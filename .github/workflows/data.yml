@@ -1,0 +1,21 @@
+name: data
+on:
+  workflow_dispatch:
+  push:
+    paths: ["research/fetch_data.py", ".github/workflows/data.yml"]
+permissions: { contents: write }
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: arena/afc8c595-quantlol }
+      - run: |
+          python3 research/fetch_data.py --out research/data 2>&1 | tee research/data/fetch_log.txt
+          ls -la research/data
+      - run: |
+          git config user.email "ci@quantlol.local"; git config user.name "QuantLOL CI"
+          git add -f research/data
+          git commit -q -m "data: free GC=F / XAUUSD / VIX snapshots [skip ci]" || echo nothing
+          git push origin HEAD:arena/afc8c595-quantlol || (git pull --rebase -q && git push origin HEAD:arena/afc8c595-quantlol)

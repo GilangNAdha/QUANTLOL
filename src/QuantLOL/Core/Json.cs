@@ -30,7 +30,7 @@ namespace QuantLOL.Core
         }
 
         public IEnumerable<KeyValuePair<string, JsonValue>> Members
-            => Object ?? (IEnumerable<KeyValuePair<string, JsonValue>>)Array.Empty<KeyValuePair<string, JsonValue>>();
+            => Object ?? (IEnumerable<KeyValuePair<string, JsonValue>>)System.Array.Empty<KeyValuePair<string, JsonValue>>();
 
         public double? Num(string key)
         {

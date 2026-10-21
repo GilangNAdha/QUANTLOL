@@ -109,7 +109,7 @@ namespace QuantLOL
                 Enabled = !DryRun
             };
             _exec.TradeClosed += OnTradeFinalised;
-            _exec.EntryFailed += (why, reason) => RecordRejection(reason, why, CurrentBid, 0, _lastEntryStructure?.Trend ?? 0, "");
+            _exec.EntryFailed += (why, reason) => RecordRejection(reason, why, CurrentBid, 0, _entryStructure?.Trend ?? 0, "");
 
             _guard = new DrawdownGuard(Account.Balance, DailyLossLimitUsd, EquityDrawdownLimitUsd)
             {
@@ -352,7 +352,7 @@ namespace QuantLOL
             plan.T0Decision = tSignal0;
 
             long tRisk1 = MonotonicClock.Timestamp;
-            _lat.SignalToRisk.RecordMs(tSignal1, tRisk1);
+            _lat.SignalToRisk.RecordMs(MonotonicClock.MsBetween(tSignal1, tRisk1));
 
             if (_monitorOnly)
             {

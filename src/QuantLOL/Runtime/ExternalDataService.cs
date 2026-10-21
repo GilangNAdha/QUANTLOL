@@ -81,9 +81,9 @@ namespace QuantLOL.Runtime
         {
             try
             {
-                if (!File.Exists(GexFilePath)) { _gexLastError = "file not found: " + GexFilePath; return; }
+                if (!System.IO.File.Exists(GexFilePath)) { _gexLastError = "file not found: " + GexFilePath; return; }
                 long t0 = MonotonicClock.Timestamp;
-                string json = File.ReadAllText(GexFilePath, Encoding.UTF8);
+                string json = System.IO.File.ReadAllText(GexFilePath, Encoding.UTF8);
                 var g = ExternalDataParser.ParseGex(json, "XAUUSD", nowUtc, 200, 20000, out string err);
                 if (err != null) { _gexLastError = err; _log("GEX file invalid: " + err, true); return; }
                 g.Source = "file:" + Path.GetFileName(GexFilePath);
@@ -96,8 +96,8 @@ namespace QuantLOL.Runtime
         {
             try
             {
-                if (!File.Exists(VixFilePath)) { _vixLastError = "file not found: " + VixFilePath; return; }
-                string json = File.ReadAllText(VixFilePath, Encoding.UTF8);
+                if (!System.IO.File.Exists(VixFilePath)) { _vixLastError = "file not found: " + VixFilePath; return; }
+                string json = System.IO.File.ReadAllText(VixFilePath, Encoding.UTF8);
                 var v = ExternalDataParser.ParseVix(json, nowUtc, out string err);
                 if (err != null) { _vixLastError = err; _log("VIX file invalid: " + err, true); return; }
                 v.Source = "file:" + Path.GetFileName(VixFilePath);
@@ -114,7 +114,7 @@ namespace QuantLOL.Runtime
             {
                 var req = new HttpRequest(new Uri(GexUrl))
                 {
-                    Method = System.Net.Http.HttpMethod.Get,
+                    Method = cAlgo.API.HttpMethod.Get,
                     Timeout = TimeSpan.FromSeconds(_timeoutSeconds)
                 };
                 _bot.Http.SendAsync(req, resp => OnGexResponse(resp, nowUtc));
@@ -134,7 +134,7 @@ namespace QuantLOL.Runtime
             {
                 var req = new HttpRequest(new Uri(VixUrl))
                 {
-                    Method = System.Net.Http.HttpMethod.Get,
+                    Method = cAlgo.API.HttpMethod.Get,
                     Timeout = TimeSpan.FromSeconds(_timeoutSeconds)
                 };
                 _bot.Http.SendAsync(req, resp => OnVixResponse(resp, nowUtc));

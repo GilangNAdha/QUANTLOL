@@ -54,9 +54,22 @@ namespace QuantLOL.Tests
             Assert.Contains(m.Warnings, w => w.Contains("sample size"));
             Assert.Contains(m.Warnings, w => w.Contains("Sharpe"));
             Assert.True(double.IsNaN(m.Sharpe));
+            // Three trades cannot support a percentile interval; the report must say so rather
+            // than print a number that looks like evidence.
+            Assert.False(m.BootstrapAvailable);
+            Assert.True(double.IsNaN(m.ExpectancyCiLow) && double.IsNaN(m.ExpectancyCiHigh));
+            Assert.Contains(m.Warnings, w => w.Contains("fewer than 5 trades"));
+        }
+
+        [Fact]
+        public void BootstrapIntervalAppearsOnceTheSampleCanSupportIt()
+        {
+            var m = PerformanceAnalyzer.Compute(new List<TradeRecord>
+            { T(1, 1), T(2, -1), T(3, 2), T(4, -1), T(5, 1.5), T(6, -0.5) });
             Assert.True(m.BootstrapAvailable);
             Assert.True(double.IsFinite(m.ExpectancyCiLow) && double.IsFinite(m.ExpectancyCiHigh));
             Assert.True(m.ExpectancyCiLow <= m.ExpectancyCiHigh);
+            Assert.True(m.ExpectancyCiHigh >= m.Expectancy && m.ExpectancyCiLow <= m.Expectancy);
         }
 
         [Fact]

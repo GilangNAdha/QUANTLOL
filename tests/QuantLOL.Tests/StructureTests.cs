@@ -86,9 +86,13 @@ namespace QuantLOL.Tests
         {
             var bars = BuildSweepSeries();
             var levels = new[] { new LevelRef(99.89, LevelKind.PrevSessionLow, "pdl") };
-            var s = StructureAnalyzer.Analyze(bars, bars.Length - 1, Opt(), levels);
+            // Bar 12 pierces BOTH the 99.90 swing low and the 99.89 context level; for a bullish
+            // sweep the lower level wins. The final bar also pierces the 100.00 swing low, and a
+            // later sweep legitimately supersedes the earlier one, so the decision index is 12.
+            var s = StructureAnalyzer.Analyze(bars, bars.Length - 2, Opt(), levels);
             Assert.NotNull(s.BullishSweep);
             Assert.Equal(LevelKind.PrevSessionLow, s.BullishSweep.LevelKind);
+            Assert.Equal(99.89, s.BullishSweep.LevelPrice, 9);
         }
 
         [Fact]

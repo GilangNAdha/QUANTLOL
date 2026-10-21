@@ -194,10 +194,14 @@ namespace QuantLOL.Core
             // ---- 4. Liquidity sweeps within the recent window ----
             double pierce = Math.Max(1, o.MinSweepPierceTicks) * o.TickSize;
             int sweepStart = Math.Max(start + k + 1, lastIndex - Math.Max(1, o.SweepWindowBars) + 1);
+            // Only the most recent confirmed swings are sweep candidates: this bounds the work per
+            // tick (the hot path budget) and keeps the candidate set identical to the research
+            // engine, which is the parity contract. Older levels remain available as context levels.
+            int candStart = Math.Max(0, swings.Count - 24);
             for (int i = sweepStart; i <= lastIndex; i++)
             {
                 // swing-based sweep: level must be confirmed strictly before this bar
-                for (int s = 0; s < swings.Count; s++)
+                for (int s = candStart; s < swings.Count; s++)
                 {
                     var sp = swings[s];
                     if (sp.ConfirmIndex >= i) continue;

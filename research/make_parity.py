@@ -55,7 +55,8 @@ def bar_json(b):
 def snap_fields(s):
     def sweep(x):
         return None if x is None else {"i": x["i"], "level": x["level"], "extreme": x["extreme"],
-                                       "kind": x["kind"], "pierce_ticks": x["pierce_ticks"]}
+                                       "kind": x["kind"], "dir": x["dir"],
+                                       "pierce_ticks": x["pierce_ticks"]}
     def fvg(x):
         return None if x is None else {"i": x["i"], "top": x["top"], "bottom": x["bottom"], "filled": x["filled"]}
     def ob(x):

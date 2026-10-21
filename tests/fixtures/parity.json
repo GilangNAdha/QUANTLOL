@@ -4874,6 +4874,7 @@
      "top": 4521.100098
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4521.299805,
      "i": 406,
      "kind": "SwingHigh",
@@ -4891,6 +4892,7 @@
      "top": 4520.100098
     },
     "bull_sweep": {
+     "dir": 1,
      "extreme": 4520.100098,
      "i": 405,
      "kind": "SwingLow",
@@ -5116,6 +5118,7 @@
      "top": 4521.600098
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4521.100098,
      "i": 475,
      "kind": "SwingHigh",
@@ -5133,6 +5136,7 @@
      "top": 4516.700195
     },
     "bull_sweep": {
+     "dir": 1,
      "extreme": 4515.399902,
      "i": 485,
      "kind": "SwingLow",
@@ -5358,6 +5362,7 @@
      "top": 4525.700195
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4518.299805,
      "i": 556,
      "kind": "SwingHigh",
@@ -5375,6 +5380,7 @@
      "top": 4515.899902
     },
     "bull_sweep": {
+     "dir": 1,
      "extreme": 4511.600098,
      "i": 552,
      "kind": "SwingLow",
@@ -5600,6 +5606,7 @@
      "top": 4518.100098
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4518.100098,
      "i": 509,
      "kind": "SwingHigh",
@@ -5617,6 +5624,7 @@
      "top": 4517.600098
     },
     "bull_sweep": {
+     "dir": 1,
      "extreme": 4508.0,
      "i": 516,
      "kind": "SwingLow",
@@ -5842,6 +5850,7 @@
      "top": 4528.899902
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4528.100098,
      "i": 535,
      "kind": "SwingHigh",
@@ -5859,6 +5868,7 @@
      "top": 4518.299805
     },
     "bull_sweep": {
+     "dir": 1,
      "extreme": 4524.899902,
      "i": 534,
      "kind": "SwingLow",
@@ -6084,6 +6094,7 @@
      "top": 4528.899902
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4528.100098,
      "i": 535,
      "kind": "SwingHigh",
@@ -6101,6 +6112,7 @@
      "top": 4518.299805
     },
     "bull_sweep": {
+     "dir": 1,
      "extreme": 4524.899902,
      "i": 534,
      "kind": "SwingLow",
@@ -6318,6 +6330,7 @@
      "top": 4432.200195
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4476.299805,
      "i": 200,
      "kind": "SwingHigh",
@@ -6546,6 +6559,7 @@
      "top": 4488.200195
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4481.600098,
      "i": 267,
      "kind": "SwingHigh",
@@ -6774,6 +6788,7 @@
      "top": 4521.100098
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4521.299805,
      "i": 406,
      "kind": "SwingHigh",
@@ -6791,6 +6806,7 @@
      "top": 4520.100098
     },
     "bull_sweep": {
+     "dir": 1,
      "extreme": 4520.100098,
      "i": 405,
      "kind": "SwingLow",
@@ -7008,6 +7024,7 @@
      "top": 4521.100098
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4521.299805,
      "i": 406,
      "kind": "SwingHigh",
@@ -7025,6 +7042,7 @@
      "top": 4520.100098
     },
     "bull_sweep": {
+     "dir": 1,
      "extreme": 4520.100098,
      "i": 405,
      "kind": "SwingLow",
@@ -7245,6 +7263,7 @@
      "top": 4521.100098
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4521.299805,
      "i": 406,
      "kind": "SwingHigh",
@@ -7262,6 +7281,7 @@
      "top": 4520.100098
     },
     "bull_sweep": {
+     "dir": 1,
      "extreme": 4520.100098,
      "i": 405,
      "kind": "SwingLow",
@@ -7479,6 +7499,7 @@
      "top": 4521.100098
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4521.299805,
      "i": 406,
      "kind": "SwingHigh",
@@ -7496,6 +7517,7 @@
      "top": 4520.100098
     },
     "bull_sweep": {
+     "dir": 1,
      "extreme": 4520.100098,
      "i": 405,
      "kind": "SwingLow",
@@ -7713,6 +7735,7 @@
      "top": 4521.100098
     },
     "bear_sweep": {
+     "dir": -1,
      "extreme": 4521.299805,
      "i": 406,
      "kind": "SwingHigh",
@@ -7730,6 +7753,7 @@
      "top": 4520.100098
     },
     "bull_sweep": {
+     "dir": 1,
      "extreme": 4520.100098,
      "i": 405,
      "kind": "SwingLow",

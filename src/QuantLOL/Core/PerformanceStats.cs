@@ -169,8 +169,11 @@ namespace QuantLOL.Core
             BuildBuckets(trades, m.ByDirection, t => t.Direction);
             BuildBuckets(trades, m.ByRegime, t => t.Regime);
 
-            Bootstrap(pnls, out m.ExpectancyCiLow, out m.ExpectancyCiHigh, out m.ProfitFactorCiLow, out m.ProfitFactorCiHigh);
-            m.BootstrapAvailable = true;
+            m.BootstrapAvailable = m.TradeCount >= 5;
+            if (m.BootstrapAvailable)
+                Bootstrap(pnls, out m.ExpectancyCiLow, out m.ExpectancyCiHigh, out m.ProfitFactorCiLow, out m.ProfitFactorCiHigh);
+            else
+                m.Warnings.Add("fewer than 5 trades: no bootstrap interval is reported at all");
             if (m.TradeCount < 30) m.Warnings.Add("sample size " + m.TradeCount + " < 30: confidence intervals are wide, do not infer an edge");
             return m;
         }

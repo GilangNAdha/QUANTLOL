@@ -41,12 +41,20 @@ namespace QuantLOL.Tests
         [Fact]
         public void GldDerivedDataIsMarkedAsProxy()
         {
-            string json = ValidGex.Replace("\"XAUUSD\"", "\"GLD\"").Replace("4321.5", "398.5")
-                                  .Replace("\"4300.0\"", "\"395.0\"").Replace("4300.0", "395.0").Replace("4400.0", "405.0")
-                                  .Replace("4250.0", "390.0").Replace("4350", "400").Replace("4290", "394");
+            // A GLD-derived file is acceptable only after the levels have been converted to the
+            // traded instrument's scale. The provenance is then downgraded to Proxy.
+            string json = ValidGex.Replace("\"XAUUSD\"", "\"GLD\"");
             var g = ExternalDataParser.ParseGex(json, "XAUUSD", Now, 2000, 8000, out string err);
             Assert.Null(err);
             Assert.Equal(DataQuality.Proxy, g.Quality);
+
+            // A raw GLD price (hundreds of USD per share) is NOT a USD/oz gold level. Accepting it
+            // would silently place walls 2,900 dollars away from price, so the sanity band refuses.
+            string raw = ValidGex.Replace("\"XAUUSD\"", "\"GLD\"").Replace("4321.5", "398.5")
+                                 .Replace("4300.0", "395.0").Replace("4400.0", "405.0").Replace("4250.0", "390.0")
+                                 .Replace("4350", "400").Replace("4290", "394");
+            ExternalDataParser.ParseGex(raw, "XAUUSD", Now, 2000, 8000, out string rawErr);
+            Assert.Contains("outside sane range", rawErr);
         }
 
         [Fact]

@@ -85,7 +85,7 @@ namespace QuantLOL.Core
             int poc = 0;
             for (int b = 1; b < bins; b++) if (vols[b] > vols[poc]) poc = b;   // ties resolve to the lowest price bin
             double total = 0; for (int b = 0; b < bins; b++) total += vols[b];
-            double target = total * Numeric.Clamp(valueAreaPercent, 0.1, 0.99) / 100.0;
+            double target = total * Numeric.Clamp(valueAreaPercent / 100.0, 0.1, 0.99);
             double acc = vols[poc];
             int lo = poc, hi = poc;
             while (acc < target && (lo > 0 || hi < bins - 1))

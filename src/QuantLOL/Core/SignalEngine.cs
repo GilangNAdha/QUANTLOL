@@ -169,7 +169,9 @@ namespace QuantLOL.Core
             if (!longOk && !shortOk)
             {
                 d.Reject = RejectReason.NoSetup;
-                d.RejectDetail = shortCand.BestRejectReason(x) ?? "no sweep+confirmation";
+                var relevant = longCand.HasSweep ? longCand : (shortCand.HasSweep ? shortCand : null);
+                d.RejectDetail = relevant?.BestRejectReason(x) ?? "no sweep+confirmation";
+                if (relevant != null) d.Evidence.AddRange(relevant.Evidence);
                 return d;
             }
 
@@ -251,6 +253,7 @@ namespace QuantLOL.Core
         {
             public int Direction;
             public bool CoreOk;
+            public bool HasSweep;
             public double Score;
             public double SweepExtreme;
             public string SetupType = "";
@@ -279,6 +282,7 @@ namespace QuantLOL.Core
                 return c;
             }
             c.CoreOk = true;
+            c.HasSweep = true;
             c.SweepExtreme = sweep.Extreme;
             c.Score += x.Weights.Sweep + x.Weights.Confirmation;
             c.Evidence.Add((dir > 0 ? "bull_sweep:" : "bear_sweep:") + sweep.LevelKind + "@" + Numeric.F(sweep.LevelPrice, 2) + "/pierce" + Numeric.F(sweep.PierceTicks, 0) + "t");

@@ -34,7 +34,7 @@ namespace QuantLOL.Core
             var r = new OrderFlowSnapshot();
             if (bars == null || bars.Length == 0 || windowBars < 2) return r;
             lastIndex = Math.Min(lastIndex, bars.Length - 1);
-            int start = Math.Max(1, lastIndex - windowBars + 1);
+            int start = Math.Max(0, lastIndex - windowBars + 1);
             if (lastIndex - start < 1) return r;
 
             int mid = (start + lastIndex) / 2;

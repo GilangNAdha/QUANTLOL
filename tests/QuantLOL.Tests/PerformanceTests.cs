@@ -55,7 +55,8 @@ namespace QuantLOL.Tests
             Assert.Contains(m.Warnings, w => w.Contains("Sharpe"));
             Assert.True(double.IsNaN(m.Sharpe));
             Assert.True(m.BootstrapAvailable);
-            Assert.True(m.ExpectancyCiLow <= m.Expectancy);
+            Assert.True(double.IsFinite(m.ExpectancyCiLow) && double.IsFinite(m.ExpectancyCiHigh));
+            Assert.True(m.ExpectancyCiLow <= m.ExpectancyCiHigh);
         }
 
         [Fact]

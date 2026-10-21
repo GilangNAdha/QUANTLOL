@@ -1,0 +1,136 @@
+=== dotnet --info ===
+6.0.428 [/usr/share/dotnet/sdk]
+8.0.132 [/usr/share/dotnet/sdk]
+8.0.206 [/usr/share/dotnet/sdk]
+8.0.319 [/usr/share/dotnet/sdk]
+8.0.426 [/usr/share/dotnet/sdk]
+9.0.122 [/usr/share/dotnet/sdk]
+9.0.205 [/usr/share/dotnet/sdk]
+9.0.319 [/usr/share/dotnet/sdk]
+10.0.113 [/usr/share/dotnet/sdk]
+10.0.204 [/usr/share/dotnet/sdk]
+10.0.303 [/usr/share/dotnet/sdk]
+10.0.402 [/usr/share/dotnet/sdk]
+
+=== BUILD cBot (net6.0, cTrader.Automate 1.0.21) ===
+  Determining projects to restore...
+  Restored /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj (in 781 ms).
+/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(61,16): warning CS0169: The field 'QuantLOLBot._sessionDayRefEquity' is never used [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
+  QuantLOL -> /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/bin/Release/net6.0/QuantLOL.dll
+  QuantLOL -> /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/bin/Release/net6.0/src.algo
+  QuantLOL -> cAlgo/Sources/Robots/src.algo
+
+Build succeeded.
+
+/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(61,16): warning CS0169: The field 'QuantLOLBot._sessionDayRefEquity' is never used [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
+    1 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:06.22
+BUILD_EXIT=0
+
+=== UNIT TESTS ===
+Test run for /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/bin/Release/net8.0/QuantLOL.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+/home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/bin/Release/net8.0/QuantLOL.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.5.7+8f2703126a (64-bit .NET 8.0.32)
+[xUnit.net 00:00:00.26]   Discovering: QuantLOL.Tests
+[xUnit.net 00:00:00.39]   Discovered:  QuantLOL.Tests
+[xUnit.net 00:00:00.39]   Starting:    QuantLOL.Tests
+  Passed QuantLOL.Tests.LatencyTests.SummaryReportsPercentilesAndCount [7 ms]
+  Passed QuantLOL.Tests.RiskTests.CooldownAndDuplicateSuppression [7 ms]
+  Passed QuantLOL.Tests.NumericTests.RoundToTickIsStableAtMidpoints [7 ms]
+  Passed QuantLOL.Tests.LatencyTests.EmptySeriesIsSafe [< 1 ms]
+  Passed QuantLOL.Tests.NumericTests.EpochHeuristicHandlesSecondsAndMilliseconds [< 1 ms]
+  Passed QuantLOL.Tests.NumericTests.PercentilesUseLinearInterpolation [1 ms]
+  Passed QuantLOL.Tests.RiskTests.LifetimeDrawdownFromReferenceBalanceLatches [4 ms]
+  Passed QuantLOL.Tests.RiskTests.DayEquityDrawdownBlocksWithoutLatchedKillSwitch [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.StopIsNeverTightenedToFitTheCap [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.RejectsInadequateRewardToRiskEvenWhenRiskFits [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.OpenPositionPnlCountsThroughEquity [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.DailyLossLimitBlocksRestOfDayAndResetsNextDay [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.ShortPlansMeasureRewardAheadOfEntry [1 ms]
+  Passed QuantLOL.Tests.RiskTests.LatchSurvivesRecoveryAndOnlyResetClearsIt [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.ZeroPointZeroOneLotIsOneUnitOnHundredOunceContract [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.OneOuncePerLotContractIsAlsoRepresentable [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.CommissionModelsAndMinimum [< 1 ms]
+  Passed QuantLOL.Tests.OrderFlowTests.RisingClosesProducePositiveDelta [1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.MoneyPerPriceUnitIsOneDollarPerDollarForOneOunce [< 1 ms]
+  Passed QuantLOL.Tests.OrderFlowTests.FallingClosesProduceNegativeDelta [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.FiveDollarCapImpliesMaxStructuralStopDistance [< 1 ms]
+  Passed QuantLOL.Tests.OrderFlowTests.ZeroRangeBarsDoNotDivideByZero [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.RejectsMisalignedVolumeStep [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.RejectsWhenBrokerMinimumExceedsIntendedSize [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.TenOuncePerLotContractGivesPointOneUnits [< 1 ms]
+  Passed QuantLOL.Tests.LatencyTests.RegistryTableExplainsNetworkAttribution [17 ms]
+  Passed QuantLOL.Tests.MarketProfileTests.ValueAreaContainsAtLeastTheRequestedShare [1 ms]
+  Passed QuantLOL.Tests.StructureTests.NoFutureDataLeaksIntoTheAnalysis [10 ms]
+  Passed QuantLOL.Tests.StructureTests.SwingsAreOnlyKnowableAfterTheirConfirmationBar [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.SweepRequiresPierceAndReclaim [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.FairValueGapDetectedAndTracked [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.ContextLevelsAreAlsoSweepCandidates [3 ms]
+  Passed QuantLOL.Tests.StructureTests.AtrIsPositiveAndBoundedByObservedRanges [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.AnalysisIsDeterministic [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.BullishBreakOfStructureChangesTrendAndRecordsChoch [< 1 ms]
+  Passed QuantLOL.Tests.MarketProfileTests.PocValueAreaAndSessionExtremes [7 ms]
+  Passed QuantLOL.Tests.MarketProfileTests.EmptyAndDegenerateInputsAreSafe [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.SignalKeyIsStableAndUniquePerBarAndPrice [9 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.ImplausiblePriceScaleIsRejected [9 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.EpochMillisecondTimestampsAreAccepted [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.GldDerivedDataIsMarkedAsProxy [3 ms]
+  Passed QuantLOL.Tests.ParityTests.OrderFlowMatchesReferenceEngine [57 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.ConflictingDirectionsAreRefused [4 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.InstrumentMismatchIsRejected [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.MissingDataBlocksOnlyWhenRequired [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.VixParsingValidatesLevelAndTime [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.FutureTimestampsAreRejected [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.ValidGexFileParsesWithProvenance [< 1 ms]
+  Passed QuantLOL.Tests.ParityTests.MarketProfileMatchesReferenceEngine [2 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.SyntheticTargetIsFlagged [2 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.SpreadFilterRejectsBeforeAnySetupWork [1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.StructuralOnlyModeRefusesToInventATarget [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.VixVetoBlocksEntries [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.FreshnessAndStalePolicy [3 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.OrderFlowVetoWhenRequired [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.ScoreThresholdCanSuppressAValidSetup [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.ProducesBullishSetupWhenAllCoreConditionsHold [< 1 ms]
+  Passed QuantLOL.Tests.JsonTests.RejectsMalformedDocuments [40 ms]
+  Passed QuantLOL.Tests.JsonTests.KeysAreCaseInsensitive [< 1 ms]
+  Passed QuantLOL.Tests.ParityTests.SignalDecisionsMatchReferenceEngine [5 ms]
+[xUnit.net 00:00:00.59]     QuantLOL.Tests.PerformanceTests.SmallSamplesAreFlaggedNotAnnualised [FAIL]
+[xUnit.net 00:00:00.59]       Assert.True() Failure
+[xUnit.net 00:00:00.59]       Expected: True
+[xUnit.net 00:00:00.59]       Actual:   False
+[xUnit.net 00:00:00.59]       Stack Trace:
+[xUnit.net 00:00:00.59]         /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/PerformanceTests.cs(60,0): at QuantLOL.Tests.PerformanceTests.SmallSamplesAreFlaggedNotAnnualised()
+[xUnit.net 00:00:00.59]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.59]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.JsonTests.ParsesObjectsArraysAndNumbers [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.WideStructuralStopIsRejectedNotTightened [2 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.MissingConfirmationYieldsNoSetup [< 1 ms]
+  Passed QuantLOL.Tests.ParityTests.StructureMatchesReferenceEngine [2 ms]
+  Passed QuantLOL.Tests.ParityTests.RiskMathMatchesReferenceEngine [< 1 ms]
+  Passed QuantLOL.Tests.ParityTests.DrawdownGuardMatchesReferenceEngine [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.MarkdownReportContainsAllHeadlineMetrics [11 ms]
+  Passed QuantLOL.Tests.PerformanceTests.BreakdownsUseTheDeclaredDimensions [2 ms]
+  Failed QuantLOL.Tests.PerformanceTests.SmallSamplesAreFlaggedNotAnnualised [27 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at QuantLOL.Tests.PerformanceTests.SmallSamplesAreFlaggedNotAnnualised() in /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/PerformanceTests.cs:line 60
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.59]   Finished:    QuantLOL.Tests
+  Passed QuantLOL.Tests.PerformanceTests.MaxDrawdownFollowsTheClosedEquityCurve [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.CoreAggregatesAreCorrect [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.EmptyInputProducesAWarningNotAnException [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.BootstrapIntervalAppearsOnceTheSampleCanSupportIt [2 ms]
+
+Test Run Failed.
+Total tests: 73
+     Passed: 72
+     Failed: 1
+ Total time: 2.9984 Seconds
+TEST_EXIT=1

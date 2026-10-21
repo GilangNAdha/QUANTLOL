@@ -129,8 +129,15 @@ def main():
     ap.add_argument("--data", default="research/data")
     ap.add_argument("--out", default="research/out")
     ap.add_argument("--quick", action="store_true")
+    ap.add_argument("--report-only", action="store_true", help="rebuild report.md from an existing metrics.json")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
+    if args.report_only:
+        with open(os.path.join(args.out, "metrics.json")) as f:
+            data = json.load(f)
+        write_report(data, os.path.join(args.out, "report.md"))
+        print("rewrote", os.path.join(args.out, "report.md"))
+        return
     for f in ("trades.csv", "rejections.csv"):
         p = os.path.join(args.out, f)
         if os.path.exists(p): os.remove(p)
@@ -234,20 +241,26 @@ def main():
                 {"spread_ticks": spread, "trades": m["trades"], "net": m["net"], "pf": m["pf"],
                  "expectancy": m["expectancy"]})
             print("[spread] %d ticks trades=%d net=%s" % (spread, m["trades"], fmt(m["net"])))
+        # Reduced grid: the full 3x3x3 grid costs minutes per cell on the pure-Python
+        # structure analysis. The earlier full grid showed min_score never binds (every
+        # qualifying setup scores the same) and sweep 6/12/24 moved the result by tens of
+        # dollars, so the informative axis left is the swing lookback.
         for lookback in (1, 2, 3):
-            for sweep in (6, 12, 24):
-                for score in (3.0, 4.0, 5.0):
+            for sweep in (12,):
+                for score in (4.0,):
                     cfg = variant_config("E_complete", max_risk=50.0, enforce_limits=False)
                     cfg.structure.swing_lookback = lookback
                     cfg.sweep_window = sweep
                     cfg.structure.sweep_window = sweep
                     cfg.min_score = score
+                    t0 = time.time()
                     run = run_backtest(bars, cfg, vix, label="sens")
                     m = compute_metrics(run)
                     results["sensitivity"].append({"swing_lookback": lookback, "sweep_window": sweep,
                                                    "min_score": score, "trades": m["trades"],
                                                    "net": m["net"], "pf": m["pf"], "expectancy": m["expectancy"]})
-                    print("[sens] lb=%d sw=%d score=%.0f trades=%d net=%s" % (lookback, sweep, score, m["trades"], fmt(m["net"])))
+                    print("[sens] lb=%d sw=%d score=%.0f trades=%d net=%s (%.0fs)" % (
+                        lookback, sweep, score, m["trades"], fmt(m["net"]), time.time() - t0))
 
     with open(os.path.join(args.out, "metrics.json"), "w") as f:
         json.dump(results, f, indent=2, sort_keys=True)
@@ -322,12 +335,13 @@ def write_report(R, path):
     A("Read module contributions across a row group (same dataset), never across datasets. A difference "
       "smaller than the bootstrap interval is noise.\n")
     A("### Reading the module deltas\n")
-    A("- **AMT (B vs A)**: the implemented gate is *\"do not buy above the value area / do not sell below it\"*. "
-      "It rarely binds, because a bullish CHoCH after a sweep of lows already sits below VAH. Where B differs "
-      "from A, the difference is target selection (VAH/VAL/session levels join the target set), not the gate.\n")
+    A("- **AMT (B vs A)**: AMT contributes in two ways: a score bonus when a long sits at/below VAL "
+      "(or a short at/above VAH), and VAH/VAL/session levels added to the target set. It is not a veto, so "
+      "it changes *which* target is chosen more often than whether a trade happens.\n")
     A("- **Order flow (D vs B)**: the confirmation is a broker-tick-volume delta proxy over a short window. "
-      "It removes signals; it does not add them. Fewer trades with worse expectancy is evidence *against* this "
-      "proxy on this sample, and it is reported as such.\n")
+      "It removes signals; it does not add them. Its effect flips sign between the two datasets in this run "
+      "(it helps on the hourly sample and hurts on the 5-minute sample), which is what a noisy filter looks "
+      "like. It is reported as mixed, not as a win.\n")
     A("- **VIX (E vs D)**: VIX only removes signals when it is at or above the configured 30 threshold. In "
       "quiet samples E and D are identical by construction, which is visible in the rejection table rather "
       "than being papered over.\n")

@@ -1,0 +1,28 @@
+[data] gc_5m: 13612 bars 2026-08-12 04:00:00+00:00 -> 2026-10-21 19:54:13+00:00
+[data] gc_60m: 13737 bars 2024-05-30 04:00:00+00:00 -> 2026-10-21 19:54:20+00:00
+[data] vix: 9298 daily observations
+[exec] gc_5m    A_smc          trades= 30 net=   29.73 setups=177
+[exec] gc_5m    B_smc_amt      trades= 29 net=   28.95 setups=169
+[exec] gc_5m    C_smc_amt_gex  UNTESTED (no historical GEX)
+[exec] gc_5m    D_smc_amt_of   trades= 21 net=    6.76 setups=118
+[exec] gc_5m    E_complete     trades= 21 net=    6.76 setups=118
+[ctf]  gc_5m    A_smc          trades= 80 net=   43.82 PF=1.14
+[ctf]  gc_5m    B_smc_amt      trades= 84 net=   86.58 PF=1.25
+[ctf]  gc_5m    D_smc_amt_of   trades= 66 net=    5.99 PF=1.02
+[ctf]  gc_5m    E_complete     trades= 66 net=    5.99 PF=1.02
+[exec] gc_60m   A_smc          trades= 10 net=   -9.10 setups=44
+[exec] gc_60m   B_smc_amt      trades= 10 net=   -6.40 setups=45
+[exec] gc_60m   C_smc_amt_gex  UNTESTED (no historical GEX)
+[exec] gc_60m   D_smc_amt_of   trades=  3 net=    3.83 setups=21
+[exec] gc_60m   E_complete     trades=  3 net=    3.83 setups=21
+[ctf]  gc_60m   A_smc          trades=102 net=  -84.90 PF=0.86
+[ctf]  gc_60m   B_smc_amt      trades=103 net=  -94.89 PF=0.85
+[ctf]  gc_60m   D_smc_amt_of   trades= 75 net=  -68.24 PF=0.85
+[ctf]  gc_60m   E_complete     trades= 75 net=  -68.24 PF=0.85
+[spread] 20 ticks trades=66 net=16.12
+[spread] 30 ticks trades=66 net=5.99
+[spread] 50 ticks trades=66 net=-2.05
+[sens] lb=1 sw=12 score=4 trades=70 net=-27.01 (22s)
+[sens] lb=2 sw=12 score=4 trades=66 net=5.99 (22s)
+[sens] lb=3 sw=12 score=4 trades=65 net=-134.81 (23s)
+wrote research/out/report.md

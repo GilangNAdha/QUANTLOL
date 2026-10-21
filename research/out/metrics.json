@@ -1,0 +1,1680 @@
+{
+  "assumptions": {
+    "commission": "0.07 USD per side (7 USD per lot round turn) - configurable, verify with your broker",
+    "fills": "decision on bar close -> fill at next bar open; stop assumed before target when both are touched",
+    "instrument": "COMEX GC=F continuous front month (Yahoo Finance, delayed) used as the XAUUSD research proxy",
+    "risk_cap": "5 USD planned risk per trade at 0.01 lot; structural stops wider than ~4.81 USD are SKIPPED, never tightened",
+    "slippage": "5 ticks (0.05 USD) adverse on entry and on stop exits; spreads paid in full",
+    "spread": "30 ticks (0.30 USD) modelled constant; NOT measured historical spread. Sensitivity at 20/50 ticks reported.",
+    "volume": "0.01 lot = 1 troy ounce (100 oz/lot contract); money per 1.0 price unit = 1.0 USD"
+  },
+  "data_manifest": {
+    "datasets": {
+      "gc_1d": {
+        "exchange_timezone": "America/New_York",
+        "fetched_utc": "2026-10-21T20:04:22.310607+00:00",
+        "file": "gc_1d.csv.gz",
+        "first": "2016-10-21 04:00:00",
+        "gmtoffset": -14400,
+        "interval": "1d",
+        "last": "2026-10-21 04:00:00",
+        "note": "Delayed/free data. GC=F is the COMEX front-month continuous series, not spot XAUUSD.",
+        "regular_market_price": 4152.2,
+        "requested_range": "10y",
+        "rows": 2514,
+        "source": "Yahoo Finance chart API",
+        "symbol": "GC%3DF",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=10y&includePrePost=false&events=div%2Csplits"
+      },
+      "gc_5m": {
+        "exchange_timezone": "America/New_York",
+        "fetched_utc": "2026-10-21T20:04:21.305913+00:00",
+        "file": "gc_5m.csv.gz",
+        "first": "2026-08-12 04:00:00",
+        "gmtoffset": -14400,
+        "interval": "5m",
+        "last": "2026-10-21 19:54:13",
+        "note": "Delayed/free data. GC=F is the COMEX front-month continuous series, not spot XAUUSD.",
+        "regular_market_price": 4152.1,
+        "requested_range": "60d",
+        "rows": 13612,
+        "source": "Yahoo Finance chart API",
+        "symbol": "GC%3DF",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=5m&range=60d&includePrePost=false&events=div%2Csplits"
+      },
+      "gc_60m": {
+        "exchange_timezone": "America/New_York",
+        "fetched_utc": "2026-10-21T20:04:21.837718+00:00",
+        "file": "gc_60m.csv.gz",
+        "first": "2024-05-30 04:00:00",
+        "gmtoffset": -14400,
+        "interval": "60m",
+        "last": "2026-10-21 19:54:20",
+        "note": "Delayed/free data. GC=F is the COMEX front-month continuous series, not spot XAUUSD.",
+        "regular_market_price": 4152.2,
+        "requested_range": "730d",
+        "rows": 13737,
+        "source": "Yahoo Finance chart API",
+        "symbol": "GC%3DF",
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=60m&range=730d&includePrePost=false&events=div%2Csplits"
+      },
+      "vix_1d": {
+        "fetched_utc": "2026-10-21T20:04:23.087898+00:00",
+        "file": "vix_1d.csv.gz",
+        "first": "1990-01-02 00:00:00",
+        "last": "2026-10-20 00:00:00",
+        "rows": 9298,
+        "source": "Cboe VIX_History.csv (public)"
+      }
+    },
+    "fetched_utc": "2026-10-21T20:04:21.007899+00:00"
+  },
+  "datasets": {
+    "gc_5m": {
+      "bars": 13612,
+      "end": "2026-10-21T19:54:13+00:00",
+      "start": "2026-08-12T04:00:00+00:00"
+    },
+    "gc_60m": {
+      "bars": 13737,
+      "end": "2026-10-21T19:54:20+00:00",
+      "start": "2024-05-30T04:00:00+00:00"
+    }
+  },
+  "generated_utc": "2026-10-21T20:28:02.022338+00:00",
+  "sensitivity": [
+    {
+      "expectancy": -0.3858,
+      "min_score": 4.0,
+      "net": -27.0083,
+      "pf": 0.908,
+      "sweep_window": 12,
+      "swing_lookback": 1,
+      "trades": 70
+    },
+    {
+      "expectancy": 0.0907,
+      "min_score": 4.0,
+      "net": 5.9873,
+      "pf": 1.019,
+      "sweep_window": 12,
+      "swing_lookback": 2,
+      "trades": 66
+    },
+    {
+      "expectancy": -2.074,
+      "min_score": 4.0,
+      "net": -134.8079,
+      "pf": 0.643,
+      "sweep_window": 12,
+      "swing_lookback": 3,
+      "trades": 65
+    }
+  ],
+  "spread_sensitivity": [
+    {
+      "expectancy": 0.2443,
+      "net": 16.1245,
+      "pf": 1.053,
+      "spread_ticks": 20,
+      "trades": 66
+    },
+    {
+      "expectancy": 0.0907,
+      "net": 5.9873,
+      "pf": 1.019,
+      "spread_ticks": 30,
+      "trades": 66
+    },
+    {
+      "expectancy": -0.031,
+      "net": -2.0451,
+      "pf": 0.994,
+      "spread_ticks": 50,
+      "trades": 66
+    }
+  ],
+  "variants": {
+    "gc_5m|A_smc|counterfactual": {
+      "avg_hold": 113.1,
+      "avg_loss": -5.867,
+      "avg_mae": -6.39,
+      "avg_mfe": 8.995,
+      "avg_r": -0.042,
+      "avg_win": 14.66,
+      "bars": 13291,
+      "by_session": {
+        "Asia": {
+          "n": 18,
+          "net": -10.477000000000004,
+          "wins": 6
+        },
+        "London": {
+          "n": 21,
+          "net": -38.76970000000001,
+          "wins": 4
+        },
+        "NewYork": {
+          "n": 32,
+          "net": 126.63560000000001,
+          "wins": 14
+        },
+        "OffHours": {
+          "n": 9,
+          "net": -33.5704,
+          "wins": 1
+        }
+      },
+      "by_setup": {
+        "SwingHigh_sweep+bear_choch": {
+          "n": 34,
+          "net": 84.40710000000003,
+          "wins": 15
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 46,
+          "net": -40.5886,
+          "wins": 10
+        }
+      },
+      "commission": 11.200000000000006,
+      "ended_by_kill": null,
+      "equity": 1043.8185434997558,
+      "expectancy": 0.5477,
+      "expectancy_ci": [
+        -1.896,
+        3.0506
+      ],
+      "gross_loss": 322.67999999999984,
+      "gross_profit": 366.4985,
+      "label": "gc_5m|A_smc|counterfactual",
+      "max_dd": 103.05068299999357,
+      "median_hold": 60.0,
+      "net": 43.8185,
+      "notes": "COUNTERFACTUAL: risk cap relaxed to 50 USD to obtain a usable sample; NOT executable at 0.01 lot within the 5 USD mandate",
+      "period": [
+        "2026-08-13T07:40:00+00:00",
+        "2026-10-21T19:50:00+00:00"
+      ],
+      "pf": 1.136,
+      "recovery": 0.425,
+      "rejected": {
+        "EntryDrift": 460,
+        "NoSetup": 11364,
+        "RewardTooLow": 63,
+        "RiskCapExceeded": 1
+      },
+      "runtime_s": 3.0,
+      "setups": 540,
+      "sharpe": 1.039,
+      "slippage": 3.999999999999994,
+      "sortino": 1.496,
+      "trades": 80,
+      "win_rate": 31.25,
+      "wins": 25
+    },
+    "gc_5m|A_smc|exec": {
+      "avg_hold": 137.8,
+      "avg_loss": -2.274,
+      "avg_mae": -2.627,
+      "avg_mfe": 5.45,
+      "avg_r": 0.084,
+      "avg_win": 7.521,
+      "bars": 13291,
+      "by_session": {
+        "Asia": {
+          "n": 6,
+          "net": -6.9702,
+          "wins": 1
+        },
+        "London": {
+          "n": 10,
+          "net": 22.870200000000004,
+          "wins": 4
+        },
+        "NewYork": {
+          "n": 11,
+          "net": 9.230699999999999,
+          "wins": 4
+        },
+        "OffHours": {
+          "n": 3,
+          "net": 4.6002,
+          "wins": 1
+        }
+      },
+      "by_setup": {
+        "SwingHigh_sweep+bear_choch": {
+          "n": 12,
+          "net": 25.940699999999996,
+          "wins": 6
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 18,
+          "net": 3.7901999999999934,
+          "wins": 4
+        }
+      },
+      "commission": 4.200000000000002,
+      "ended_by_kill": null,
+      "equity": 1029.7308921407837,
+      "expectancy": 0.991,
+      "expectancy_ci": [
+        -0.795,
+        2.9674
+      ],
+      "gross_loss": 45.4798,
+      "gross_profit": 75.2107,
+      "label": "gc_5m|A_smc|exec",
+      "max_dd": 15.409804999996595,
+      "median_hold": 20.0,
+      "net": 29.7309,
+      "notes": "SMC only (sweep + confirmation + dealing-range location)",
+      "period": [
+        "2026-08-13T07:40:00+00:00",
+        "2026-10-21T19:50:00+00:00"
+      ],
+      "pf": 1.654,
+      "recovery": 1.929,
+      "rejected": {
+        "EntryDrift": 132,
+        "NoSetup": 12308,
+        "RewardTooLow": 42,
+        "RiskCapAtFill": 15,
+        "RiskCapExceeded": 501
+      },
+      "runtime_s": 3.3,
+      "setups": 177,
+      "sharpe": 3.564,
+      "slippage": 1.5000000000000007,
+      "sortino": 6.531,
+      "trades": 30,
+      "win_rate": 33.33,
+      "wins": 10
+    },
+    "gc_5m|B_smc_amt|counterfactual": {
+      "avg_hold": 110.7,
+      "avg_loss": -6.115,
+      "avg_mae": -6.432,
+      "avg_mfe": 9.379,
+      "avg_r": -0.011,
+      "avg_win": 15.322,
+      "bars": 13291,
+      "by_session": {
+        "Asia": {
+          "n": 20,
+          "net": 0.3427999999999951,
+          "wins": 7
+        },
+        "London": {
+          "n": 21,
+          "net": -32.1413,
+          "wins": 5
+        },
+        "NewYork": {
+          "n": 34,
+          "net": 151.9522,
+          "wins": 15
+        },
+        "OffHours": {
+          "n": 9,
+          "net": -33.5704,
+          "wins": 1
+        }
+      },
+      "by_setup": {
+        "PrevSessionHigh_sweep+bear_choch": {
+          "n": 2,
+          "net": 10.788599999999999,
+          "wins": 1
+        },
+        "PrevSessionLow_sweep+bull_choch": {
+          "n": 3,
+          "net": 47.129999999999995,
+          "wins": 2
+        },
+        "SwingHigh_sweep+bear_choch": {
+          "n": 27,
+          "net": 52.49420000000001,
+          "wins": 12
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 41,
+          "net": -60.93890000000002,
+          "wins": 9
+        },
+        "ValueAreaHigh_sweep+bear_choch": {
+          "n": 7,
+          "net": 18.269499999999997,
+          "wins": 3
+        },
+        "ValueAreaLow_sweep+bull_choch": {
+          "n": 4,
+          "net": 18.839900000000004,
+          "wins": 1
+        }
+      },
+      "commission": 11.760000000000009,
+      "ended_by_kill": null,
+      "equity": 1086.5833491633698,
+      "expectancy": 1.0308,
+      "expectancy_ci": [
+        -1.5041,
+        3.6694
+      ],
+      "gross_loss": 342.44039999999984,
+      "gross_profit": 429.0237000000001,
+      "label": "gc_5m|B_smc_amt|counterfactual",
+      "max_dd": 100.76656738467932,
+      "median_hold": 60.0,
+      "net": 86.5833,
+      "notes": "COUNTERFACTUAL: risk cap relaxed to 50 USD to obtain a usable sample; NOT executable at 0.01 lot within the 5 USD mandate",
+      "period": [
+        "2026-08-13T07:40:00+00:00",
+        "2026-10-21T19:50:00+00:00"
+      ],
+      "pf": 1.253,
+      "recovery": 0.859,
+      "rejected": {
+        "EntryDrift": 448,
+        "NoSetup": 11300,
+        "RewardTooLow": 81,
+        "RiskCapExceeded": 1
+      },
+      "runtime_s": 20.8,
+      "setups": 532,
+      "sharpe": 1.764,
+      "slippage": 4.199999999999993,
+      "sortino": 2.575,
+      "trades": 84,
+      "win_rate": 33.33,
+      "wins": 28
+    },
+    "gc_5m|B_smc_amt|exec": {
+      "avg_hold": 141.0,
+      "avg_loss": -2.435,
+      "avg_mae": -2.703,
+      "avg_mfe": 5.41,
+      "avg_r": 0.09,
+      "avg_win": 7.521,
+      "bars": 13291,
+      "by_session": {
+        "Asia": {
+          "n": 7,
+          "net": -12.060200000000002,
+          "wins": 1
+        },
+        "London": {
+          "n": 9,
+          "net": 26.860200000000006,
+          "wins": 4
+        },
+        "NewYork": {
+          "n": 10,
+          "net": 9.550699999999999,
+          "wins": 4
+        },
+        "OffHours": {
+          "n": 3,
+          "net": 4.6002,
+          "wins": 1
+        }
+      },
+      "by_setup": {
+        "SwingHigh_sweep+bear_choch": {
+          "n": 9,
+          "net": 21.4407,
+          "wins": 5
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 15,
+          "net": 17.660199999999993,
+          "wins": 4
+        },
+        "ValueAreaHigh_sweep+bear_choch": {
+          "n": 3,
+          "net": -0.27,
+          "wins": 1
+        },
+        "ValueAreaLow_sweep+bull_choch": {
+          "n": 2,
+          "net": -9.879999999999999,
+          "wins": 0
+        }
+      },
+      "commission": 4.060000000000002,
+      "ended_by_kill": null,
+      "equity": 1028.9508921407828,
+      "expectancy": 0.9983,
+      "expectancy_ci": [
+        -0.8297,
+        3.0945
+      ],
+      "gross_loss": 46.2598,
+      "gross_profit": 75.2107,
+      "label": "gc_5m|B_smc_amt|exec",
+      "max_dd": 11.09980499999756,
+      "median_hold": 20.0,
+      "net": 28.9509,
+      "notes": "SMC + AMT (session value-area location required)",
+      "period": [
+        "2026-08-13T07:40:00+00:00",
+        "2026-10-21T19:50:00+00:00"
+      ],
+      "pf": 1.626,
+      "recovery": 2.608,
+      "rejected": {
+        "EntryDrift": 125,
+        "NoSetup": 12297,
+        "RewardTooLow": 53,
+        "RiskCapAtFill": 15,
+        "RiskCapExceeded": 521
+      },
+      "runtime_s": 22.6,
+      "setups": 169,
+      "sharpe": 3.454,
+      "slippage": 1.4500000000000006,
+      "sortino": 6.244,
+      "trades": 29,
+      "win_rate": 34.48,
+      "wins": 10
+    },
+    "gc_5m|C_smc_amt_gex|exec": {
+      "avg_r": null,
+      "expectancy": null,
+      "expectancy_ci": [
+        null,
+        null
+      ],
+      "label": "gc_5m|C_smc_amt_gex|exec",
+      "max_dd": null,
+      "net": null,
+      "notes": "SMC + AMT + GEX levels (needs historical GEX; unavailable -> untested)",
+      "pf": null,
+      "rejected": {},
+      "setups": null,
+      "status": "UNTESTED - no legitimate historical GEX series; the harness accepts a gex CSV but none exists",
+      "trades": null,
+      "win_rate": null
+    },
+    "gc_5m|D_smc_amt_of|counterfactual": {
+      "avg_hold": 125.5,
+      "avg_loss": -6.729,
+      "avg_mae": -6.851,
+      "avg_mfe": 9.459,
+      "avg_r": -0.146,
+      "avg_win": 15.777,
+      "bars": 13291,
+      "by_session": {
+        "Asia": {
+          "n": 16,
+          "net": -42.03979999999999,
+          "wins": 4
+        },
+        "London": {
+          "n": 18,
+          "net": -80.7414,
+          "wins": 3
+        },
+        "NewYork": {
+          "n": 25,
+          "net": 162.82870000000003,
+          "wins": 13
+        },
+        "OffHours": {
+          "n": 7,
+          "net": -34.0602,
+          "wins": 0
+        }
+      },
+      "by_setup": {
+        "PrevSessionHigh_sweep+bear_choch": {
+          "n": 2,
+          "net": 10.788599999999999,
+          "wins": 1
+        },
+        "PrevSessionLow_sweep+bull_choch": {
+          "n": 3,
+          "net": 47.129999999999995,
+          "wins": 2
+        },
+        "SwingHigh_sweep+bear_choch": {
+          "n": 20,
+          "net": 39.689699999999995,
+          "wins": 9
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 34,
+          "net": -125.12179999999998,
+          "wins": 5
+        },
+        "ValueAreaHigh_sweep+bear_choch": {
+          "n": 5,
+          "net": 3.9493999999999962,
+          "wins": 2
+        },
+        "ValueAreaLow_sweep+bull_choch": {
+          "n": 2,
+          "net": 29.5514,
+          "wins": 1
+        }
+      },
+      "commission": 9.239999999999998,
+      "ended_by_kill": null,
+      "equity": 1005.9873591622999,
+      "expectancy": 0.0907,
+      "expectancy_ci": [
+        -2.8058,
+        3.0887
+      ],
+      "gross_loss": 309.55049999999994,
+      "gross_profit": 315.53779999999995,
+      "label": "gc_5m|D_smc_amt_of|counterfactual",
+      "max_dd": 121.36306633918139,
+      "median_hold": 60.0,
+      "net": 5.9873,
+      "notes": "COUNTERFACTUAL: risk cap relaxed to 50 USD to obtain a usable sample; NOT executable at 0.01 lot within the 5 USD mandate",
+      "period": [
+        "2026-08-13T07:40:00+00:00",
+        "2026-10-21T19:50:00+00:00"
+      ],
+      "pf": 1.019,
+      "recovery": 0.049,
+      "rejected": {
+        "EntryDrift": 356,
+        "NoSetup": 11680,
+        "RewardTooLow": 46,
+        "RiskCapExceeded": 1
+      },
+      "runtime_s": 21.2,
+      "setups": 422,
+      "sharpe": 0.277,
+      "slippage": 3.2999999999999963,
+      "sortino": 0.375,
+      "trades": 66,
+      "win_rate": 30.3,
+      "wins": 20
+    },
+    "gc_5m|D_smc_amt_of|exec": {
+      "avg_hold": 169.5,
+      "avg_loss": -2.866,
+      "avg_mae": -2.705,
+      "avg_mfe": 5.071,
+      "avg_r": -0.086,
+      "avg_win": 6.697,
+      "bars": 13291,
+      "by_session": {
+        "Asia": {
+          "n": 5,
+          "net": -16.1802,
+          "wins": 0
+        },
+        "London": {
+          "n": 6,
+          "net": 11.360100000000001,
+          "wins": 3
+        },
+        "NewYork": {
+          "n": 8,
+          "net": 14.660599999999999,
+          "wins": 4
+        },
+        "OffHours": {
+          "n": 2,
+          "net": -3.0798,
+          "wins": 0
+        }
+      },
+      "by_setup": {
+        "SwingHigh_sweep+bear_choch": {
+          "n": 5,
+          "net": 11.660699999999999,
+          "wins": 3
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 13,
+          "net": -0.22990000000000066,
+          "wins": 3
+        },
+        "ValueAreaHigh_sweep+bear_choch": {
+          "n": 2,
+          "net": 0.41999999999999993,
+          "wins": 1
+        },
+        "ValueAreaLow_sweep+bull_choch": {
+          "n": 1,
+          "net": -5.0901,
+          "wins": 0
+        }
+      },
+      "commission": 2.9400000000000017,
+      "ended_by_kill": null,
+      "equity": 1006.7606971407803,
+      "expectancy": 0.3219,
+      "expectancy_ci": [
+        -1.6657,
+        2.3657
+      ],
+      "gross_loss": 40.1198,
+      "gross_profit": 46.8805,
+      "label": "gc_5m|D_smc_amt_of|exec",
+      "max_dd": 12.159804999998869,
+      "median_hold": 15.0,
+      "net": 6.7607,
+      "notes": "SMC + AMT + order-flow proxy confirmation",
+      "period": [
+        "2026-08-13T07:40:00+00:00",
+        "2026-10-21T19:50:00+00:00"
+      ],
+      "pf": 1.169,
+      "recovery": 0.556,
+      "rejected": {
+        "EntryDrift": 84,
+        "NoSetup": 12590,
+        "RewardTooLow": 30,
+        "RiskCapAtFill": 13,
+        "RiskCapExceeded": 412
+      },
+      "runtime_s": 22.6,
+      "setups": 118,
+      "sharpe": null,
+      "slippage": 1.0500000000000003,
+      "sortino": null,
+      "trades": 21,
+      "win_rate": 33.33,
+      "wins": 7
+    },
+    "gc_5m|E_complete|counterfactual": {
+      "avg_hold": 125.5,
+      "avg_loss": -6.729,
+      "avg_mae": -6.851,
+      "avg_mfe": 9.459,
+      "avg_r": -0.146,
+      "avg_win": 15.777,
+      "bars": 13291,
+      "by_session": {
+        "Asia": {
+          "n": 16,
+          "net": -42.03979999999999,
+          "wins": 4
+        },
+        "London": {
+          "n": 18,
+          "net": -80.7414,
+          "wins": 3
+        },
+        "NewYork": {
+          "n": 25,
+          "net": 162.82870000000003,
+          "wins": 13
+        },
+        "OffHours": {
+          "n": 7,
+          "net": -34.0602,
+          "wins": 0
+        }
+      },
+      "by_setup": {
+        "PrevSessionHigh_sweep+bear_choch": {
+          "n": 2,
+          "net": 10.788599999999999,
+          "wins": 1
+        },
+        "PrevSessionLow_sweep+bull_choch": {
+          "n": 3,
+          "net": 47.129999999999995,
+          "wins": 2
+        },
+        "SwingHigh_sweep+bear_choch": {
+          "n": 20,
+          "net": 39.689699999999995,
+          "wins": 9
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 34,
+          "net": -125.12179999999998,
+          "wins": 5
+        },
+        "ValueAreaHigh_sweep+bear_choch": {
+          "n": 5,
+          "net": 3.9493999999999962,
+          "wins": 2
+        },
+        "ValueAreaLow_sweep+bull_choch": {
+          "n": 2,
+          "net": 29.5514,
+          "wins": 1
+        }
+      },
+      "commission": 9.239999999999998,
+      "ended_by_kill": null,
+      "equity": 1005.9873591622999,
+      "expectancy": 0.0907,
+      "expectancy_ci": [
+        -2.8058,
+        3.0887
+      ],
+      "gross_loss": 309.55049999999994,
+      "gross_profit": 315.53779999999995,
+      "label": "gc_5m|E_complete|counterfactual",
+      "max_dd": 121.36306633918139,
+      "median_hold": 60.0,
+      "net": 5.9873,
+      "notes": "COUNTERFACTUAL: risk cap relaxed to 50 USD to obtain a usable sample; NOT executable at 0.01 lot within the 5 USD mandate",
+      "period": [
+        "2026-08-13T07:40:00+00:00",
+        "2026-10-21T19:50:00+00:00"
+      ],
+      "pf": 1.019,
+      "recovery": 0.049,
+      "rejected": {
+        "EntryDrift": 356,
+        "NoSetup": 11680,
+        "RewardTooLow": 46,
+        "RiskCapExceeded": 1
+      },
+      "runtime_s": 21.2,
+      "setups": 422,
+      "sharpe": 0.277,
+      "slippage": 3.2999999999999963,
+      "sortino": 0.375,
+      "trades": 66,
+      "win_rate": 30.3,
+      "wins": 20
+    },
+    "gc_5m|E_complete|exec": {
+      "avg_hold": 169.5,
+      "avg_loss": -2.866,
+      "avg_mae": -2.705,
+      "avg_mfe": 5.071,
+      "avg_r": -0.086,
+      "avg_win": 6.697,
+      "bars": 13291,
+      "by_session": {
+        "Asia": {
+          "n": 5,
+          "net": -16.1802,
+          "wins": 0
+        },
+        "London": {
+          "n": 6,
+          "net": 11.360100000000001,
+          "wins": 3
+        },
+        "NewYork": {
+          "n": 8,
+          "net": 14.660599999999999,
+          "wins": 4
+        },
+        "OffHours": {
+          "n": 2,
+          "net": -3.0798,
+          "wins": 0
+        }
+      },
+      "by_setup": {
+        "SwingHigh_sweep+bear_choch": {
+          "n": 5,
+          "net": 11.660699999999999,
+          "wins": 3
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 13,
+          "net": -0.22990000000000066,
+          "wins": 3
+        },
+        "ValueAreaHigh_sweep+bear_choch": {
+          "n": 2,
+          "net": 0.41999999999999993,
+          "wins": 1
+        },
+        "ValueAreaLow_sweep+bull_choch": {
+          "n": 1,
+          "net": -5.0901,
+          "wins": 0
+        }
+      },
+      "commission": 2.9400000000000017,
+      "ended_by_kill": null,
+      "equity": 1006.7606971407803,
+      "expectancy": 0.3219,
+      "expectancy_ci": [
+        -1.6657,
+        2.3657
+      ],
+      "gross_loss": 40.1198,
+      "gross_profit": 46.8805,
+      "label": "gc_5m|E_complete|exec",
+      "max_dd": 12.159804999998869,
+      "median_hold": 15.0,
+      "net": 6.7607,
+      "notes": "SMC + AMT + order-flow + VIX (Delta/Vanna unavailable)",
+      "period": [
+        "2026-08-13T07:40:00+00:00",
+        "2026-10-21T19:50:00+00:00"
+      ],
+      "pf": 1.169,
+      "recovery": 0.556,
+      "rejected": {
+        "EntryDrift": 84,
+        "NoSetup": 12590,
+        "RewardTooLow": 30,
+        "RiskCapAtFill": 13,
+        "RiskCapExceeded": 412
+      },
+      "runtime_s": 23.0,
+      "setups": 118,
+      "sharpe": null,
+      "slippage": 1.0500000000000003,
+      "sortino": null,
+      "trades": 21,
+      "win_rate": 33.33,
+      "wins": 7
+    },
+    "gc_60m|A_smc|counterfactual": {
+      "avg_hold": 240.6,
+      "avg_loss": -10.003,
+      "avg_mae": -11.439,
+      "avg_mfe": 12.539,
+      "avg_r": -0.087,
+      "avg_win": 13.381,
+      "bars": 13416,
+      "by_session": {
+        "Asia": {
+          "n": 37,
+          "net": 20.446800000000003,
+          "wins": 18
+        },
+        "London": {
+          "n": 27,
+          "net": -12.636100000000003,
+          "wins": 9
+        },
+        "NewYork": {
+          "n": 29,
+          "net": -89.34469999999999,
+          "wins": 9
+        },
+        "OffHours": {
+          "n": 9,
+          "net": -3.3701000000000008,
+          "wins": 4
+        }
+      },
+      "by_setup": {
+        "SwingHigh_sweep+bear_choch": {
+          "n": 56,
+          "net": -39.454199999999965,
+          "wins": 20
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 46,
+          "net": -45.44989999999998,
+          "wins": 20
+        }
+      },
+      "commission": 14.280000000000019,
+      "ended_by_kill": null,
+      "equity": 915.0954539384386,
+      "expectancy": -0.8324,
+      "expectancy_ci": [
+        -3.8317,
+        2.2203
+      ],
+      "gross_loss": 620.1602000000003,
+      "gross_profit": 535.2561,
+      "label": "gc_60m|A_smc|counterfactual",
+      "max_dd": 242.28951000000097,
+      "median_hold": 240.0,
+      "net": -84.9041,
+      "notes": "COUNTERFACTUAL: risk cap relaxed to 50 USD to obtain a usable sample; NOT executable at 0.01 lot within the 5 USD mandate",
+      "period": [
+        "2024-06-19T02:00:00+00:00",
+        "2026-10-21T19:00:00+00:00"
+      ],
+      "pf": 0.863,
+      "recovery": -0.35,
+      "rejected": {
+        "EntryDrift": 392,
+        "NoSetup": 12392,
+        "RewardTooLow": 32,
+        "RiskCapAtFill": 2,
+        "RiskCapExceeded": 69
+      },
+      "runtime_s": 3.2,
+      "setups": 496,
+      "sharpe": -0.659,
+      "slippage": 5.09999999999999,
+      "sortino": -0.804,
+      "trades": 102,
+      "win_rate": 39.22,
+      "wins": 40
+    },
+    "gc_60m|A_smc|exec": {
+      "avg_hold": 114.0,
+      "avg_loss": -3.661,
+      "avg_mae": -5.12,
+      "avg_mfe": 5.65,
+      "avg_r": -0.275,
+      "avg_win": 5.511,
+      "bars": 13416,
+      "by_session": {
+        "Asia": {
+          "n": 4,
+          "net": -3.7578000000000005,
+          "wins": 1
+        },
+        "London": {
+          "n": 2,
+          "net": 6.22,
+          "wins": 1
+        },
+        "NewYork": {
+          "n": 4,
+          "net": -11.5604,
+          "wins": 1
+        }
+      },
+      "by_setup": {
+        "SwingHigh_sweep+bear_choch": {
+          "n": 8,
+          "net": -1.417999999999999,
+          "wins": 3
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 2,
+          "net": -7.6802,
+          "wins": 0
+        }
+      },
+      "commission": 1.4000000000000004,
+      "ended_by_kill": null,
+      "equity": 990.9017716799274,
+      "expectancy": -0.9098,
+      "expectancy_ci": [
+        -3.59,
+        2.2907
+      ],
+      "gross_loss": 25.630399999999998,
+      "gross_profit": 16.5322,
+      "label": "gc_60m|A_smc|exec",
+      "max_dd": 16.950440999999614,
+      "median_hold": 120.0,
+      "net": -9.0982,
+      "notes": "SMC only (sweep + confirmation + dealing-range location)",
+      "period": [
+        "2024-06-19T02:00:00+00:00",
+        "2026-10-21T19:00:00+00:00"
+      ],
+      "pf": 0.645,
+      "recovery": -0.537,
+      "rejected": {
+        "EntryDrift": 31,
+        "NoSetup": 12618,
+        "RewardTooLow": 11,
+        "RiskCapAtFill": 3,
+        "RiskCapExceeded": 685
+      },
+      "runtime_s": 3.3,
+      "setups": 44,
+      "sharpe": null,
+      "slippage": 0.49999999999999994,
+      "sortino": null,
+      "trades": 10,
+      "win_rate": 30.0,
+      "wins": 3
+    },
+    "gc_60m|B_smc_amt|counterfactual": {
+      "avg_hold": 240.6,
+      "avg_loss": -10.241,
+      "avg_mae": -11.488,
+      "avg_mfe": 12.503,
+      "avg_r": -0.091,
+      "avg_win": 13.172,
+      "bars": 13416,
+      "by_session": {
+        "Asia": {
+          "n": 36,
+          "net": 23.236800000000002,
+          "wins": 18
+        },
+        "London": {
+          "n": 29,
+          "net": -25.416099999999975,
+          "wins": 10
+        },
+        "NewYork": {
+          "n": 29,
+          "net": -89.34469999999999,
+          "wins": 9
+        },
+        "OffHours": {
+          "n": 9,
+          "net": -3.3701000000000008,
+          "wins": 4
+        }
+      },
+      "by_setup": {
+        "PrevSessionHigh_sweep+bear_choch": {
+          "n": 3,
+          "net": 34.83,
+          "wins": 2
+        },
+        "SwingHigh_sweep+bear_choch": {
+          "n": 55,
+          "net": -87.06419999999997,
+          "wins": 19
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 45,
+          "net": -42.659899999999986,
+          "wins": 20
+        }
+      },
+      "commission": 14.42000000000002,
+      "ended_by_kill": null,
+      "equity": 905.1056009384384,
+      "expectancy": -0.9213,
+      "expectancy_ci": [
+        -3.8074,
+        2.0721
+      ],
+      "gross_loss": 634.9602000000002,
+      "gross_profit": 540.0660999999999,
+      "label": "gc_60m|B_smc_amt|counterfactual",
+      "max_dd": 257.0894120000012,
+      "median_hold": 240.0,
+      "net": -94.8941,
+      "notes": "COUNTERFACTUAL: risk cap relaxed to 50 USD to obtain a usable sample; NOT executable at 0.01 lot within the 5 USD mandate",
+      "period": [
+        "2024-06-19T02:00:00+00:00",
+        "2026-10-21T19:00:00+00:00"
+      ],
+      "pf": 0.851,
+      "recovery": -0.369,
+      "rejected": {
+        "EntryDrift": 397,
+        "NoSetup": 12373,
+        "RewardTooLow": 34,
+        "RiskCapAtFill": 2,
+        "RiskCapExceeded": 76
+      },
+      "runtime_s": 6.8,
+      "setups": 502,
+      "sharpe": -0.741,
+      "slippage": 5.14999999999999,
+      "sortino": -0.894,
+      "trades": 103,
+      "win_rate": 39.81,
+      "wins": 41
+    },
+    "gc_60m|B_smc_amt|exec": {
+      "avg_hold": 108.0,
+      "avg_loss": -3.661,
+      "avg_mae": -5.12,
+      "avg_mfe": 5.65,
+      "avg_r": -0.21,
+      "avg_win": 6.41,
+      "bars": 13416,
+      "by_session": {
+        "Asia": {
+          "n": 4,
+          "net": -1.0600000000000014,
+          "wins": 1
+        },
+        "London": {
+          "n": 2,
+          "net": 6.22,
+          "wins": 1
+        },
+        "NewYork": {
+          "n": 4,
+          "net": -11.5604,
+          "wins": 1
+        }
+      },
+      "by_setup": {
+        "SwingHigh_sweep+bear_choch": {
+          "n": 8,
+          "net": 1.2798,
+          "wins": 3
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 2,
+          "net": -7.6802,
+          "wins": 0
+        }
+      },
+      "commission": 1.4000000000000004,
+      "ended_by_kill": null,
+      "equity": 993.599559,
+      "expectancy": -0.64,
+      "expectancy_ci": [
+        -3.59,
+        2.98
+      ],
+      "gross_loss": 25.630399999999998,
+      "gross_profit": 19.23,
+      "label": "gc_60m|B_smc_amt|exec",
+      "max_dd": 16.950440999999614,
+      "median_hold": 120.0,
+      "net": -6.4004,
+      "notes": "SMC + AMT (session value-area location required)",
+      "period": [
+        "2024-06-19T02:00:00+00:00",
+        "2026-10-21T19:00:00+00:00"
+      ],
+      "pf": 0.75,
+      "recovery": -0.378,
+      "rejected": {
+        "EntryDrift": 32,
+        "NoSetup": 12601,
+        "RewardTooLow": 11,
+        "RiskCapAtFill": 3,
+        "RiskCapExceeded": 702
+      },
+      "runtime_s": 6.9,
+      "setups": 45,
+      "sharpe": null,
+      "slippage": 0.49999999999999994,
+      "sortino": null,
+      "trades": 10,
+      "win_rate": 30.0,
+      "wins": 3
+    },
+    "gc_60m|C_smc_amt_gex|exec": {
+      "avg_r": null,
+      "expectancy": null,
+      "expectancy_ci": [
+        null,
+        null
+      ],
+      "label": "gc_60m|C_smc_amt_gex|exec",
+      "max_dd": null,
+      "net": null,
+      "notes": "SMC + AMT + GEX levels (needs historical GEX; unavailable -> untested)",
+      "pf": null,
+      "rejected": {},
+      "setups": null,
+      "status": "UNTESTED - no legitimate historical GEX series; the harness accepts a gex CSV but none exists",
+      "trades": null,
+      "win_rate": null
+    },
+    "gc_60m|D_smc_amt_of|counterfactual": {
+      "avg_hold": 264.8,
+      "avg_loss": -10.08,
+      "avg_mae": -11.891,
+      "avg_mfe": 11.859,
+      "avg_r": -0.089,
+      "avg_win": 12.106,
+      "bars": 13416,
+      "by_session": {
+        "Asia": {
+          "n": 28,
+          "net": 54.456500000000005,
+          "wins": 13
+        },
+        "London": {
+          "n": 21,
+          "net": -59.189699999999995,
+          "wins": 7
+        },
+        "NewYork": {
+          "n": 20,
+          "net": -71.2348,
+          "wins": 8
+        },
+        "OffHours": {
+          "n": 6,
+          "net": 7.730000000000004,
+          "wins": 3
+        }
+      },
+      "by_setup": {
+        "PrevSessionHigh_sweep+bear_choch": {
+          "n": 3,
+          "net": 34.83,
+          "wins": 2
+        },
+        "SwingHigh_sweep+bear_choch": {
+          "n": 39,
+          "net": -10.19409999999998,
+          "wins": 17
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 33,
+          "net": -92.87389999999999,
+          "wins": 12
+        }
+      },
+      "commission": 10.500000000000004,
+      "ended_by_kill": null,
+      "equity": 931.7618572143357,
+      "expectancy": -0.9098,
+      "expectancy_ci": [
+        -4.1071,
+        2.3857
+      ],
+      "gross_loss": 443.5099000000001,
+      "gross_profit": 375.2718999999999,
+      "label": "gc_60m|D_smc_amt_of|counterfactual",
+      "max_dd": 206.59960799999965,
+      "median_hold": 240.0,
+      "net": -68.238,
+      "notes": "COUNTERFACTUAL: risk cap relaxed to 50 USD to obtain a usable sample; NOT executable at 0.01 lot within the 5 USD mandate",
+      "period": [
+        "2024-06-19T02:00:00+00:00",
+        "2026-10-21T19:00:00+00:00"
+      ],
+      "pf": 0.846,
+      "recovery": -0.33,
+      "rejected": {
+        "EntryDrift": 279,
+        "NoSetup": 12652,
+        "RewardTooLow": 21,
+        "RiskCapAtFill": 1,
+        "RiskCapExceeded": 56
+      },
+      "runtime_s": 6.8,
+      "setups": 355,
+      "sharpe": -0.834,
+      "slippage": 3.7499999999999947,
+      "sortino": -0.985,
+      "trades": 75,
+      "win_rate": 41.33,
+      "wins": 31
+    },
+    "gc_60m|D_smc_amt_of|exec": {
+      "avg_hold": 100.0,
+      "avg_loss": -3.89,
+      "avg_mae": -4.567,
+      "avg_mfe": 5.9,
+      "avg_r": 0.239,
+      "avg_win": 11.61,
+      "bars": 13416,
+      "by_session": {
+        "Asia": {
+          "n": 3,
+          "net": 3.830099999999999,
+          "wins": 1
+        }
+      },
+      "by_setup": {
+        "SwingHigh_sweep+bear_choch": {
+          "n": 2,
+          "net": 8.8201,
+          "wins": 1
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 1,
+          "net": -4.99,
+          "wins": 0
+        }
+      },
+      "commission": 0.42000000000000004,
+      "ended_by_kill": null,
+      "equity": 1003.8301469999998,
+      "expectancy": 1.2767,
+      "expectancy_ci": [
+        null,
+        null
+      ],
+      "gross_loss": 7.78,
+      "gross_profit": 11.6101,
+      "label": "gc_60m|D_smc_amt_of|exec",
+      "max_dd": 4.989951000000133,
+      "median_hold": 120.0,
+      "net": 3.8301,
+      "notes": "SMC + AMT + order-flow proxy confirmation",
+      "period": [
+        "2024-06-19T02:00:00+00:00",
+        "2026-10-21T19:00:00+00:00"
+      ],
+      "pf": 1.492,
+      "recovery": 0.768,
+      "rejected": {
+        "EntryDrift": 15,
+        "NoSetup": 12870,
+        "RewardTooLow": 5,
+        "RiskCapAtFill": 3,
+        "RiskCapExceeded": 479
+      },
+      "runtime_s": 6.9,
+      "setups": 21,
+      "sharpe": null,
+      "slippage": 0.15000000000000002,
+      "sortino": null,
+      "trades": 3,
+      "win_rate": 33.33,
+      "wins": 1
+    },
+    "gc_60m|E_complete|counterfactual": {
+      "avg_hold": 264.8,
+      "avg_loss": -10.08,
+      "avg_mae": -11.891,
+      "avg_mfe": 11.859,
+      "avg_r": -0.089,
+      "avg_win": 12.106,
+      "bars": 13416,
+      "by_session": {
+        "Asia": {
+          "n": 28,
+          "net": 54.456500000000005,
+          "wins": 13
+        },
+        "London": {
+          "n": 21,
+          "net": -59.189699999999995,
+          "wins": 7
+        },
+        "NewYork": {
+          "n": 20,
+          "net": -71.2348,
+          "wins": 8
+        },
+        "OffHours": {
+          "n": 6,
+          "net": 7.730000000000004,
+          "wins": 3
+        }
+      },
+      "by_setup": {
+        "PrevSessionHigh_sweep+bear_choch": {
+          "n": 3,
+          "net": 34.83,
+          "wins": 2
+        },
+        "SwingHigh_sweep+bear_choch": {
+          "n": 39,
+          "net": -10.19409999999998,
+          "wins": 17
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 33,
+          "net": -92.87389999999999,
+          "wins": 12
+        }
+      },
+      "commission": 10.500000000000004,
+      "ended_by_kill": null,
+      "equity": 931.7618572143357,
+      "expectancy": -0.9098,
+      "expectancy_ci": [
+        -4.1071,
+        2.3857
+      ],
+      "gross_loss": 443.5099000000001,
+      "gross_profit": 375.2718999999999,
+      "label": "gc_60m|E_complete|counterfactual",
+      "max_dd": 206.59960799999965,
+      "median_hold": 240.0,
+      "net": -68.238,
+      "notes": "COUNTERFACTUAL: risk cap relaxed to 50 USD to obtain a usable sample; NOT executable at 0.01 lot within the 5 USD mandate",
+      "period": [
+        "2024-06-19T02:00:00+00:00",
+        "2026-10-21T19:00:00+00:00"
+      ],
+      "pf": 0.846,
+      "recovery": -0.33,
+      "rejected": {
+        "EntryDrift": 278,
+        "NoSetup": 12308,
+        "RewardTooLow": 21,
+        "RiskCapAtFill": 1,
+        "RiskCapExceeded": 56,
+        "VixFilter": 345
+      },
+      "runtime_s": 6.8,
+      "setups": 354,
+      "sharpe": -0.834,
+      "slippage": 3.7499999999999947,
+      "sortino": -0.985,
+      "trades": 75,
+      "win_rate": 41.33,
+      "wins": 31
+    },
+    "gc_60m|E_complete|exec": {
+      "avg_hold": 100.0,
+      "avg_loss": -3.89,
+      "avg_mae": -4.567,
+      "avg_mfe": 5.9,
+      "avg_r": 0.239,
+      "avg_win": 11.61,
+      "bars": 13416,
+      "by_session": {
+        "Asia": {
+          "n": 3,
+          "net": 3.830099999999999,
+          "wins": 1
+        }
+      },
+      "by_setup": {
+        "SwingHigh_sweep+bear_choch": {
+          "n": 2,
+          "net": 8.8201,
+          "wins": 1
+        },
+        "SwingLow_sweep+bull_choch": {
+          "n": 1,
+          "net": -4.99,
+          "wins": 0
+        }
+      },
+      "commission": 0.42000000000000004,
+      "ended_by_kill": null,
+      "equity": 1003.8301469999998,
+      "expectancy": 1.2767,
+      "expectancy_ci": [
+        null,
+        null
+      ],
+      "gross_loss": 7.78,
+      "gross_profit": 11.6101,
+      "label": "gc_60m|E_complete|exec",
+      "max_dd": 4.989951000000133,
+      "median_hold": 120.0,
+      "net": 3.8301,
+      "notes": "SMC + AMT + order-flow + VIX (Delta/Vanna unavailable)",
+      "period": [
+        "2024-06-19T02:00:00+00:00",
+        "2026-10-21T19:00:00+00:00"
+      ],
+      "pf": 1.492,
+      "recovery": 0.768,
+      "rejected": {
+        "EntryDrift": 15,
+        "NoSetup": 12526,
+        "RewardTooLow": 5,
+        "RiskCapAtFill": 3,
+        "RiskCapExceeded": 478,
+        "VixFilter": 345
+      },
+      "runtime_s": 6.9,
+      "setups": 21,
+      "sharpe": null,
+      "slippage": 0.15000000000000002,
+      "sortino": null,
+      "trades": 3,
+      "win_rate": 33.33,
+      "wins": 1
+    }
+  },
+  "walk_forward": {
+    "A_smc": {
+      "expectancy_ci": [
+        -4.2738,
+        1.788
+      ],
+      "folds": [
+        {
+          "expectancy": -0.6698,
+          "fold": 1,
+          "net": -28.8006,
+          "period": [
+            "2024-05-30T04:00:00+00:00",
+            "2025-03-19T14:00:00+00:00"
+          ],
+          "pf": 0.835,
+          "trades": 43
+        },
+        {
+          "expectancy": -4.3907,
+          "fold": 2,
+          "net": -144.8945,
+          "period": [
+            "2025-03-19T14:00:00+00:00",
+            "2026-01-05T09:00:00+00:00"
+          ],
+          "pf": 0.45,
+          "trades": 33
+        },
+        {
+          "expectancy": 2.1938,
+          "fold": 3,
+          "net": 46.0707,
+          "period": [
+            "2026-01-05T09:00:00+00:00",
+            "2026-10-21T19:54:20+00:00"
+          ],
+          "pf": 1.285,
+          "trades": 21
+        }
+      ],
+      "pooled_expectancy": -1.3157,
+      "pooled_net": -127.6244,
+      "pooled_trades": 97
+    },
+    "B_smc_amt": {
+      "expectancy_ci": [
+        -4.3643,
+        1.625
+      ],
+      "folds": [
+        {
+          "expectancy": -0.5452,
+          "fold": 1,
+          "net": -23.9906,
+          "period": [
+            "2024-05-30T04:00:00+00:00",
+            "2025-03-19T14:00:00+00:00"
+          ],
+          "pf": 0.863,
+          "trades": 44
+        },
+        {
+          "expectancy": -4.8392,
+          "fold": 2,
+          "net": -159.6945,
+          "period": [
+            "2025-03-19T14:00:00+00:00",
+            "2026-01-05T09:00:00+00:00"
+          ],
+          "pf": 0.426,
+          "trades": 33
+        },
+        {
+          "expectancy": 2.1938,
+          "fold": 3,
+          "net": 46.0707,
+          "period": [
+            "2026-01-05T09:00:00+00:00",
+            "2026-10-21T19:54:20+00:00"
+          ],
+          "pf": 1.285,
+          "trades": 21
+        }
+      ],
+      "pooled_expectancy": -1.4042,
+      "pooled_net": -137.6144,
+      "pooled_trades": 98
+    },
+    "D_smc_amt_of": {
+      "expectancy_ci": [
+        -4.3246,
+        1.5719
+      ],
+      "folds": [
+        {
+          "expectancy": -0.4467,
+          "fold": 1,
+          "net": -12.0603,
+          "period": [
+            "2024-05-30T04:00:00+00:00",
+            "2025-03-19T14:00:00+00:00"
+          ],
+          "pf": 0.87,
+          "trades": 27
+        },
+        {
+          "expectancy": -4.4046,
+          "fold": 2,
+          "net": -127.7346,
+          "period": [
+            "2025-03-19T14:00:00+00:00",
+            "2026-01-05T09:00:00+00:00"
+          ],
+          "pf": 0.453,
+          "trades": 29
+        },
+        {
+          "expectancy": 2.2204,
+          "fold": 3,
+          "net": 35.5266,
+          "period": [
+            "2026-01-05T09:00:00+00:00",
+            "2026-10-21T19:54:20+00:00"
+          ],
+          "pf": 1.365,
+          "trades": 16
+        }
+      ],
+      "pooled_expectancy": -1.4482,
+      "pooled_net": -104.2683,
+      "pooled_trades": 72
+    },
+    "E_complete": {
+      "expectancy_ci": [
+        -4.3246,
+        1.5719
+      ],
+      "folds": [
+        {
+          "expectancy": -0.4467,
+          "fold": 1,
+          "net": -12.0603,
+          "period": [
+            "2024-05-30T04:00:00+00:00",
+            "2025-03-19T14:00:00+00:00"
+          ],
+          "pf": 0.87,
+          "trades": 27
+        },
+        {
+          "expectancy": -4.4046,
+          "fold": 2,
+          "net": -127.7346,
+          "period": [
+            "2025-03-19T14:00:00+00:00",
+            "2026-01-05T09:00:00+00:00"
+          ],
+          "pf": 0.453,
+          "trades": 29
+        },
+        {
+          "expectancy": 2.2204,
+          "fold": 3,
+          "net": 35.5266,
+          "period": [
+            "2026-01-05T09:00:00+00:00",
+            "2026-10-21T19:54:20+00:00"
+          ],
+          "pf": 1.365,
+          "trades": 16
+        }
+      ],
+      "pooled_expectancy": -1.4482,
+      "pooled_net": -104.2683,
+      "pooled_trades": 72
+    }
+  }
+}

@@ -158,7 +158,14 @@ namespace QuantLOL.Core
                 m.Sortino = dd > 0 ? mean / dd * Math.Sqrt(252) : double.NaN;
                 if (daily.Count < 60) m.Warnings.Add("Sharpe/Sortino computed from " + daily.Count + " days; treat as indicative only");
             }
-            else m.Warnings.Add("fewer than 20 trading days: Sharpe/Sortino not reported");
+            else
+            {
+                // Not reported is NaN, never zero: a zero Sharpe would read as "flat, no risk"
+                // instead of "insufficient data".
+                m.Sharpe = double.NaN;
+                m.Sortino = double.NaN;
+                m.Warnings.Add("fewer than 20 trading days: Sharpe/Sortino not reported");
+            }
 
             m.LatencyP50 = Numeric.Percentile(lat, 0.50);
             m.LatencyP95 = Numeric.Percentile(lat, 0.95);

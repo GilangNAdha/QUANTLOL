@@ -108,7 +108,7 @@ namespace QuantLOL.Tests
             Assert.NotNull(s);
             Assert.Equal(I(e, "i"), s.BarIndex);
             Assert.Equal(I(e, "dir"), s.Direction);
-            Assert.Equal(I(e, "kind"), (int)Enum.Parse<LevelKind>(e.GetProperty("kind").GetString()));
+            Assert.Equal(Enum.Parse<LevelKind>(e.GetProperty("kind").GetString()), s.LevelKind);
             AssertEx.Near(D(e, "level"), s.LevelPrice, 1e-6, label + " level");
             AssertEx.Near(D(e, "extreme"), s.Extreme, 1e-6, label + " extreme");
             AssertEx.Near(D(e, "pierce_ticks"), s.PierceTicks, 1e-6, label + " pierce");

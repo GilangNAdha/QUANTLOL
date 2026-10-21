@@ -42,3 +42,20 @@ for path in ["/XAUUSD/2024/00/01/BID_candles_min_1.bi5", "/XAUUSD/2024/00/01/00h
              "/XAUUSD/2024/00/BID_candles_hour_1.bi5", "/XAUUSD/2024/00/BID_candles_day_1.bi5"]:
     st, body = fetch("https://datafeed.dukascopy.com/datafeed" + path)
     print(f"ALT {path} status={st} bytes={len(body) if isinstance(body, bytes) else body}")
+
+# Sizing probe across a few years to plan the research dataset
+import urllib.error
+def size_probe():
+    tot = 0
+    for y in (2015, 2018, 2020, 2022, 2024, 2025):
+        st, body = fetch(f"https://datafeed.dukascopy.com/datafeed/XAUUSD/{y}/00/BID_candles_min_1.bi5")
+        n = "?"
+        if st == 200:
+            try: n = len(decompress_bi5(body)) // 24
+            except Exception as e: n = "decomp_err"
+        print(f"SIZE year={y} month=0 status={st} bytes={len(body) if isinstance(body, bytes) else body} bars={n}")
+size_probe()
+# Also probe day-level path (all years in one file?) and hour candles
+for path in ["/XAUUSD/2021/00/BID_candles_hour_1.bi5", "/XAUUSD/2021/00/BID_candles_day_1.bi5"]:
+    st, body = fetch("https://datafeed.dukascopy.com/datafeed" + path)
+    print(f"RES {path} status={st} bytes={len(body) if isinstance(body, bytes) else body}")

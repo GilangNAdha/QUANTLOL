@@ -51,9 +51,10 @@ jobs:
         run: |
           git config user.email "ci@quantlol.local"; git config user.name "QuantLOL CI"
           mkdir -p build
-          cp ci_report.txt build/ci_report.txt
-          git add -f build/ci_report.txt
-          git commit -q -m "ci: build report [skip ci]" || echo nothing
+          cp ci_report.txt "build/ci_report_${GITHUB_RUN_ID}.txt"
+          echo "${GITHUB_SHA}" > "build/ci_report_${GITHUB_RUN_ID}.sha"
+          git add -f "build/ci_report_${GITHUB_RUN_ID}.txt" "build/ci_report_${GITHUB_RUN_ID}.sha"
+          git commit -q -m "ci: build report ${GITHUB_RUN_ID} [skip ci]" || echo nothing
           git push origin HEAD:arena/afc8c595-quantlol || (git pull --rebase -q && git push origin HEAD:arena/afc8c595-quantlol)
       - name: Fail on error
         run: |

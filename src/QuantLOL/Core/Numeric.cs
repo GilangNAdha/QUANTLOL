@@ -95,3 +95,5 @@ namespace QuantLOL.Core
         }
     }
 }
+
+// build trigger: 2026-10-21T20:06:26Z

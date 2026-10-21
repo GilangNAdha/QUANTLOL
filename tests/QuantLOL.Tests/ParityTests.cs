@@ -261,7 +261,7 @@ namespace QuantLOL.Tests
                 Bid = price,
                 Ask = price + D(cfg, "spread_ticks") * tick,
                 SpreadKnown = true,
-                MaxSpreadTicks = D(cfg, "max_spread_ticks"),
+                MaxSpreadTicks = (int)D(cfg, "max_spread_ticks"),
                 MoneyPerPriceUnit = D(cfg, "money_per_price"),
                 CommissionRoundTripUsd = D(cfg, "commission"),
                 SlippageRoundTripUsd = D(cfg, "slippage"),

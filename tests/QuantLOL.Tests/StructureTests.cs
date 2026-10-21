@@ -85,7 +85,7 @@ namespace QuantLOL.Tests
         public void ContextLevelsAreAlsoSweepCandidates()
         {
             var bars = BuildSweepSeries();
-            var levels = new[] { new LevelRef(99.88, LevelKind.PrevSessionLow, "pdl") };
+            var levels = new[] { new LevelRef(99.89, LevelKind.PrevSessionLow, "pdl") };
             var s = StructureAnalyzer.Analyze(bars, bars.Length - 1, Opt(), levels);
             Assert.NotNull(s.BullishSweep);
             Assert.Equal(LevelKind.PrevSessionLow, s.BullishSweep.LevelKind);

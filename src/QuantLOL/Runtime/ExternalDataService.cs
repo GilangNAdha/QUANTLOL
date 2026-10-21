@@ -77,6 +77,19 @@ namespace QuantLOL.Runtime
             }
         }
 
+        /// <summary>Live mid used to sanity-check the price scale of external levels.
+        /// A GLD-priced file (≈400) can never validate against XAUUSD (≈4300).</summary>
+        double LiveSpot()
+        {
+            try
+            {
+                double a = _bot.Symbol.Ask, b = _bot.Symbol.Bid;
+                if (a > 0 && b > 0) return (a + b) / 2.0;
+            }
+            catch { }
+            return 2000.0;   // conservative fallback band; levels must still be within a wide gold range
+        }
+
         void TryLoadFileGex(DateTime nowUtc)
         {
             try
@@ -84,7 +97,8 @@ namespace QuantLOL.Runtime
                 if (!System.IO.File.Exists(GexFilePath)) { _gexLastError = "file not found: " + GexFilePath; return; }
                 long t0 = MonotonicClock.Timestamp;
                 string json = System.IO.File.ReadAllText(GexFilePath, Encoding.UTF8);
-                var g = ExternalDataParser.ParseGex(json, "XAUUSD", nowUtc, 200, 20000, out string err);
+                double spot = LiveSpot();
+                var g = ExternalDataParser.ParseGex(json, "XAUUSD", nowUtc, spot * 0.6, spot * 1.6, out string err);
                 if (err != null) { _gexLastError = err; _log("GEX file invalid: " + err, true); return; }
                 g.Source = "file:" + Path.GetFileName(GexFilePath);
                 lock (_sync) { _gex = g; _gexReceivedUtc = nowUtc; _gexLastError = ""; }
@@ -153,7 +167,8 @@ namespace QuantLOL.Runtime
             {
                 if (resp == null || !resp.IsSuccessful) { OnGexFailure("http status " + (resp?.StatusCode.ToString() ?? "null"), requestedUtc); return; }
                 var now = requestedUtc;
-                var g = ExternalDataParser.ParseGex(resp.Body, "XAUUSD", now, 200, 20000, out string err);
+                double spot = LiveSpot();
+                var g = ExternalDataParser.ParseGex(resp.Body, "XAUUSD", now, spot * 0.6, spot * 1.6, out string err);
                 if (err != null) { OnGexFailure("parse: " + err, now); return; }
                 g.Source = "http:" + new Uri(GexUrl).Host;
                 lock (_sync) { _gex = g; _gexReceivedUtc = now; _gexLastError = ""; _gexFailures = 0; _gexNextAttemptUtc = DateTime.MinValue; }

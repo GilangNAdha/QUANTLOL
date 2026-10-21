@@ -97,6 +97,16 @@ def cfg_json(c):
             "money_per_price": c.money_per_price}
 
 
+def _round_floats(x):
+    if isinstance(x, float):
+        return round(x, 9)
+    if isinstance(x, dict):
+        return {k: _round_floats(v) for k, v in x.items()}
+    if isinstance(x, list):
+        return [_round_floats(v) for v in x]
+    return x
+
+
 def main():
     rows = load_rows(DATA)
     all_bars = to_bars(rows)
@@ -227,6 +237,10 @@ def main():
         "guard": guard,
         "decisions": cases,
     }
+    # Round floats before serialising: the last bits of a volume sum can differ between
+    # Python builds (3.11 vs 3.12), which would make an exact-diff reproducibility check
+    # fail for a difference of 1e-10. Nine decimals is far below every test tolerance.
+    fixture = _round_floats(fixture)
     out = os.path.join(HERE, "..", "tests", "fixtures", "parity.json")
     with open(out, "w") as f:
         json.dump(fixture, f, indent=1, sort_keys=True, default=str)

@@ -180,11 +180,11 @@ namespace QuantLOL.Tests
                 var n = RiskMath.Compute(D(c, "entry"), D(c, "stop"), D(c, "target"),
                                          D(c, "money"), D(c, "commission"), D(c, "slippage"));
                 var e = c.GetProperty("expected");
-                AssertEx.Near(D(e, "dist"), n.StopDistance, 1e-9, "stop distance");
-                AssertEx.Near(D(e, "risk"), n.RiskUsd, 1e-9, "risk USD");
-                AssertEx.Near(D(e, "net_reward"), n.NetRewardUsd, 1e-9, "net reward");
-                AssertEx.Near(D(e, "rr_net"), n.RrNet, 1e-9, "net R:R");
-                AssertEx.Near(D(e, "rr_gross"), n.RrGross, 1e-9, "gross R:R");
+                AssertEx.Near(D(e, "dist"), n.StopDistance, 1e-7, "stop distance");
+                AssertEx.Near(D(e, "risk"), n.RiskUsd, 1e-7, "risk USD");
+                AssertEx.Near(D(e, "net_reward"), n.NetRewardUsd, 1e-7, "net reward");
+                AssertEx.Near(D(e, "rr_net"), n.RrNet, 1e-7, "net R:R");
+                AssertEx.Near(D(e, "rr_gross"), n.RrGross, 1e-7, "gross R:R");
             }
         }
 

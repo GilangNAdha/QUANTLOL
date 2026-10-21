@@ -4834,8 +4834,8 @@
     "dir": 1,
     "entry": 4520.299805,
     "reject": "None",
-    "risk_usd": 2.139804999999287,
-    "rr_net": 3.8368893427218373,
+    "risk_usd": 2.139805,
+    "rr_net": 3.836889343,
     "score": 6.5,
     "setup": "SwingLow_sweep+bull_choch",
     "state": "bull",
@@ -4848,7 +4848,7 @@
     "div_bear": true,
     "div_bull": false,
     "n": 12,
-    "ratio": 0.011144981117196633
+    "ratio": 0.011144981
    },
    "profile": {
     "high": 4558.5,
@@ -4856,13 +4856,13 @@
     "ib_low": 4464.899902,
     "low": 4464.899902,
     "partial": false,
-    "poc": 4535.650000000001,
-    "total_volume": 135189.00000049226,
+    "poc": 4535.65,
+    "total_volume": 135189.000000492,
     "vah": 4544.0,
     "val": 4504.6
    },
    "snapshot": {
-    "atr": 2.3372104296094784,
+    "atr": 2.33721043,
     "bear_fvg": {
      "bottom": 4518.799805,
      "filled": true,
@@ -4879,7 +4879,7 @@
      "i": 406,
      "kind": "SwingHigh",
      "level": 4520.100098,
-     "pierce_ticks": 119.9706999999762
+     "pierce_ticks": 119.9707
     },
     "bull_fvg": {
      "bottom": 4523.899902,
@@ -4897,7 +4897,7 @@
      "i": 405,
      "kind": "SwingLow",
      "level": 4520.299805,
-     "pierce_ticks": 19.970699999976205
+     "pierce_ticks": 19.9707
     },
     "dealing_high": 4542.0,
     "dealing_low": 4517.700195,
@@ -5078,8 +5078,8 @@
     "dir": 1,
     "entry": 4518.100098,
     "reject": "None",
-    "risk_usd": 4.740097999999707,
-    "rr_net": 1.8374940771268122,
+    "risk_usd": 4.740098,
+    "rr_net": 1.837494077,
     "score": 6.5,
     "setup": "SwingLow_sweep+bull_choch",
     "state": "bull",
@@ -5092,7 +5092,7 @@
     "div_bear": false,
     "div_bull": true,
     "n": 12,
-    "ratio": 0.3043223986610778
+    "ratio": 0.304322399
    },
    "profile": {
     "high": 4543.399902,
@@ -5100,13 +5100,13 @@
     "ib_low": 4520.299805,
     "low": 4511.600098,
     "partial": false,
-    "poc": 4523.150000000001,
-    "total_volume": 49342.00000017907,
-    "vah": 4534.400000000001,
+    "poc": 4523.15,
+    "total_volume": 49342.000000179,
+    "vah": 4534.4,
     "val": 4514.1
    },
    "snapshot": {
-    "atr": 3.3415527934819202,
+    "atr": 3.341552793,
     "bear_fvg": {
      "bottom": 4516.299805,
      "filled": false,
@@ -5141,7 +5141,7 @@
      "i": 485,
      "kind": "SwingLow",
      "level": 4516.299805,
-     "pierce_ticks": 89.990299999954
+     "pierce_ticks": 89.9903
     },
     "dealing_high": 4528.899902,
     "dealing_low": 4511.600098,
@@ -5283,7 +5283,7 @@
     4521.600098,
     4511.600098,
     4516.700195,
-    4534.400000000001,
+    4534.4,
     4514.1,
     4543.399902,
     4511.600098
@@ -5322,8 +5322,8 @@
     "dir": 1,
     "entry": 4514.799805,
     "reject": "None",
-    "risk_usd": 3.439804999999469,
-    "rr_net": 1.7472487539268293,
+    "risk_usd": 3.439805,
+    "rr_net": 1.747248754,
     "score": 6.5,
     "setup": "SwingLow_sweep+bull_choch",
     "state": "bull",
@@ -5336,7 +5336,7 @@
     "div_bear": true,
     "div_bull": false,
     "n": 12,
-    "ratio": 0.0248198951483549
+    "ratio": 0.024819895
    },
    "profile": {
     "high": 4537.799805,
@@ -5345,12 +5345,12 @@
     "low": 4506.600098,
     "partial": false,
     "poc": 4515.55,
-    "total_volume": 45742.00000016657,
+    "total_volume": 45742.000000167,
     "vah": 4526.1,
     "val": 4513.1
    },
    "snapshot": {
-    "atr": 3.666547508630159,
+    "atr": 3.666547509,
     "bear_fvg": {
      "bottom": 4512.799805,
      "filled": true,
@@ -5367,7 +5367,7 @@
      "i": 556,
      "kind": "SwingHigh",
      "level": 4518.100098,
-     "pierce_ticks": 19.970699999976205
+     "pierce_ticks": 19.9707
     },
     "bull_fvg": {
      "bottom": 4517.200195,
@@ -5385,7 +5385,7 @@
      "i": 552,
      "kind": "SwingLow",
      "level": 4512.799805,
-     "pierce_ticks": 119.9706999999762
+     "pierce_ticks": 119.9707
     },
     "dealing_high": 4531.0,
     "dealing_low": 4510.0,
@@ -5566,12 +5566,12 @@
     "dir": -1,
     "entry": 4515.399902,
     "reject": "None",
-    "risk_usd": 2.9400980000004346,
-    "rr_net": 2.9284404805548907,
+    "risk_usd": 2.940098,
+    "rr_net": 2.928440481,
     "score": 6.5,
     "setup": "SwingHigh_sweep+bear_choch",
     "state": "bear",
-    "stop": 4518.150000000001,
+    "stop": 4518.15,
     "synthetic": false,
     "target": 4506.6
    },
@@ -5580,7 +5580,7 @@
     "div_bear": false,
     "div_bull": false,
     "n": 12,
-    "ratio": -0.05217188519588653
+    "ratio": -0.052171885
    },
    "profile": {
     "high": 4533.600098,
@@ -5588,13 +5588,13 @@
     "ib_low": 4517.700195,
     "low": 4506.600098,
     "partial": false,
-    "poc": 4523.150000000001,
-    "total_volume": 41527.000000151034,
+    "poc": 4523.15,
+    "total_volume": 41527.000000151,
     "vah": 4526.3,
     "val": 4516.0
    },
    "snapshot": {
-    "atr": 4.027254558333125,
+    "atr": 4.027254558,
     "bear_fvg": {
      "bottom": 4512.899902,
      "filled": true,
@@ -5611,7 +5611,7 @@
      "i": 509,
      "kind": "SwingHigh",
      "level": 4516.700195,
-     "pierce_ticks": 139.990299999954
+     "pierce_ticks": 139.9903
     },
     "bull_fvg": {
      "bottom": 4510.0,
@@ -5629,7 +5629,7 @@
      "i": 516,
      "kind": "SwingLow",
      "level": 4511.600098,
-     "pierce_ticks": 360.0097999999889
+     "pierce_ticks": 360.0098
     },
     "dealing_high": 4523.899902,
     "dealing_low": 4506.600098,
@@ -5810,8 +5810,8 @@
     "dir": -1,
     "entry": 4525.200195,
     "reject": "None",
-    "risk_usd": 3.939804999999469,
-    "rr_net": 1.703179472080743,
+    "risk_usd": 3.939805,
+    "rr_net": 1.703179472,
     "score": 6.5,
     "setup": "SwingHigh_sweep+bear_choch",
     "state": "bear",
@@ -5824,7 +5824,7 @@
     "div_bear": false,
     "div_bull": false,
     "n": 12,
-    "ratio": -0.002788200905502725
+    "ratio": -0.002788201
    },
    "profile": {
     "high": 4537.799805,
@@ -5832,13 +5832,13 @@
     "ib_low": 4517.700195,
     "low": 4506.600098,
     "partial": false,
-    "poc": 4519.950000000001,
-    "total_volume": 42361.00000015426,
+    "poc": 4519.95,
+    "total_volume": 42361.000000154,
     "vah": 4526.1,
     "val": 4513.8
    },
    "snapshot": {
-    "atr": 4.253982686680748,
+    "atr": 4.253982687,
     "bear_fvg": {
      "bottom": 4512.899902,
      "filled": true,
@@ -5855,7 +5855,7 @@
      "i": 535,
      "kind": "SwingHigh",
      "level": 4527.0,
-     "pierce_ticks": 110.0097999999889
+     "pierce_ticks": 110.0098
     },
     "bull_fvg": {
      "bottom": 4523.299805,
@@ -5873,7 +5873,7 @@
      "i": 534,
      "kind": "SwingLow",
      "level": 4525.700195,
-     "pierce_ticks": 80.0293000000238
+     "pierce_ticks": 80.0293
     },
     "dealing_high": 4537.799805,
     "dealing_low": 4506.600098,
@@ -6054,8 +6054,8 @@
     "dir": -1,
     "entry": 4524.5,
     "reject": "None",
-    "risk_usd": 4.639999999999818,
-    "rr_net": 2.2650862068966013,
+    "risk_usd": 4.64,
+    "rr_net": 2.265086207,
     "score": 6.5,
     "setup": "SwingHigh_sweep+bear_choch",
     "state": "bear",
@@ -6068,7 +6068,7 @@
     "div_bear": false,
     "div_bull": true,
     "n": 12,
-    "ratio": -0.20387337213224416
+    "ratio": -0.203873372
    },
    "profile": {
     "high": 4537.799805,
@@ -6076,13 +6076,13 @@
     "ib_low": 4517.700195,
     "low": 4506.600098,
     "partial": false,
-    "poc": 4519.950000000001,
-    "total_volume": 42009.000000152904,
+    "poc": 4519.95,
+    "total_volume": 42009.000000153,
     "vah": 4526.1,
     "val": 4513.8
    },
    "snapshot": {
-    "atr": 4.071534423365124,
+    "atr": 4.071534423,
     "bear_fvg": {
      "bottom": 4512.899902,
      "filled": true,
@@ -6099,7 +6099,7 @@
      "i": 535,
      "kind": "SwingHigh",
      "level": 4527.0,
-     "pierce_ticks": 110.0097999999889
+     "pierce_ticks": 110.0098
     },
     "bull_fvg": {
      "bottom": 4523.299805,
@@ -6117,7 +6117,7 @@
      "i": 534,
      "kind": "SwingLow",
      "level": 4525.700195,
-     "pierce_ticks": 80.0293000000238
+     "pierce_ticks": 80.0293
     },
     "dealing_high": 4537.799805,
     "dealing_low": 4506.600098,
@@ -6304,7 +6304,7 @@
     "div_bear": true,
     "div_bull": false,
     "n": 12,
-    "ratio": 0.33275856712106006
+    "ratio": 0.332758567
    },
    "profile": {
     "high": 4477.899902,
@@ -6312,13 +6312,13 @@
     "ib_low": 4411.100098,
     "low": 4411.100098,
     "partial": false,
-    "poc": 4415.950000000001,
-    "total_volume": 60978.00000022208,
-    "vah": 4440.700000000001,
-    "val": 4411.200000000001
+    "poc": 4415.95,
+    "total_volume": 60978.000000222,
+    "vah": 4440.7,
+    "val": 4411.2
    },
    "snapshot": {
-    "atr": 4.500694427175328,
+    "atr": 4.500694427,
     "bear_fvg": {
      "bottom": 4476.299805,
      "filled": false,
@@ -6335,7 +6335,7 @@
      "i": 200,
      "kind": "SwingHigh",
      "level": 4476.0,
-     "pierce_ticks": 29.980499999965105
+     "pierce_ticks": 29.9805
     },
     "bull_fvg": {
      "bottom": 4473.200195,
@@ -6488,8 +6488,8 @@
     4457.100098,
     4476.0,
     4477.899902,
-    4440.700000000001,
-    4411.200000000001,
+    4440.7,
+    4411.2,
     4477.899902,
     4411.100098
    ],
@@ -6533,7 +6533,7 @@
     "div_bear": true,
     "div_bull": false,
     "n": 12,
-    "ratio": 0.09555871192710678
+    "ratio": 0.095558712
    },
    "profile": {
     "high": 4490.0,
@@ -6542,12 +6542,12 @@
     "low": 4426.700195,
     "partial": false,
     "poc": 4471.95,
-    "total_volume": 69136.00000025137,
+    "total_volume": 69136.000000251,
     "vah": 4488.2,
     "val": 4459.9
    },
    "snapshot": {
-    "atr": 4.8662437668670195,
+    "atr": 4.866243767,
     "bear_fvg": {
      "bottom": 4481.600098,
      "filled": false,
@@ -6762,7 +6762,7 @@
     "div_bear": true,
     "div_bull": false,
     "n": 12,
-    "ratio": 0.011144981117196633
+    "ratio": 0.011144981
    },
    "profile": {
     "high": 4558.5,
@@ -6770,13 +6770,13 @@
     "ib_low": 4464.899902,
     "low": 4464.899902,
     "partial": false,
-    "poc": 4535.650000000001,
-    "total_volume": 135189.00000049226,
+    "poc": 4535.65,
+    "total_volume": 135189.000000492,
     "vah": 4544.0,
     "val": 4504.6
    },
    "snapshot": {
-    "atr": 2.3372104296094784,
+    "atr": 2.33721043,
     "bear_fvg": {
      "bottom": 4518.799805,
      "filled": true,
@@ -6793,7 +6793,7 @@
      "i": 406,
      "kind": "SwingHigh",
      "level": 4520.100098,
-     "pierce_ticks": 119.9706999999762
+     "pierce_ticks": 119.9707
     },
     "bull_fvg": {
      "bottom": 4523.899902,
@@ -6811,7 +6811,7 @@
      "i": 405,
      "kind": "SwingLow",
      "level": 4520.299805,
-     "pierce_ticks": 19.970699999976205
+     "pierce_ticks": 19.9707
     },
     "dealing_high": 4542.0,
     "dealing_low": 4517.700195,
@@ -6998,7 +6998,7 @@
     "div_bear": true,
     "div_bull": false,
     "n": 12,
-    "ratio": 0.011144981117196633
+    "ratio": 0.011144981
    },
    "profile": {
     "high": 4558.5,
@@ -7006,13 +7006,13 @@
     "ib_low": 4464.899902,
     "low": 4464.899902,
     "partial": false,
-    "poc": 4535.650000000001,
-    "total_volume": 135189.00000049226,
+    "poc": 4535.65,
+    "total_volume": 135189.000000492,
     "vah": 4544.0,
     "val": 4504.6
    },
    "snapshot": {
-    "atr": 2.3372104296094784,
+    "atr": 2.33721043,
     "bear_fvg": {
      "bottom": 4518.799805,
      "filled": true,
@@ -7029,7 +7029,7 @@
      "i": 406,
      "kind": "SwingHigh",
      "level": 4520.100098,
-     "pierce_ticks": 119.9706999999762
+     "pierce_ticks": 119.9707
     },
     "bull_fvg": {
      "bottom": 4523.899902,
@@ -7047,7 +7047,7 @@
      "i": 405,
      "kind": "SwingLow",
      "level": 4520.299805,
-     "pierce_ticks": 19.970699999976205
+     "pierce_ticks": 19.9707
     },
     "dealing_high": 4542.0,
     "dealing_low": 4517.700195,
@@ -7237,7 +7237,7 @@
     "div_bear": true,
     "div_bull": false,
     "n": 12,
-    "ratio": 0.011144981117196633
+    "ratio": 0.011144981
    },
    "profile": {
     "high": 4558.5,
@@ -7245,13 +7245,13 @@
     "ib_low": 4464.899902,
     "low": 4464.899902,
     "partial": false,
-    "poc": 4535.650000000001,
-    "total_volume": 135189.00000049226,
+    "poc": 4535.65,
+    "total_volume": 135189.000000492,
     "vah": 4544.0,
     "val": 4504.6
    },
    "snapshot": {
-    "atr": 2.3372104296094784,
+    "atr": 2.33721043,
     "bear_fvg": {
      "bottom": 4518.799805,
      "filled": true,
@@ -7268,7 +7268,7 @@
      "i": 406,
      "kind": "SwingHigh",
      "level": 4520.100098,
-     "pierce_ticks": 119.9706999999762
+     "pierce_ticks": 119.9707
     },
     "bull_fvg": {
      "bottom": 4523.899902,
@@ -7286,7 +7286,7 @@
      "i": 405,
      "kind": "SwingLow",
      "level": 4520.299805,
-     "pierce_ticks": 19.970699999976205
+     "pierce_ticks": 19.9707
     },
     "dealing_high": 4542.0,
     "dealing_low": 4517.700195,
@@ -7473,7 +7473,7 @@
     "div_bear": true,
     "div_bull": false,
     "n": 12,
-    "ratio": 0.011144981117196633
+    "ratio": 0.011144981
    },
    "profile": {
     "high": 4558.5,
@@ -7481,13 +7481,13 @@
     "ib_low": 4464.899902,
     "low": 4464.899902,
     "partial": false,
-    "poc": 4535.650000000001,
-    "total_volume": 135189.00000049226,
+    "poc": 4535.65,
+    "total_volume": 135189.000000492,
     "vah": 4544.0,
     "val": 4504.6
    },
    "snapshot": {
-    "atr": 2.3372104296094784,
+    "atr": 2.33721043,
     "bear_fvg": {
      "bottom": 4518.799805,
      "filled": true,
@@ -7504,7 +7504,7 @@
      "i": 406,
      "kind": "SwingHigh",
      "level": 4520.100098,
-     "pierce_ticks": 119.9706999999762
+     "pierce_ticks": 119.9707
     },
     "bull_fvg": {
      "bottom": 4523.899902,
@@ -7522,7 +7522,7 @@
      "i": 405,
      "kind": "SwingLow",
      "level": 4520.299805,
-     "pierce_ticks": 19.970699999976205
+     "pierce_ticks": 19.9707
     },
     "dealing_high": 4542.0,
     "dealing_low": 4517.700195,
@@ -7717,13 +7717,13 @@
     "ib_low": 4464.899902,
     "low": 4464.899902,
     "partial": false,
-    "poc": 4535.650000000001,
-    "total_volume": 135189.00000049226,
+    "poc": 4535.65,
+    "total_volume": 135189.000000492,
     "vah": 4544.0,
     "val": 4504.6
    },
    "snapshot": {
-    "atr": 2.3372104296094784,
+    "atr": 2.33721043,
     "bear_fvg": {
      "bottom": 4518.799805,
      "filled": true,
@@ -7740,7 +7740,7 @@
      "i": 406,
      "kind": "SwingHigh",
      "level": 4520.100098,
-     "pierce_ticks": 119.9706999999762
+     "pierce_ticks": 119.9707
     },
     "bull_fvg": {
      "bottom": 4523.899902,
@@ -7758,7 +7758,7 @@
      "i": 405,
      "kind": "SwingLow",
      "level": 4520.299805,
-     "pierce_ticks": 19.970699999976205
+     "pierce_ticks": 19.9707
     },
     "dealing_high": 4542.0,
     "dealing_low": 4517.700195,
@@ -7963,12 +7963,12 @@
  "orderflow": {
   "avg_volume": 3756.9,
   "expected": {
-   "buy": 17971.15651514411,
-   "delta": 3629.3130302882137,
+   "buy": 17971.156515144,
+   "delta": 3629.313030288,
    "div_bear": true,
    "div_bull": false,
-   "ratio": 0.1123174273601403,
-   "sell": 14341.843484855894,
+   "ratio": 0.112317427,
+   "sell": 14341.843484856,
    "total": 32313.0
   },
   "last_index": 599,
@@ -7984,7 +7984,7 @@
    "low": 4412.0,
    "partial": false,
    "poc": 4515.35,
-   "total_volume": 114390.00000041624,
+   "total_volume": 114390.000000416,
    "vah": 4534.9,
    "val": 4447.8
   },
@@ -7997,11 +7997,11 @@
    "commission": 0.14,
    "entry": 3300.0,
    "expected": {
-    "dist": 1.199999999999818,
+    "dist": 1.2,
     "net_reward": 2.81,
-    "risk": 1.3899999999998183,
-    "rr_gross": 2.500000000000379,
-    "rr_net": 2.021582733813214
+    "risk": 1.39,
+    "rr_gross": 2.5,
+    "rr_net": 2.021582734
    },
    "money": 1.0,
    "slippage": 0.05,
@@ -8014,9 +8014,9 @@
    "expected": {
     "dist": 1.0,
     "net_reward": -0.19,
-    "risk": 1.1900000000000002,
+    "risk": 1.19,
     "rr_gross": 0.0,
-    "rr_net": -0.15966386554621848
+    "rr_net": -0.159663866
    },
    "money": 1.0,
    "slippage": 0.05,
@@ -8027,11 +8027,11 @@
    "commission": 0.14,
    "entry": 3300.0,
    "expected": {
-    "dist": 1.199999999999818,
+    "dist": 1.2,
     "net_reward": 2.81,
-    "risk": 1.3899999999998183,
-    "rr_gross": 2.500000000000379,
-    "rr_net": 2.021582733813214
+    "risk": 1.39,
+    "rr_gross": 2.5,
+    "rr_net": 2.021582734
    },
    "money": 1.0,
    "slippage": 0.05,
@@ -8044,9 +8044,9 @@
    "expected": {
     "dist": 4.0,
     "net_reward": -0.19,
-    "risk": 4.1899999999999995,
+    "risk": 4.19,
     "rr_gross": 0.0,
-    "rr_net": -0.04534606205250597
+    "rr_net": -0.045346062
    },
    "money": 1.0,
    "slippage": 0.05,
@@ -8056,7 +8056,7 @@
  ],
  "structure": {
   "expected": {
-   "atr": 13.338068973233586,
+   "atr": 13.338068973,
    "bars_analysed": 320,
    "bear_fvg": {
     "bottom": 4436.700195,
@@ -8077,7 +8077,7 @@
     "i": 595,
     "kind": "SwingHigh",
     "level": 4456.899902,
-    "pierce_ticks": 820.0195999999778,
+    "pierce_ticks": 820.0196,
     "t": "2026-09-04 13:35:00+00:00"
    },
    "bull_fvg": {
@@ -8098,7 +8098,7 @@
     "i": 589,
     "kind": "SwingLow",
     "level": 4426.799805,
-    "pierce_ticks": 429.9804999999651,
+    "pierce_ticks": 429.9805,
     "t": "2026-09-04 13:05:00+00:00"
    },
    "dealing_high": 4516.799805,

@@ -83,7 +83,13 @@ namespace QuantLOL.Core
     {
         public static PerformanceMetrics Compute(IReadOnlyList<TradeRecord> trades)
         {
-            var m = new PerformanceMetrics();
+            var m = new PerformanceMetrics
+            {
+                // "not computed" must read as NaN, never as zero.
+                ExpectancyCiLow = double.NaN, ExpectancyCiHigh = double.NaN,
+                ProfitFactorCiLow = double.NaN, ProfitFactorCiHigh = double.NaN,
+                Sharpe = double.NaN, Sortino = double.NaN,
+            };
             if (trades == null || trades.Count == 0)
             {
                 m.Warnings.Add("no closed trades: performance metrics are undefined");

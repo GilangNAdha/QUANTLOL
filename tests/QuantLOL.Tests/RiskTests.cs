@@ -9,6 +9,23 @@ namespace QuantLOL.Tests
         static readonly DateTime Day = new DateTime(2026, 3, 2, 0, 0, 0, DateTimeKind.Utc);
 
         [Fact]
+        public void ShortPlansMeasureRewardAheadOfEntry()
+        {
+            // Regression: reward was measured as (target - entry), which is negative for every
+            // short and silently rejected all bearish plans regardless of target quality.
+            var n = RiskMath.Compute(3300.00, 3301.20, 3297.00, 1.0, 0.14, 0.05);
+            AssertEx.Near(3.0, n.RewardDistance, 1e-9, "short reward distance is positive");
+            AssertEx.True(n.RrGross > 2.4, "short gross R:R computed, got " + n.RrGross);
+            AssertEx.True(RiskMath.Approve(n, new RiskCaps { MaxRiskPerTradeUsd = 5, MinRewardRisk = 1.5 }, out string why),
+                "short plan inside the cap should be approved, got: " + why);
+            // A target on the wrong side of the entry must produce zero reward, not a negative one.
+            var wrongSide = RiskMath.Compute(3300.00, 3301.20, 3302.00, 1.0, 0.14, 0.05);
+            AssertEx.Near(0, wrongSide.RewardDistance, 1e-9, "wrong-side target gives zero reward");
+            AssertEx.False(RiskMath.Approve(wrongSide, new RiskCaps { MaxRiskPerTradeUsd = 5 }, out _),
+                "wrong-side target cannot be approved");
+        }
+
+        [Fact]
         public void DailyLossLimitBlocksRestOfDayAndResetsNextDay()
         {
             var g = new DrawdownGuard(1000, 15, 30);

@@ -69,7 +69,16 @@ namespace QuantLOL.Core
                                           double commissionRoundTripUsd, double slippageRoundTripUsd)
         {
             double stopDist = Math.Abs(entry - stop);
-            double rewardDist = target > 0 ? (target - entry) : 0;
+            // Direction is inferred from the stop side (a long stops out below entry, a short above).
+            // Reward must be measured AHEAD of the entry, otherwise every short plan would show a
+            // negative reward and be rejected regardless of how good its target is.
+            int dir = entry > stop ? +1 : (entry < stop ? -1 : 0);
+            double rewardDist = 0;
+            if (target > 0 && dir != 0 && Numeric.IsFinite(target))
+            {
+                rewardDist = (target - entry) * dir;
+                if (rewardDist < 0) rewardDist = 0;
+            }
             if (moneyPerPriceUnit <= 0 || !Numeric.IsFinite(moneyPerPriceUnit))
                 return new RiskNumbers(stopDist, 0, double.NaN, commissionRoundTripUsd, slippageRoundTripUsd, rewardDist, double.NaN, double.NaN, 0, 0);
 

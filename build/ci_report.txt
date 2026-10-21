@@ -1,49 +1,253 @@
 === dotnet --info ===
 6.0.428 [/usr/share/dotnet/sdk]
-8.0.132 [/usr/share/dotnet/sdk]
+8.0.131 [/usr/share/dotnet/sdk]
 8.0.206 [/usr/share/dotnet/sdk]
 8.0.319 [/usr/share/dotnet/sdk]
+8.0.425 [/usr/share/dotnet/sdk]
 8.0.426 [/usr/share/dotnet/sdk]
-9.0.122 [/usr/share/dotnet/sdk]
+9.0.121 [/usr/share/dotnet/sdk]
 9.0.205 [/usr/share/dotnet/sdk]
-9.0.319 [/usr/share/dotnet/sdk]
-10.0.113 [/usr/share/dotnet/sdk]
+9.0.318 [/usr/share/dotnet/sdk]
+10.0.112 [/usr/share/dotnet/sdk]
 10.0.204 [/usr/share/dotnet/sdk]
 10.0.303 [/usr/share/dotnet/sdk]
-10.0.402 [/usr/share/dotnet/sdk]
+10.0.401 [/usr/share/dotnet/sdk]
 
 === BUILD cBot (net6.0, cTrader.Automate 1.0.21) ===
   Determining projects to restore...
-  Restored /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj (in 1.2 sec).
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(112,95): error CS0103: The name '_lastEntryStructure' does not exist in the current context [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(355,31): error CS1501: No overload for method 'RecordMs' takes 2 arguments [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Core/Json.cs(33,78): error CS1061: 'List<JsonValue>' does not contain a definition for 'Empty' and no accessible extension method 'Empty' accepting a first argument of type 'List<JsonValue>' could be found (are you missing a using directive or an assembly reference?) [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Runtime/ExternalDataService.cs(84,22): error CS0104: 'File' is an ambiguous reference between 'cAlgo.API.File' and 'System.IO.File' [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Runtime/ExternalDataService.cs(86,31): error CS0104: 'File' is an ambiguous reference between 'cAlgo.API.File' and 'System.IO.File' [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Runtime/ExternalDataService.cs(99,22): error CS0104: 'File' is an ambiguous reference between 'cAlgo.API.File' and 'System.IO.File' [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Runtime/ExternalDataService.cs(100,31): error CS0104: 'File' is an ambiguous reference between 'cAlgo.API.File' and 'System.IO.File' [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Runtime/ExternalDataService.cs(117,30): error CS0029: Cannot implicitly convert type 'System.Net.Http.HttpMethod' to 'cAlgo.API.HttpMethod' [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Runtime/ExternalDataService.cs(137,30): error CS0029: Cannot implicitly convert type 'System.Net.Http.HttpMethod' to 'cAlgo.API.HttpMethod' [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
+  Restored /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj (in 605 ms).
 /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(61,16): warning CS0169: The field 'QuantLOLBot._sessionDayRefEquity' is never used [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
+  QuantLOL -> /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/bin/Release/net6.0/QuantLOL.dll
+  QuantLOL -> /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/bin/Release/net6.0/src.algo
+  QuantLOL -> cAlgo/Sources/Robots/src.algo
 
-Build FAILED.
+Build succeeded.
 
 /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(61,16): warning CS0169: The field 'QuantLOLBot._sessionDayRefEquity' is never used [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(112,95): error CS0103: The name '_lastEntryStructure' does not exist in the current context [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(355,31): error CS1501: No overload for method 'RecordMs' takes 2 arguments [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Core/Json.cs(33,78): error CS1061: 'List<JsonValue>' does not contain a definition for 'Empty' and no accessible extension method 'Empty' accepting a first argument of type 'List<JsonValue>' could be found (are you missing a using directive or an assembly reference?) [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Runtime/ExternalDataService.cs(84,22): error CS0104: 'File' is an ambiguous reference between 'cAlgo.API.File' and 'System.IO.File' [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Runtime/ExternalDataService.cs(86,31): error CS0104: 'File' is an ambiguous reference between 'cAlgo.API.File' and 'System.IO.File' [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Runtime/ExternalDataService.cs(99,22): error CS0104: 'File' is an ambiguous reference between 'cAlgo.API.File' and 'System.IO.File' [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Runtime/ExternalDataService.cs(100,31): error CS0104: 'File' is an ambiguous reference between 'cAlgo.API.File' and 'System.IO.File' [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Runtime/ExternalDataService.cs(117,30): error CS0029: Cannot implicitly convert type 'System.Net.Http.HttpMethod' to 'cAlgo.API.HttpMethod' [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Runtime/ExternalDataService.cs(137,30): error CS0029: Cannot implicitly convert type 'System.Net.Http.HttpMethod' to 'cAlgo.API.HttpMethod' [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
     1 Warning(s)
-    9 Error(s)
+    0 Error(s)
 
-Time Elapsed 00:00:04.54
-BUILD_EXIT=1
+Time Elapsed 00:00:05.07
+BUILD_EXIT=0
 
 === UNIT TESTS ===
-/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/Core/Json.cs(33,78): error CS1061: 'List<JsonValue>' does not contain a definition for 'Empty' and no accessible extension method 'Empty' accepting a first argument of type 'List<JsonValue>' could be found (are you missing a using directive or an assembly reference?) [/home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/QuantLOL.Tests.csproj]
+Test run for /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/bin/Release/net8.0/QuantLOL.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+/home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/bin/Release/net8.0/QuantLOL.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.5.7+8f2703126a (64-bit .NET 8.0.32)
+[xUnit.net 00:00:00.07]   Discovering: QuantLOL.Tests
+[xUnit.net 00:00:00.10]   Discovered:  QuantLOL.Tests
+[xUnit.net 00:00:00.10]   Starting:    QuantLOL.Tests
+  Passed QuantLOL.Tests.NumericTests.RoundToTickIsStableAtMidpoints [4 ms]
+  Passed QuantLOL.Tests.NumericTests.EpochHeuristicHandlesSecondsAndMilliseconds [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.SignalKeyIsStableAndUniquePerBarAndPrice [9 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.ConflictingDirectionsAreRefused [3 ms]
+  Passed QuantLOL.Tests.NumericTests.PercentilesUseLinearInterpolation [4 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.SyntheticTargetIsFlagged [3 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.SpreadFilterRejectsBeforeAnySetupWork [1 ms]
+[xUnit.net 00:00:00.21]     QuantLOL.Tests.OrderFlowTests.RisingClosesProducePositiveDelta [FAIL]
+[xUnit.net 00:00:00.21]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.21]       Expected: 60
+[xUnit.net 00:00:00.21]       Actual:   59
+[xUnit.net 00:00:00.21]       Stack Trace:
+[xUnit.net 00:00:00.21]         /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/CoreLogicTests.cs(139,0): at QuantLOL.Tests.OrderFlowTests.RisingClosesProducePositiveDelta()
+[xUnit.net 00:00:00.21]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.21]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.SignalEngineTests.StructuralOnlyModeRefusesToInventATarget [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.VixVetoBlocksEntries [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.NoFutureDataLeaksIntoTheAnalysis [6 ms]
+  Failed QuantLOL.Tests.OrderFlowTests.RisingClosesProducePositiveDelta [23 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 60
+Actual:   59
+  Stack Trace:
+     at QuantLOL.Tests.OrderFlowTests.RisingClosesProducePositiveDelta() in /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/CoreLogicTests.cs:line 139
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.OrderFlowTests.FallingClosesProduceNegativeDelta [< 1 ms]
+  Passed QuantLOL.Tests.OrderFlowTests.ZeroRangeBarsDoNotDivideByZero [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.SwingsAreOnlyKnowableAfterTheirConfirmationBar [< 1 ms]
+[xUnit.net 00:00:00.21]     QuantLOL.Tests.SignalEngineTests.OrderFlowVetoWhenRequired [FAIL]
+[xUnit.net 00:00:00.21]       Assert.Contains() Failure: Sub-string not found
+[xUnit.net 00:00:00.21]       String:    "no bearish sweep within 20 bars"
+[xUnit.net 00:00:00.21]       Not found: "order-flow"
+[xUnit.net 00:00:00.21]       Stack Trace:
+[xUnit.net 00:00:00.21]         /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/SignalEngineTests.cs(163,0): at QuantLOL.Tests.SignalEngineTests.OrderFlowVetoWhenRequired()
+[xUnit.net 00:00:00.21]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.21]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.21]     QuantLOL.Tests.MarketProfileTests.ValueAreaContainsAtLeastTheRequestedShare [FAIL]
+[xUnit.net 00:00:00.21]       value area must cover >= 70% of volume, got 0.4878048780487805
+[xUnit.net 00:00:00.21]       Stack Trace:
+[xUnit.net 00:00:00.21]         /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/CoreLogicTests.cs(108,0): at QuantLOL.Tests.MarketProfileTests.ValueAreaContainsAtLeastTheRequestedShare()
+[xUnit.net 00:00:00.21]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.21]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.StructureTests.SweepRequiresPierceAndReclaim [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.FairValueGapDetectedAndTracked [< 1 ms]
+  Failed QuantLOL.Tests.SignalEngineTests.OrderFlowVetoWhenRequired [5 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "no bearish sweep within 20 bars"
+Not found: "order-flow"
+  Stack Trace:
+     at QuantLOL.Tests.SignalEngineTests.OrderFlowVetoWhenRequired() in /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/SignalEngineTests.cs:line 163
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.SignalEngineTests.ScoreThresholdCanSuppressAValidSetup [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.ProducesBullishSetupWhenAllCoreConditionsHold [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.MarkdownReportContainsAllHeadlineMetrics [35 ms]
+  Failed QuantLOL.Tests.MarketProfileTests.ValueAreaContainsAtLeastTheRequestedShare [3 ms]
+  Error Message:
+   value area must cover >= 70% of volume, got 0.4878048780487805
+  Stack Trace:
+     at QuantLOL.Tests.MarketProfileTests.ValueAreaContainsAtLeastTheRequestedShare() in /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/CoreLogicTests.cs:line 108
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.21]     QuantLOL.Tests.PerformanceTests.SmallSamplesAreFlaggedNotAnnualised [FAIL]
+[xUnit.net 00:00:00.21]       Assert.True() Failure
+[xUnit.net 00:00:00.21]       Expected: True
+[xUnit.net 00:00:00.21]       Actual:   False
+[xUnit.net 00:00:00.21]       Stack Trace:
+[xUnit.net 00:00:00.21]         /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/PerformanceTests.cs(56,0): at QuantLOL.Tests.PerformanceTests.SmallSamplesAreFlaggedNotAnnualised()
+[xUnit.net 00:00:00.21]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.21]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.PerformanceTests.BreakdownsUseTheDeclaredDimensions [2 ms]
+  Failed QuantLOL.Tests.PerformanceTests.SmallSamplesAreFlaggedNotAnnualised [< 1 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+     at QuantLOL.Tests.PerformanceTests.SmallSamplesAreFlaggedNotAnnualised() in /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/PerformanceTests.cs:line 56
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.SignalEngineTests.WideStructuralStopIsRejectedNotTightened [2 ms]
+  Passed QuantLOL.Tests.PerformanceTests.MaxDrawdownFollowsTheClosedEquityCurve [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.MissingConfirmationYieldsNoSetup [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.CoreAggregatesAreCorrect [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.CooldownAndDuplicateSuppression [< 1 ms]
+[xUnit.net 00:00:00.21]     QuantLOL.Tests.StructureTests.ContextLevelsAreAlsoSweepCandidates [FAIL]
+[xUnit.net 00:00:00.21]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.21]       Expected: PrevSessionLow
+[xUnit.net 00:00:00.21]       Actual:   SwingLow
+[xUnit.net 00:00:00.21]       Stack Trace:
+[xUnit.net 00:00:00.21]         /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/StructureTests.cs(91,0): at QuantLOL.Tests.StructureTests.ContextLevelsAreAlsoSweepCandidates()
+[xUnit.net 00:00:00.21]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.21]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.PerformanceTests.EmptyInputProducesAWarningNotAnException [< 1 ms]
+  Passed QuantLOL.Tests.LatencyTests.SummaryReportsPercentilesAndCount [1 ms]
+  Passed QuantLOL.Tests.LatencyTests.EmptySeriesIsSafe [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.LifetimeDrawdownFromReferenceBalanceLatches [3 ms]
+  Failed QuantLOL.Tests.StructureTests.ContextLevelsAreAlsoSweepCandidates [9 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: PrevSessionLow
+Actual:   SwingLow
+  Stack Trace:
+     at QuantLOL.Tests.StructureTests.ContextLevelsAreAlsoSweepCandidates() in /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/StructureTests.cs:line 91
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.RiskTests.DayEquityDrawdownBlocksWithoutLatchedKillSwitch [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.AtrIsPositiveAndBoundedByObservedRanges [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.StopIsNeverTightenedToFitTheCap [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.RejectsInadequateRewardToRiskEvenWhenRiskFits [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.AnalysisIsDeterministic [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.OpenPositionPnlCountsThroughEquity [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.BullishBreakOfStructureChangesTrendAndRecordsChoch [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.DailyLossLimitBlocksRestOfDayAndResetsNextDay [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.LatchSurvivesRecoveryAndOnlyResetClearsIt [< 1 ms]
+  Passed QuantLOL.Tests.LatencyTests.RegistryTableExplainsNetworkAttribution [3 ms]
+  Passed QuantLOL.Tests.MarketProfileTests.PocValueAreaAndSessionExtremes [9 ms]
+  Passed QuantLOL.Tests.MarketProfileTests.EmptyAndDegenerateInputsAreSafe [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.ZeroPointZeroOneLotIsOneUnitOnHundredOunceContract [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.OneOuncePerLotContractIsAlsoRepresentable [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.CommissionModelsAndMinimum [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.MoneyPerPriceUnitIsOneDollarPerDollarForOneOunce [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.FiveDollarCapImpliesMaxStructuralStopDistance [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.RejectsMisalignedVolumeStep [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.RejectsWhenBrokerMinimumExceedsIntendedSize [< 1 ms]
+[xUnit.net 00:00:00.22]     QuantLOL.Tests.ExternalDataTests.ImplausiblePriceScaleIsRejected [FAIL]
+[xUnit.net 00:00:00.22]       Assert.False() Failure
+[xUnit.net 00:00:00.22]       Expected: False
+[xUnit.net 00:00:00.22]       Actual:   True
+[xUnit.net 00:00:00.22]       Stack Trace:
+[xUnit.net 00:00:00.22]         /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/ExternalDataTests.cs(68,0): at QuantLOL.Tests.ExternalDataTests.ImplausiblePriceScaleIsRejected()
+[xUnit.net 00:00:00.22]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.22]     QuantLOL.Tests.ExternalDataTests.EpochMillisecondTimestampsAreAccepted [FAIL]
+[xUnit.net 00:00:00.22]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.22]       Expected: 2026-10-20T17:30:00.0000000Z
+[xUnit.net 00:00:00.22]       Actual:   2025-10-20T17:30:00.0000000Z
+[xUnit.net 00:00:00.22]       Stack Trace:
+[xUnit.net 00:00:00.22]         /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/ExternalDataTests.cs(87,0): at QuantLOL.Tests.ExternalDataTests.EpochMillisecondTimestampsAreAccepted()
+[xUnit.net 00:00:00.22]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.BrokerMathTests.TenOuncePerLotContractGivesPointOneUnits [< 1 ms]
+  Passed QuantLOL.Tests.JsonTests.RejectsMalformedDocuments [13 ms]
+  Passed QuantLOL.Tests.JsonTests.KeysAreCaseInsensitive [< 1 ms]
+  Failed QuantLOL.Tests.ExternalDataTests.ImplausiblePriceScaleIsRejected [15 ms]
+  Error Message:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  Stack Trace:
+     at QuantLOL.Tests.ExternalDataTests.ImplausiblePriceScaleIsRejected() in /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/ExternalDataTests.cs:line 68
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.JsonTests.ParsesObjectsArraysAndNumbers [1 ms]
+  Failed QuantLOL.Tests.ExternalDataTests.EpochMillisecondTimestampsAreAccepted [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 2026-10-20T17:30:00.0000000Z
+Actual:   2025-10-20T17:30:00.0000000Z
+  Stack Trace:
+     at QuantLOL.Tests.ExternalDataTests.EpochMillisecondTimestampsAreAccepted() in /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/ExternalDataTests.cs:line 87
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.ExternalDataTests.GldDerivedDataIsMarkedAsProxy [1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.InstrumentMismatchIsRejected [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.MissingDataBlocksOnlyWhenRequired [< 1 ms]
+[xUnit.net 00:00:00.22]     QuantLOL.Tests.ExternalDataTests.VixParsingValidatesLevelAndTime [FAIL]
+[xUnit.net 00:00:00.22]       Assert.Null() Failure: Value is not null
+[xUnit.net 00:00:00.22]       Expected: null
+[xUnit.net 00:00:00.22]       Actual:   "as_of in the future"
+[xUnit.net 00:00:00.22]       Stack Trace:
+[xUnit.net 00:00:00.22]         /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/ExternalDataTests.cs(119,0): at QuantLOL.Tests.ExternalDataTests.VixParsingValidatesLevelAndTime()
+[xUnit.net 00:00:00.22]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.22]     QuantLOL.Tests.ExternalDataTests.ValidGexFileParsesWithProvenance [FAIL]
+[xUnit.net 00:00:00.22]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.22]       Expected: 4
+[xUnit.net 00:00:00.22]       Actual:   5
+[xUnit.net 00:00:00.22]       Stack Trace:
+[xUnit.net 00:00:00.22]         /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/ExternalDataTests.cs(37,0): at QuantLOL.Tests.ExternalDataTests.ValidGexFileParsesWithProvenance()
+[xUnit.net 00:00:00.22]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.22]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.22]   Finished:    QuantLOL.Tests
+  Failed QuantLOL.Tests.ExternalDataTests.VixParsingValidatesLevelAndTime [< 1 ms]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   "as_of in the future"
+  Stack Trace:
+     at QuantLOL.Tests.ExternalDataTests.VixParsingValidatesLevelAndTime() in /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/ExternalDataTests.cs:line 119
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.ExternalDataTests.FutureTimestampsAreRejected [< 1 ms]
+  Failed QuantLOL.Tests.ExternalDataTests.ValidGexFileParsesWithProvenance [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 4
+Actual:   5
+  Stack Trace:
+     at QuantLOL.Tests.ExternalDataTests.ValidGexFileParsesWithProvenance() in /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/ExternalDataTests.cs:line 37
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed QuantLOL.Tests.ExternalDataTests.FreshnessAndStalePolicy [< 1 ms]
+
+Test Run Failed.
+Total tests: 65
+     Passed: 56
+     Failed: 9
+ Total time: 0.5745 Seconds
 TEST_EXIT=1

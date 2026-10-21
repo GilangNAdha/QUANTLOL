@@ -1,0 +1,64 @@
+name: build
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - ".github/workflows/build.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: arena/afc8c595-quantlol
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            8.0.x
+      - name: Build cBot and run tests
+        id: build
+        run: |
+          set +e
+          export DOTNET_CLI_TELEMETRY_OPTOUT=1
+          echo "=== dotnet --info ===" > ci_report.txt
+          dotnet --list-sdks >> ci_report.txt 2>&1
+          echo "" >> ci_report.txt
+          echo "=== BUILD cBot (net6.0, cTrader.Automate 1.0.21) ===" >> ci_report.txt
+          dotnet build src/QuantLOL/QuantLOL.csproj -c Release --nologo -v m > build_raw.txt 2>&1
+          BUILD_RC=$?
+          cat build_raw.txt >> ci_report.txt
+          echo "BUILD_EXIT=$BUILD_RC" >> ci_report.txt
+          echo "" >> ci_report.txt
+          echo "=== UNIT TESTS ===" >> ci_report.txt
+          dotnet test tests/QuantLOL.Tests/QuantLOL.Tests.csproj -c Release --nologo -v q --logger "console;verbosity=detailed" > test_raw.txt 2>&1
+          TEST_RC=$?
+          cat test_raw.txt >> ci_report.txt
+          echo "TEST_EXIT=$TEST_RC" >> ci_report.txt
+          echo "RESULT build=$BUILD_RC test=$TEST_RC"
+          exit 0
+      - name: Show report
+        run: |
+          tail -c 6000 ci_report.txt || true
+          grep -E "error|Failed!|Passed!|BUILD_EXIT|TEST_EXIT" ci_report.txt | head -60 || true
+      - name: Commit report
+        run: |
+          git config user.email "ci@quantlol.local"; git config user.name "QuantLOL CI"
+          mkdir -p build
+          cp ci_report.txt build/ci_report.txt
+          git add -f build/ci_report.txt
+          git commit -q -m "ci: build report [skip ci]" || echo nothing
+          git push origin HEAD:arena/afc8c595-quantlol || (git pull --rebase -q && git push origin HEAD:arena/afc8c595-quantlol)
+      - name: Fail on error
+        run: |
+          if grep -q "BUILD_EXIT=0" ci_report.txt && grep -q "TEST_EXIT=0" ci_report.txt; then
+            echo "build and tests succeeded"; exit 0;
+          else
+            echo "build or tests failed - see build/ci_report.txt"; exit 1;
+          fi

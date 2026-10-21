@@ -1,0 +1,8 @@
+[ok] gc_5m         13612 rows  2026-08-12 04:00:00 -> 2026-10-21 19:54:13
+[ok] gc_60m        13737 rows  2024-05-30 04:00:00 -> 2026-10-21 19:54:20
+[ok] gc_1d          2514 rows  2016-10-21 04:00:00 -> 2026-10-21 04:00:00
+[fail] xauusd_5m: GET failed for https://query1.finance.yahoo.com/v8/finance/chart/XAUUSD%3DX?interval=5m&range=60d&includePrePost=false&events=div%2Csplits (HTTP 404)
+[fail] xauusd_60m: GET failed for https://query1.finance.yahoo.com/v8/finance/chart/XAUUSD%3DX?interval=60m&range=730d&includePrePost=false&events=div%2Csplits (HTTP 404)
+[fail] xauusd_1d: GET failed for https://query1.finance.yahoo.com/v8/finance/chart/XAUUSD%3DX?interval=1d&range=10y&includePrePost=false&events=div%2Csplits (HTTP 404)
+[ok] vix_1d         9298 rows  1990-01-02 00:00:00 -> 2026-10-20 00:00:00
+wrote research/data/manifest.json

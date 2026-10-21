@@ -27,6 +27,10 @@ C# engine (pinned by cross-language tests).
   is **skipped, never tightened**.
 - One position at a time, no martingale/grid/averaging up/size escalation/duplicate orders.
 - **$15 daily loss limit**, **$30 equity drawdown** from the reference balance (latched kill switch).
+
+These are limits on *planned* risk. Gaps, slippage, rejected stops or a disconnect can make a
+realised loss larger; the journal records realised slippage and MAE/MFE so the gap is measured, not
+assumed away (see `docs/BUILD.md` §5).
 - Works with **no paid services**: broker data only; GEX/VIX are optional and clearly labelled.
 
 ## Layout
@@ -71,6 +75,8 @@ Measured in this repository:
 Not measured here:
 - profitability on live data (no forward test exists yet);
 - real spreads, fills or latency (backtest assumptions are labelled as such);
+- benchmark numbers for this machine (no cTrader runtime was available here; the template ships
+  empty rather than filled with invented figures);
 - any benefit from GEX / delta / vanna (no legitimate historical exposure series was available, so
   those variants are reported as **untested**, not as "no effect").
 

@@ -165,10 +165,32 @@ and broker. Use `docs/BENCHMARK_TEMPLATE.md` to record it.
 
 ---
 
-## 5. What this build is not
+## 5. Limits of the risk model (read this before trusting `risk_usd`)
+
+`risk_usd` is the **planned** risk at the moment of the decision: structural stop distance × money
+per price unit, plus estimated commission and slippage. It is not a guarantee. In live trading the
+realised loss can be larger when:
+
+- **price gaps through the stop** (weekend, news, thin liquidity) and the fill is worse than the
+  stop price;
+- **slippage exceeds the allowance**, especially on stop exits in fast markets;
+- **the broker rejects or delays the protective stop**, or the connection drops between fill and
+  stop placement (`EnsureProtectiveStop` re-applies it, but a gap can happen first);
+- **commission or swap differs** from the configured estimate;
+- a **partial fill** leaves a smaller position with a stop sized for the original (the bot logs it;
+  it does not silently resize).
+
+The mandate limits *planned* risk, one position, and daily/lifetime drawdown. It cannot make a
+market order fill at a chosen price. `docs/TRADE_REPORT_TEMPLATE.md` records realised slippage and
+MAE/MFE precisely so that this difference is measured rather than assumed away.
+
+## 6. What this build is not
 
 - It is not a proven profitable strategy. The backtest is small-sample and the intervals are wide.
 - It is not a substitute for a demo/forward test. Costs, fills and latency in backtest are
   assumptions, not observations.
 - It does not compute dealer gamma from gold candles. GEX is external input only, labelled by
-  quality (manual / proxy / unavailable).
+  quality (manual / proxy / unavailable). Manual or daily files are **not** low-latency data; they
+  are context, refreshed in the background and timestamped.
+- It does not report benchmark numbers that were never measured. This environment has no cTrader
+  runtime, so `docs/BENCHMARK_TEMPLATE.md` ships empty on purpose: fill it on your machine.

@@ -1,0 +1,11 @@
+QuantLOL Signals 1.0.0 - signal-only application (no broker, no orders)
+engine : research/quantlol_ref.py | swing/BOS/CHoCH, sweeps, FVG/OB, session profile, CLV order-flow proxy, USD risk cap, drawdown guard
+market : BTCUSD (spot, venue feed) | 0.005 lots x 1 units -> $0.01 per 1.00 price move
+risk   : cap $5.00 -> max structural stop 995.500 price units (9955 ticks)
+costs  : commission $0.02 round turn, slippage 5 ticks, assumed spread 2 ticks (ASSUMPTION)
+data   : DATA:live rows=499 last=2026-10-22 08:55 age=9.7m src=binance:BTCUSDT
+feed   : binance (BTCUSDT) keyless
+vix    : VIX:STALE(delayed,age=2210m)
+gex    : GEX:disabled
+
+ready. `python3 -m signals once` for a single read, `serve` for the dashboard.

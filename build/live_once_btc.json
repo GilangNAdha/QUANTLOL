@@ -1,0 +1,191 @@
+{
+  "schema": 1,
+  "app": {
+    "name": "QuantLOL Signals",
+    "version": "1.0.0",
+    "execution": "none - advisory signals only, no broker connection",
+    "engine": {
+      "module": "research/quantlol_ref.py",
+      "rules": "swing/BOS/CHoCH, sweeps, FVG/OB, session profile, CLV order-flow proxy, USD risk cap, drawdown guard",
+      "shared_with": [
+        "cBot C# core (parity tests)",
+        "research backtest"
+      ]
+    },
+    "uptime_seconds": 0.7
+  },
+  "generated_utc": "2026-10-22T09:04:45.178285+00:00",
+  "config": {
+    "symbol": "BTCUSD",
+    "label": "BTCUSD (spot, venue feed)",
+    "timeframe_minutes": 5,
+    "data_mode": "live",
+    "data_source": "binance/BTCUSDT",
+    "lots": 0.005,
+    "ounces_per_lot": 100.0,
+    "volume": "0.0050 lot fixed = 0.0050 units (never resized)",
+    "contract_units": 1.0,
+    "money_per_price": 0.005,
+    "max_risk_usd": 5.0,
+    "max_stop_distance": 995.5,
+    "min_rr": 1.5,
+    "assumed_spread_ticks": 2,
+    "commission_round_trip": 0.02,
+    "slippage_ticks": 5,
+    "enable_vix": true,
+    "enable_gex": false,
+    "gex_source": "file",
+    "gex_currency": "BTC",
+    "execution": "none (advisory signals only)"
+  },
+  "data": {
+    "ok": true,
+    "source": "binance:BTCUSDT",
+    "quality": "live",
+    "note": "venue spot klines (Binance) | dropped 1 in-progress candle",
+    "bars": 499,
+    "rows_rejected": 0,
+    "first_bar_utc": "2026-10-20T15:25:00+00:00",
+    "last_bar_utc": "2026-10-22T08:55:00+00:00",
+    "age_minutes": 9.75,
+    "fresh": true,
+    "fetched_utc": "2026-10-22T09:04:45.172099+00:00"
+  },
+  "external": {
+    "vix": {
+      "available": true,
+      "status": "VIX:STALE(delayed,age=2210m)",
+      "quality": "delayed",
+      "fresh": false,
+      "age_minutes": 2209.7,
+      "data": {
+        "level": 17.31,
+        "as_of": "2026-10-20T20:15:00+00:00",
+        "quality": "delayed",
+        "source": "Cboe VIX_History.csv (daily close, T+1)",
+        "change_1d": -1.13
+      }
+    },
+    "gex": {
+      "available": false,
+      "status": "GEX:disabled",
+      "quality": "disabled",
+      "fresh": false,
+      "age_minutes": null,
+      "data": null
+    }
+  },
+  "latest": {
+    "schema": 1,
+    "generated_utc": "2026-10-22T09:04:44.513243+00:00",
+    "engine": "quantlol_ref (shared with cBot C# core)",
+    "symbol": "BTCUSD",
+    "label": "BTCUSD (spot, venue feed)",
+    "timeframe_minutes": 5,
+    "bar_time_utc": "2026-10-22T08:55:00+00:00",
+    "bar_age_minutes": 9.74,
+    "price": 81861.24,
+    "state": "neutral",
+    "direction": "NONE",
+    "entry": null,
+    "stop": null,
+    "target": null,
+    "risk_usd": null,
+    "rr_net": null,
+    "score": null,
+    "setup": null,
+    "stop_ticks": null,
+    "target_ticks": null,
+    "evidence": [],
+    "reason": "NoSetup",
+    "detail": "no sweep+confirmation",
+    "session": "London",
+    "atr": 106.8214,
+    "dealing_high": 82991.57,
+    "dealing_low": 81874.54,
+    "volume": "0.01 lot fixed = 0.50 oz, never resized",
+    "money_per_price": 0.005,
+    "max_risk_usd": 5.0,
+    "max_stop_distance": 995.5,
+    "spread": {
+      "assumed_ticks": 2,
+      "note": "no quote feed: spread is an ASSUMPTION used for the risk check",
+      "cost_usd": 0.001
+    },
+    "context": {
+      "vix": {
+        "status": "VIX:STALE(delayed,age=2210m)",
+        "available": true,
+        "quality": "delayed",
+        "fresh": false,
+        "age_minutes": 2209.7,
+        "level": 17.31,
+        "as_of": "2026-10-20T20:15:00+00:00"
+      },
+      "gex": {
+        "status": "GEX:disabled",
+        "available": false,
+        "quality": "disabled",
+        "fresh": false,
+        "age_minutes": null,
+        "data": null
+      }
+    },
+    "data": {
+      "source": "binance:BTCUSDT",
+      "quality": "live",
+      "note": "venue spot klines (Binance) | dropped 1 in-progress candle",
+      "last_bar_utc": "2026-10-22T08:55:00+00:00",
+      "bars": 499,
+      "rows_rejected": 0,
+      "fresh": true,
+      "age_minutes": 9.74
+    },
+    "engine_ms": 5.685,
+    "risk_ok": false,
+    "dedupe_key": "2026-10-22T08:55:00+00:00|neutral|NONE",
+    "actionable": false,
+    "signal_id": "20261022T0855-NONE-na",
+    "is_new": false
+  },
+  "recent_signals": [],
+  "stats": {
+    "evaluations": 1,
+    "signals": 0,
+    "by_reason": {
+      "NoSetup": 1
+    },
+    "by_state": {
+      "neutral": 1
+    },
+    "by_session": {
+      "London": 1
+    },
+    "last_eval_utc": "2026-10-22T09:04:44.513243+00:00",
+    "last_eval_ms": 5.685,
+    "data_refreshes": 1,
+    "errors": 0,
+    "evaluations_written": 1,
+    "evaluations_skipped": 0
+  },
+  "health": {
+    "ok": true,
+    "issues": [
+      {
+        "severity": "info",
+        "text": "VIX is stale (VIX:STALE(delayed,age=2210m)); it will not score new signals"
+      }
+    ],
+    "market_closed": false
+  },
+  "stored": {
+    "signals_written": 0,
+    "evaluations_written": 1,
+    "files": {
+      "signals": "signals/out/signals.jsonl",
+      "evaluations": "signals/out/evaluations.jsonl",
+      "csv": "signals/out/signals.csv",
+      "state": "signals/out/state.json"
+    }
+  }
+}

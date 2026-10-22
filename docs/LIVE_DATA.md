@@ -11,28 +11,54 @@ from Twelve Data (800 requests/day). For **XAUUSD there is nothing new** — thi
 
 This table is not copied from provider docs. Every row was requested for real by
 `tools/probe/live_data_probe.py`, executed on GitHub Actions (the development sandbox has no
-outbound network), run `39752161783` on 2026-10-22 09:01 UTC:
+outbound network), run `39754396647` on 2026-10-22 09:18 UTC:
 
 | class | provider | HTTP | latency | bars/items | key | volume | note |
 |---|---|---|---|---|---|---|---|
-| crypto | **Binance** (`data-api.binance.vision`) | **200** | 600 ms | 50 | none | yes | venue spot klines |
-| crypto | Binance (`api.binance.com`) | **451** | 54 ms | 0 | none | – | **geo-blocked from CI** — use the `data-api` mirror |
-| crypto | **Kraken** | **200** | 30 ms | 721 | none | yes | last row is the in-progress candle |
-| crypto | **Coinbase Exchange** | **200** | 30 ms | 350 | none | yes | newest first, max 300 candles |
-| crypto | **OKX** | **200** | 179 ms | 50 | none | yes | newest first, unconfirmed tail row |
-| crypto | **Bitstamp** | **200** | 262 ms | 50 | none | yes | |
-| crypto | Bybit | **403** | 33 ms | 0 | none | – | **blocked from CI** — do not make it the primary |
-| crypto | **Deribit** (perp) | **200** | 255 ms | 289 | none | yes | venue chart feed |
-| crypto-options | **Deribit** chain | **200** | 190 ms | 930 contracts | none | n/a | 741 with open interest |
-| forex | **Yahoo `EURUSD=X`** | **200** | 108 ms | 1274 | none | **no** | 5m, ~60-day lookback |
-| forex | Frankfurter (ECB) | 200 | 743 ms | 1 | none | no | **daily fixing only** |
-| forex | open.er-api | 200 | 33 ms | 1 | none | no | daily rates, no OHLC |
-| forex | Twelve Data | 401 | 108 ms | 0 | **required** | n/a | works with a free key |
-| forex | Binance `EURUSDT` | 200 | 865 ms | 1 | none | n/a | **not forex** — stablecoin pair |
-| control | Yahoo `GC=F` | 200 | 120 ms | 994 | none | yes | the app's existing gold proxy |
-| control | Yahoo `BTC-USD` | 200 | 88 ms | 1262 | none | yes | fine, but Binance is better |
+| crypto | **Binance** (`data-api.binance.vision`) | **200** | 597 ms | 50 | none | yes | venue spot klines |
+| crypto | Binance (`api.binance.com`) | **451** | 130 ms | 0 | none | – | **geo-blocked from CI** — use the `data-api` mirror |
+| crypto | **Kraken** | **200** | 157 ms | 721 | none | yes | last row is the in-progress candle |
+| crypto | **Coinbase Exchange** | **200** | 45 ms | 350 | none | yes | newest first, max 300 candles |
+| crypto | **OKX** | **200** | 239 ms | 50 | none | yes | newest first, unconfirmed tail row |
+| crypto | **Bitstamp** | **200** | 433 ms | 50 | none | yes | |
+| crypto | Bybit | **403** | 87 ms | 0 | none | – | **blocked from CI** — do not make it the primary |
+| crypto | **Deribit** (perp) | **200** | 220 ms | 289 | none | yes | venue chart feed |
+| crypto-options | **Deribit** chain | **200** | 184 ms | 930 contracts | none | n/a | 747 with open interest |
+| forex | **Yahoo `EURUSD=X`** | **200** | 281 ms | 1277 | none | **no** | 5m, ~60-day lookback |
+| forex | Frankfurter (ECB) | 200 | 101 ms | 1 | none | no | **daily fixing only** |
+| forex | open.er-api | 200 | 100 ms | 1 | none | no | daily rates, no OHLC |
+| forex | Twelve Data | 401 | 126 ms | 0 | **required** | n/a | works with a free key |
+| forex | Binance `EURUSDT` | 200 | 550 ms | 1 | none | n/a | **not forex** — stablecoin pair |
+| control | Yahoo `GC=F` | 200 | 175 ms | 997 | none | yes | the app's existing gold proxy |
+| control | Yahoo `BTC-USD` | 200 | 232 ms | 1265 | none | yes | fine, but Binance is better |
 
-Re-run any time: `python3 tools/probe/live_data_probe.py` (or trigger the `live-data-probe` workflow).
+### The app's own adapters, run against the same venues
+
+Same run, but this time through `signals.providers` — the exact code path
+`python3 -m signals --preset btc` uses. This is what catches a 200 that returns candles the engine
+cannot use:
+
+| adapter | HTTP | ms | bars | volume | resolved symbol | note |
+|---|---|---|---|---|---|---|
+| `signals.providers/binance` | 200 | 684 | 199 | yes | `BTCUSDT` | dropped 1 in-progress candle |
+| `signals.providers/kraken` | 200 | 173 | 720 | yes | `XBTUSD` → `XXBTZUSD` | dropped 1 in-progress candle |
+| `signals.providers/coinbase` | 200 | 50 | 350 | yes | `BTC-USD` | max 300/call, newest first |
+| `signals.providers/okx` | 200 | 207 | 199 | yes | `BTC-USDT` | unconfirmed tail row skipped |
+| `signals.providers/bitstamp` | 200 | 473 | 199 | yes | `btcusd` | dropped 1 in-progress candle |
+| `signals.providers/deribit` | 200 | 226 | 212 | yes | `BTC-PERPETUAL` | dropped 1 in-progress candle |
+| `signals.providers/bybit` | **ERR** | 51 | 0 | – | `BTCUSDT` | **HTTP 403** from the runner |
+| Deribit OI levels | 200 | 736 | 930 contracts | n/a | 50 strikes in ±25% of spot | spot 81 890 → put wall 75 000, flip 90 000, call wall 95 000 |
+
+And the engine actually consumed a live bar (`build/live_once_btc.json`, run `39752590718`):
+
+```
+state neutral  reason NoSetup  price 81861.24  bar 2026-10-22T08:55:00Z
+data  binance:BTCUSDT  quality live  bars 499  fresh true
+stats evaluations 1  signals 0  by_reason {NoSetup: 1}  engine 5.685 ms
+```
+
+Re-run any time: `python3 tools/probe/live_data_probe.py` (or trigger the `live-data-probe` workflow,
+which commits `tools/probe/out/live_probe.{json,md}` and `tools/probe/out/app_doctor.txt`).
 
 ## What each provider actually gives you
 
@@ -70,8 +96,8 @@ Re-run any time: `python3 tools/probe/live_data_probe.py` (or trigger the `live-
 4. **fail loudly** when an endpoint changes shape, instead of returning zero bars.
 
 `load_feed()` in `signals/datafeed.py` uses a **tested fallback chain** when no provider is named:
-`binance → bybit → okx → coinbase → kraken → bitstamp → deribit → yahoo`, and the note on the feed
-records which providers failed. If every provider fails you get `DATA:INVALID`, never a silent
+`binance → kraken → coinbase → okx → bitstamp → deribit → yahoo → bybit`, and the note on the feed
+records which providers failed. Bybit is last on purpose: it returned **403** to the CI runner. If every provider fails you get `DATA:INVALID`, never a silent
 empty feed.
 
 ### Running it

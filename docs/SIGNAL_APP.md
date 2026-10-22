@@ -139,7 +139,7 @@ grow the logs without bound, and a restart does not re-append what it already wr
 
 The app never invents volume, never derives dealer exposure from gold candles, and never calls a
 daily file "live". In `data_mode: live` with no provider named it walks a **tested fallback chain**
-(`binance → bybit → okx → coinbase → kraken → bitstamp → deribit → yahoo`) and reports each failure in
+(`binance → kraken → coinbase → okx → bitstamp → deribit → yahoo → bybit`) and reports each failure in
 the feed note; if every venue fails you get `DATA:INVALID`, not an empty-but-happy feed.
 
 ## 7b. Other markets (BTC, EUR/USD)

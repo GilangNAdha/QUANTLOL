@@ -550,7 +550,7 @@ class TestLiveProvidersOffline(unittest.TestCase):
 
         def fake_fetch(name, symbol=None, tf=5, limit=500, api_key=None, yahoo_range="5d", market=None):
             calls.append(name)
-            if name in ("binance", "bybit"):
+            if name in ("binance", "kraken"):
                 raise self.pv.ProviderError("HTTP 451")
             from signals.core_bridge import core
             t = datetime.now(timezone.utc) - timedelta(minutes=10)
@@ -564,9 +564,9 @@ class TestLiveProvidersOffline(unittest.TestCase):
         finally:
             self.pv.fetch = real
         self.assertTrue(res.ok)
-        self.assertEqual("okx:X", res.source)
-        self.assertIn("fell back to okx after 2 failure(s)", res.note)
-        self.assertEqual(["binance", "bybit", "okx"], calls)
+        self.assertEqual("coinbase:X", res.source)
+        self.assertIn("fell back to coinbase after 2 failure(s)", res.note)
+        self.assertEqual(["binance", "kraken", "coinbase"], calls)
 
     def test_every_provider_failing_is_an_error_not_an_empty_feed(self):
         from signals.config import SignalConfig

@@ -276,7 +276,9 @@ ADAPTERS = {
     "yahoo": _yahoo, "twelvedata": _twelvedata,
 }
 
-FALLBACK_ORDER = ["binance", "bybit", "okx", "coinbase", "kraken", "bitstamp", "deribit", "yahoo"]
+# Ordered by what the CI probe actually got through. Bybit is last on purpose: it answered 403 from
+# the runner's IP, so it is a fallback of last resort, not a second choice.
+FALLBACK_ORDER = ["binance", "kraken", "coinbase", "okx", "bitstamp", "deribit", "yahoo", "bybit"]
 
 
 def default_symbol(provider, market=None):

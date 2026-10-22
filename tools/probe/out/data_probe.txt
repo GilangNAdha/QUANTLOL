@@ -1,6 +1,6 @@
 URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/00/BID_candles_min_1.bi5 status=503 bytes=35
 URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/00/ASK_candles_min_1.bi5 status=503 bytes=35
-URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/05/BID_candles_min_1.bi5 status=404 bytes=25
+URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/05/BID_candles_min_1.bi5 status=503 bytes=35
 URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/05/ASK_candles_min_1.bi5 status=503 bytes=35
 URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2025/00/BID_candles_min_1.bi5 status=503 bytes=35
 URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2025/00/ASK_candles_min_1.bi5 status=503 bytes=35

@@ -1,0 +1,30 @@
+name: live-data-probe
+on:
+  workflow_dispatch:
+  push:
+    branches: ["**"]
+    paths:
+      - "tools/probe/live_data_probe.py"
+      - ".github/workflows/live_probe.yml"
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: arena/afc8c595-quantlol
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Probe endpoints
+        run: python3 tools/probe/live_data_probe.py --out tools/probe/out
+      - name: Commit results
+        run: |
+          git config user.email "ci@quantlol.local"; git config user.name "QuantLOL CI"
+          git add -f tools/probe/out/live_probe.json tools/probe/out/live_probe.md
+          git commit -q -m "probe: live data endpoint results [skip ci]" || echo nothing
+          git pull --rebase -q || true
+          git push origin HEAD:arena/afc8c595-quantlol

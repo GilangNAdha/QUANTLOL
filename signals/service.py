@@ -34,9 +34,13 @@ class SignalService:
         self.recent = []
         self.stats = {"evaluations": 0, "signals": 0, "by_reason": {}, "by_state": {},
                       "by_session": {}, "last_eval_utc": None, "last_eval_ms": None,
-                      "data_refreshes": 0, "errors": 0}
+                      "data_refreshes": 0, "errors": 0,
+                      "evaluations_written": 0, "evaluations_skipped": 0}
         prev = self.store.load_state()
         self.last_key = prev.get("last_dedupe_key") or ""
+        # One audit row per (bar, outcome). A static feed polled every minute must not grow the
+        # log without bound, and a restart must not duplicate rows it already wrote.
+        self.last_eval_key = prev.get("last_eval_key") or ""
 
     # ------------------------------------------------------------------ data
     def refresh_data(self, now=None):
@@ -85,7 +89,17 @@ class SignalService:
                 self.recent = self.recent[-self.cfg.max_recent_signals:]
                 self.last_key = rec["dedupe_key"]
                 self.store.append_signal(rec)
-            self.store.append_evaluation(rec)
+
+            eval_key = "%s|%s|%s" % (rec["bar_time_utc"], rec["state"], rec.get("reason"))
+            if force or eval_key != self.last_eval_key:
+                self.store.append_evaluation(rec)
+                self.last_eval_key = eval_key
+                self.stats["evaluations_written"] += 1
+                self.store.save_state({"last_dedupe_key": self.last_key,
+                                       "last_eval_key": self.last_eval_key,
+                                       "saved_utc": now.isoformat()})
+            else:
+                self.stats["evaluations_skipped"] += 1
             self.latest = rec
 
         return self._state()

@@ -308,10 +308,35 @@ class ServiceTests(Tmp):
         svc.poll_once()
         counts = svc.store.counts()
         self.assertEqual(1, counts["signals_written"], "duplicate suppression failed")
-        self.assertEqual(3, counts["evaluations_written"])
+        # one audit row per (bar, outcome); repeated polls of the same bar add nothing
+        self.assertEqual(1, counts["evaluations_written"])
+        self.assertEqual(3, svc.stats["evaluations"])
         rows = svc.store.tail_signals(10)
         self.assertEqual(1, len(rows))
         self.assertEqual("long", rows[0]["state"])
+
+    def test_repeated_polls_do_not_duplicate_evaluation_rows(self):
+        """A static feed polled forever must not grow the audit log without bound."""
+        svc = self._service()
+        for _ in range(5):
+            svc.poll_once()
+        counts = svc.store.counts()
+        self.assertEqual(1, counts["signals_written"], "signal duplicated")
+        self.assertEqual(1, counts["evaluations_written"], "evaluation duplicated")
+        self.assertEqual(4, svc.stats["evaluations_skipped"])
+        # a restart must not re-write the row it already wrote
+        svc2 = SignalService(svc.cfg)
+        svc2.poll_once()
+        self.assertEqual(1, svc2.store.counts()["evaluations_written"])
+
+    def test_a_new_bar_adds_exactly_one_evaluation_row(self):
+        svc = self._service()
+        svc.poll_once()
+        csv_path = os.path.join(self.dir, "later.csv")
+        write_slice(csv_path, ACTION_INDEX + 1)
+        svc.cfg.csv_path = csv_path
+        svc.poll_once()
+        self.assertEqual(2, svc.store.counts()["evaluations_written"])
 
     def test_state_exposes_health_data_and_stats(self):
         st = self._service().poll_once()

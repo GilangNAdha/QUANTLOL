@@ -117,7 +117,11 @@ stops the app with a clear message instead of running a different configuration 
 | `signals.jsonl` | every emitted signal, full record (append-only) |
 | `signals.csv` | the same in flat form for spreadsheets |
 | `evaluations.jsonl` | **every** evaluated bar, including rejections — the audit trail |
-| `state.json` | last emitted bar/direction, used to suppress duplicates after a restart |
+| `state.json` | last emitted bar/direction and last evaluation key, used to suppress duplicate rows after a restart |
+
+One row is written per **(bar, outcome)**, not per poll: a static feed polled every minute does not
+grow the logs without bound, and a restart does not re-append what it already wrote. The counters
+`stats.evaluations` (polls) and `stats.evaluations_skipped` (deduplicated) show the difference.
 
 ## 7. Data sources and their labels
 

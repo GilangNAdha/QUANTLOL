@@ -1,0 +1,10 @@
+{
+  "meta": {"symbol": "XAU/USD", "interval": "5min", "currency_base": "Gold Spot",
+           "currency_quote": "US Dollar", "type": "Precious Metal"},
+  "values": [
+    {"datetime": "2026-10-22 09:30:00", "open": "4084.04084", "high": "4084.21569", "low": "4083.79957", "close": "4083.86301"},
+    {"datetime": "2026-10-22 09:25:00", "open": "4087.47268", "high": "4087.47268", "low": "4083.79957", "close": "4083.89019"},
+    {"datetime": "2026-10-22 09:20:00", "open": "4086.14439", "high": "4087.87946", "low": "4083.29931", "close": "4087.73306"}
+  ],
+  "status": "ok"
+}

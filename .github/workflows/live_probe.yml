@@ -16,6 +16,10 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      # Optional: add it in Settings > Secrets and variables > Actions. Without it the Twelve Data
+      # rows are reported as SKIP, never as a failure, so the workflow stays green.
+      TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,6 +43,19 @@ jobs:
           python3 -m signals --preset btc --data-mode live doctor >> "$O" 2>&1 || true
           echo "=== --preset eurusd (Yahoo, no volume) ===" >> "$O"
           python3 -m signals --preset eurusd --data-mode live doctor >> "$O" 2>&1 || true
+          if [ -n "$TWELVEDATA_API_KEY" ]; then
+            echo "=== --preset xauusd --provider twelvedata (spot gold, 5min) ===" >> "$O"
+            python3 -m signals --preset xauusd --provider twelvedata --no-order-flow \
+              doctor >> "$O" 2>&1 || true
+            echo "=== --preset eurusd --provider twelvedata (EUR/USD, 5min) ===" >> "$O"
+            python3 -m signals --preset eurusd --provider twelvedata --no-order-flow \
+              doctor >> "$O" 2>&1 || true
+            echo "=== --preset xauusd --provider twelvedata once --json ===" >> "$O"
+            python3 -m signals --preset xauusd --provider twelvedata --no-order-flow \
+              once --json >> "$O" 2>&1 || true
+          else
+            echo "=== Twelve Data: SKIPPED (repository secret TWELVEDATA_API_KEY not set) ===" >> "$O"
+          fi
           grep -E "^(market|feed|data|NOT READY)" "$O"
       - uses: actions/upload-artifact@v4
         if: always()
@@ -67,6 +84,8 @@ jobs:
   live-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:

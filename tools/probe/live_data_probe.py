@@ -246,10 +246,80 @@ PROBES = [
     ("forex", "Frankfurter (ECB)", "https://api.frankfurter.dev", p_frankfurter),
     ("forex", "open.er-api.com", "https://open.er-api.com", p_erapi),
     ("forex", "Twelve Data (no key)", "https://api.twelvedata.com", p_twelvedata_nokey),
+    ("forex", "Twelve Data (key from CI secret)", "https://api.twelvedata.com",
+     lambda: p_twelvedata_key()),
     ("forex", "Binance EURUSDT (not spot FX)", "https://data-api.binance.vision", p_binance_forex),
     ("control", "Yahoo GC=F", "https://query1.finance.yahoo.com", lambda: p_yahoo("GC=F")),
     ("control", "Yahoo BTC-USD", "https://query1.finance.yahoo.com", lambda: p_yahoo("BTC-USD")),
 ]
+
+
+def p_twelvedata_key():
+    """Twelve Data with the real key, if CI has it. Skipped (and said so) when it does not."""
+    key = os.environ.get("TWELVEDATA_API_KEY", "").strip()
+    if not key:
+        return ({"status": "SKIP", "ms": 0, "error": "",
+                 "body": "key not provided to this run (add the repository secret TWELVEDATA_API_KEY)",
+                 "status_code": None},
+                {"bars": 0, "first": "-", "last": "-", "volume": "n/a", "key": "set? no",
+                 "note": "secret TWELVEDATA_API_KEY is not configured for this workflow run"})
+    r = get("https://api.twelvedata.com/time_series?symbol=EUR%2FUSD&interval=5min"
+            "&outputsize=50&timezone=UTC&apikey=" + key)
+    out = {"bars": 0, "first": "?", "last": "?", "volume": "no", "key": "free key",
+           "note": "basic plan: 8 req/min, 800/day; timezone=UTC is mandatory"}
+    try:
+        d = json.loads(r["body"])
+        if d.get("status") == "error":
+            out["api_error"] = "%s %s" % (d.get("code"), d.get("message"))
+        else:
+            vals = d.get("values") or []
+            out.update(bars=len(vals),
+                       first=(vals[-1]["datetime"] + "Z") if vals else "?",
+                       last=(vals[0]["datetime"] + "Z") if vals else "?")
+    except Exception as e:
+        out["parse_error"] = str(e)[:120]
+    return r, out
+
+
+def app_twelvedata_checks():
+    """The app's Twelve Data path: FX, gold spot, and free-tier headroom."""
+    key = os.environ.get("TWELVEDATA_API_KEY", "").strip()
+    rows = []
+    base = {"class": "app", "base": "https://api.twelvedata.com", "ms": 0, "first": "?", "last": "?"}
+    if not key:
+        return [dict(base, name="signals.providers/twelvedata", status="SKIP", bars=0,
+                     volume="n/a", key="not set", note="no TWELVEDATA_API_KEY in this run; "
+                     "the key was verified manually against the same endpoints (see docs/LIVE_DATA.md)")]
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    from signals import providers  # noqa: E402
+
+    for market, symbol in (("eurusd", "EUR/USD"), ("xauusd", "XAU/USD")):
+        t0 = time.time()
+        rec = dict(base, name="signals.providers/twelvedata:%s" % symbol, status=None, bars=0,
+                   volume="?", key="free key", note="")
+        try:
+            bars, meta = providers.fetch("twelvedata", symbol, 5, limit=100, api_key=key,
+                                         market=market)
+            rec.update(status=200, bars=len(bars), first=bars[0].t.strftime("%Y-%m-%d %H:%M"),
+                       last=bars[-1].t.strftime("%Y-%m-%d %H:%M"),
+                       volume="yes" if meta["volume_available"] else "NO",
+                       note="%s | %s" % (meta["source"], meta["note"]))
+        except Exception as e:
+            rec.update(status="ERR", note=str(e)[:150])
+        rec["ms"] = int((time.time() - t0) * 1000)
+        rows.append(rec)
+
+    rec = dict(base, name="Twelve Data free-tier headroom", status=None, bars=0,
+               volume="n/a", key="free key", note="")
+    try:
+        u = providers.api_usage(key)
+        rec.update(status=200, first="plan=%s" % u["plan"],
+                   last="min %s/%s day %s/%s" % (u["per_minute"][0], u["per_minute"][1],
+                                                 u["per_day"][0], u["per_day"][1]))
+    except Exception as e:
+        rec.update(status="ERR", note=str(e)[:150])
+    rows.append(rec)
+    return rows
 
 
 def app_checks():
@@ -316,7 +386,7 @@ def main():
             (rec.get("api_error") or rec.get("parse_error") or rec.get("error") or "")[:70]))
 
     print("\n--- the app's own adapters (signals.providers) ---")
-    for rec in app_checks():
+    for rec in app_checks() + app_twelvedata_checks():
         results.append(rec)
         print("%-14s %-34s status=%-5s %6sms bars=%-4s vol=%-3s %s" % (
             rec["class"], rec["name"], rec["status"], rec["ms"], rec["bars"], rec["volume"],

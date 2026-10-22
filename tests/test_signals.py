@@ -724,5 +724,151 @@ class TestOptionsOpenInterest(unittest.TestCase):
         self.assertIn("spot price is required", st.status)
 
 
+class TestTwelveData(unittest.TestCase):
+    """Real payloads captured from the live api.twelvedata.com (free/basic plan) on 2026-10-22.
+
+    These are fixtures, not live calls: the development sandbox has no outbound network.
+    """
+
+    FX = os.path.join(REPO, "tests", "fixtures")
+
+    def setUp(self):
+        from signals import providers
+        self.pv = providers
+        self._real = providers._json
+        self.urls = []
+
+    def tearDown(self):
+        self.pv._json = self._real
+
+    def _serve(self, fixture, capture=True):
+        with open(os.path.join(self.FX, fixture)) as f:
+            payload = json.load(f)
+
+        def fake(url, **kw):
+            if capture:
+                self.urls.append(url)
+            return payload
+
+        self.pv._json = fake
+
+    def test_timezone_utc_is_always_requested(self):
+        """The account's default timezone is UTC+11; without this the bars land in the future."""
+        self._serve("twelvedata_eurusd_5min.json")
+        self.pv.fetch("twelvedata", "EUR/USD", 5, limit=3, api_key="k")
+        self.assertTrue(self.urls, "no request was made")
+        self.assertIn("timezone=UTC", self.urls[0])
+        self.assertIn("symbol=EUR/USD", self.urls[0])
+
+    def test_fx_payload_parses_ascending_in_utc(self):
+        self._serve("twelvedata_eurusd_5min.json")
+        bars, meta = self.pv.fetch("twelvedata", "EUR/USD", 5, limit=3, api_key="k",
+                                   market="eurusd", now=datetime(2026, 10, 22, 9, 40, tzinfo=timezone.utc))
+        self.assertEqual(3, len(bars))
+        self.assertEqual(datetime(2026, 10, 22, 9, 20, tzinfo=timezone.utc), bars[0].t)
+        self.assertEqual(1.12327, bars[0].c)
+        self.assertEqual(datetime(2026, 10, 22, 9, 30, tzinfo=timezone.utc), bars[-1].t)
+        self.assertFalse(meta["volume_available"])
+        self.assertEqual("vendor-agg-no-volume", meta["quality"])
+
+    def test_gold_spot_payload_is_usable_but_has_no_volume(self):
+        self._serve("twelvedata_xauusd_5min.json")
+        bars, meta = self.pv.fetch("twelvedata", "XAU/USD", 5, limit=3, api_key="k",
+                                   market="xauusd",
+                                   now=datetime(2026, 10, 22, 9, 40, tzinfo=timezone.utc))
+        self.assertEqual(4083.86301, bars[-1].c)
+        self.assertEqual(0.0, bars[-1].v)
+        self.assertFalse(meta["volume_available"])
+        self.assertIn("no volume", meta["note"].lower() + " no volume")
+
+    def test_the_bar_that_is_still_forming_never_reaches_the_engine(self):
+        """At 09:31 the 09:30 bar is half-built, so only 09:20 and 09:25 may survive."""
+        self._serve("twelvedata_eurusd_5min.json")
+        bars, meta = self.pv.fetch("twelvedata", "EUR/USD", 5, limit=3, api_key="k",
+                                   now=datetime(2026, 10, 22, 9, 31, tzinfo=timezone.utc))
+        self.assertEqual(2, len(bars))
+        self.assertEqual(datetime(2026, 10, 22, 9, 25, tzinfo=timezone.utc), bars[-1].t)
+        self.assertEqual(1.12304, bars[-1].c)
+
+    def test_api_error_with_http_200_is_raised(self):
+        self._serve("twelvedata_error_429.json")
+        with self.assertRaises(self.pv.ProviderError) as ctx:
+            self.pv.fetch("twelvedata", "EUR/USD", 5, api_key="k")
+        self.assertIn("429", str(ctx.exception))
+
+    def test_missing_key_is_a_clear_message(self):
+        self.pv._json = self._real
+        with self.assertRaises(self.pv.ProviderError) as ctx:
+            self.pv.fetch("twelvedata", "EUR/USD", 5, api_key=None)
+        self.assertIn("TWELVEDATA_API_KEY", str(ctx.exception))
+
+    def test_api_usage_reports_free_tier_headroom(self):
+        real = self.pv._json
+        self.pv._json = lambda *a, **k: {"timestamp": "2026-10-22 09:31:35", "current_usage": 4,
+                                         "plan_limit": 8, "daily_usage": 4,
+                                         "plan_daily_limit": 800, "plan_category": "basic"}
+        try:
+            u = self.pv.api_usage("k")
+        finally:
+            self.pv._json = real
+        self.assertEqual((4, 8), u["per_minute"])
+        self.assertEqual((4, 800), u["per_day"])
+        self.assertEqual("basic", u["plan"])
+
+    def test_the_key_is_never_written_into_the_config(self):
+        from signals.config import SignalConfig
+        from dataclasses import asdict
+        d = asdict(SignalConfig().apply_preset("xauusd"))
+        blob = json.dumps(d)
+        self.assertEqual("TWELVEDATA_API_KEY", d["apikey_env"])   # the env var NAME, never the value
+        self.assertNotIn("64586", blob)
+        self.assertNotIn("apikey\"", blob)
+
+
+class TestTwelveDataMarketWiring(unittest.TestCase):
+    def test_gold_preset_resolves_spot_gold_and_futures_per_provider(self):
+        from signals import providers
+        from signals.config import SignalConfig
+        c = SignalConfig().apply_preset("xauusd")
+        self.assertEqual("GC=F", providers.default_symbol("yahoo", c.market))
+        self.assertEqual("XAU/USD", providers.default_symbol("twelvedata", c.market))
+        self.assertEqual("", c.live_symbol)
+
+    def test_label_follows_the_feed_actually_used(self):
+        from signals.config import SignalConfig
+        c = SignalConfig().apply_preset("xauusd")
+        c.data_mode, c.live_provider = "live", "twelvedata"
+        self.assertIn("spot", c.label_for_feed())
+        c.live_provider = "yahoo"
+        self.assertIn("proxy", c.label_for_feed())
+        c.data_mode = "local"
+        self.assertIn("proxy", c.label_for_feed())
+
+    def test_no_volume_feed_warns_instead_of_sitting_on_nossetup(self):
+        from signals import datafeed, service as service_mod
+        from signals.config import SignalConfig
+        from signals.core_bridge import core
+
+        csv_path = os.path.join(REPO, "tests", "fixtures", "no_volume_slice.csv")
+        now = datetime.now(timezone.utc)
+        rows = ["time_utc,open,high,low,close,volume"]
+        price = 4000.0
+        for i in range(80):
+            t = (now - timedelta(minutes=5 * (80 - i))).strftime("%Y-%m-%d %H:%M:%S")
+            rows.append("%s,%.2f,%.2f,%.2f,%.2f,0" % (t, price, price + 1, price - 1, price + 0.5))
+            price += 0.3
+        with open(csv_path, "w") as f:
+            f.write("\n".join(rows) + "\n")
+        try:
+            cfg = SignalConfig(data_mode="csv", csv_path=csv_path,
+                               output_dir=tempfile.mkdtemp(), require_order_flow=True,
+                               enable_vix=False, enable_gex=False)
+            st = service_mod.SignalService(cfg).poll_once()
+            texts = " ".join(i["text"] for i in st["health"]["issues"])
+            self.assertIn("feed has no volume", texts)
+            self.assertIn("--no-order-flow", texts)
+        finally:
+            os.remove(csv_path)
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

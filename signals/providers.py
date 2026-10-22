@@ -57,7 +57,9 @@ PRESET_SYMBOLS = {
             "bitstamp": "btcusd", "kraken": "XBTUSD", "deribit": "BTC-PERPETUAL",
             "yahoo": "BTC-USD"},
     "eurusd": {"yahoo": "EURUSD=X", "twelvedata": "EUR/USD", "binance": "EURUSDT"},
-    "xauusd": {"yahoo": "GC=F"},
+    # XAU/USD is spot gold (not the GC=F futures proxy). Verified on the free plan: 5min and 1min
+    # both work, and neither returns a volume column -> the order-flow proxy cannot run on it.
+    "xauusd": {"yahoo": "GC=F", "twelvedata": "XAU/USD"},
 }
 
 DEFAULT_SYMBOLS = {
@@ -254,20 +256,48 @@ def _yahoo(symbol, tf, limit, range_="5d", **_):
 
 
 def _twelvedata(symbol, tf, limit, api_key=None, **_):
+    """Twelve Data time_series. The free (basic) plan is 8 req/min and 800 req/day.
+
+    Two things this endpoint does that will silently corrupt a series if ignored:
+      * `datetime` is in the **account's** timezone, not UTC (this key's account is UTC+11), so
+        every request must pin `timezone=UTC`;
+      * an error can come back as HTTP 200 with {"status": "error"}, so the body is checked, not
+        just the status code.
+    """
     if not api_key:
-        raise ProviderError("Twelve Data needs a free API key in the TWELVEDATA_API_KEY environment variable")
+        raise ProviderError("Twelve Data needs a key: export TWELVEDATA_API_KEY=... "
+                            "(free plan: 800 req/day, 8 req/min)")
     interval = {1: "1min", 5: "5min", 15: "15min", 30: "30min", 60: "1h", 240: "4h"}.get(tf, "5min")
-    url = ("https://api.twelvedata.com/time_series?symbol=%s&interval=%s&outputsize=%d&apikey=%s"
-           % (symbol, interval, min(limit, 5000), api_key))
+    url = ("https://api.twelvedata.com/time_series?symbol=%s&interval=%s&outputsize=%d"
+           "&timezone=UTC&apikey=%s" % (symbol, interval, max(1, min(limit, 5000)), api_key))
     d = _json(url)
-    if d.get("status") == "error" or "values" not in d:
-        raise ProviderError("twelvedata: %s" % str(d.get("message"))[:140])
+    if str(d.get("status", "")).lower() == "error" or "values" not in d:
+        msg = d.get("message") or d.get("error") or d
+        code = d.get("code")
+        raise ProviderError("twelvedata%s: %s" % (" (HTTP %s)" % code if code else "", str(msg)[:140]))
     rows = []
     for k in reversed(d["values"]):
-        t = datetime.fromisoformat(k["datetime"]).replace(tzinfo=timezone.utc)
-        rows.append(core.Bar(t, float(k["open"]), float(k["high"]), float(k["low"]),
-                             float(k["close"]), float(k.get("volume") or 0)))
-    return rows, "twelvedata:" + symbol, "vendor-agg", "Twelve Data free tier (aggregated FX feed)"
+        try:
+            t = datetime.fromisoformat(str(k["datetime"])).replace(tzinfo=timezone.utc)
+            rows.append(core.Bar(t, float(k["open"]), float(k["high"]), float(k["low"]),
+                                 float(k["close"]), float(k.get("volume") or 0)))
+        except (KeyError, TypeError, ValueError):
+            continue
+    if not rows:
+        raise ProviderError("twelvedata: no parseable rows")
+    meta = d.get("meta") or {}
+    note = ("Twelve Data basic plan (8 req/min, 800/day), timezone=UTC requested, "
+            "%s %s" % (meta.get("type", "?"), meta.get("exchange", "") or "")).strip()
+    quality = "vendor-agg" if any(b.v > 0 for b in rows) else "vendor-agg-no-volume"
+    return rows, "twelvedata:" + symbol, quality, note
+
+
+def api_usage(api_key, timeout=DEFAULT_TIMEOUT):
+    """Free-tier headroom, so a poll loop can back off before it gets a 429."""
+    d = _json("https://api.twelvedata.com/api_usage?apikey=%s" % api_key, timeout=timeout)
+    return {"per_minute": (d.get("current_usage"), d.get("plan_limit")),
+            "per_day": (d.get("daily_usage"), d.get("plan_daily_limit")),
+            "plan": d.get("plan_category")}
 
 
 ADAPTERS = {
@@ -289,8 +319,12 @@ def default_symbol(provider, market=None):
 
 
 def fetch(provider, symbol=None, timeframe_minutes=5, limit=500, api_key=None, yahoo_range="5d",
-          market=None):
-    """Fetches and normalises closed bars from one provider. Returns (bars, meta)."""
+          market=None, now=None):
+    """Fetches and normalises closed bars from one provider. Returns (bars, meta).
+
+    `now` is injectable so the "drop the candle that is still forming" rule can be tested at a
+    fixed instant instead of depending on when the suite happens to run.
+    """
     if provider not in ADAPTERS:
         raise ProviderError("unknown provider '%s' (choose from %s)" % (provider, ", ".join(sorted(ADAPTERS))))
     sym = symbol or default_symbol(provider, market)
@@ -300,7 +334,7 @@ def fetch(provider, symbol=None, timeframe_minutes=5, limit=500, api_key=None, y
     if provider == "yahoo":
         kw["range_"] = yahoo_range
     rows, source, quality, note = ADAPTERS[provider](sym, timeframe_minutes, limit, **kw)
-    bars, meta = _finish(rows, source, quality, note, timeframe_minutes)
+    bars, meta = _finish(rows, source, quality, note, timeframe_minutes, now=now)
     meta["provider"] = provider
     meta["symbol"] = sym
     meta["volume_available"] = any(b.v > 0 for b in bars[-50:])

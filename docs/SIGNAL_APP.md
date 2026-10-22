@@ -131,7 +131,7 @@ grow the logs without bound, and a restart does not re-append what it already wr
 | Yahoo `GC=F` live | `proxy` | delayed, free; timeframe-dependent history limits |
 | Binance / Kraken / Coinbase / OKX / Bitstamp / Bybit / Deribit (keyless) | `live` | that venue's own book, real volume, in-progress candle dropped — see `docs/LIVE_DATA.md` |
 | Yahoo `EURUSD=X` live | `no-volume` | intraday FX with **no volume**; the EURUSD preset disables order-flow confirmation |
-| Twelve Data (free key) | `vendor-agg` | 800 req/day; aggregated FX, not one venue's book |
+| Twelve Data (free key) | `vendor-agg` / `vendor-agg-no-volume` | 800 req/day; spot FX **and spot gold**; no volume, so order-flow needs `--no-order-flow` |
 | Deribit BTC options chain | `oi-derived` | open-interest concentrations; **not** dealer gamma (Deribit publishes no gamma) |
 | Your broker CSV | `broker` | anything with `time,open,high,low,close[,volume]` |
 | Cboe VIX daily | `delayed` | one value per day; broad context only |
@@ -148,6 +148,9 @@ the feed note; if every venue fails you get `DATA:INVALID`, not an empty-but-hap
 python3 -m signals --preset btc doctor        # keyless Binance BTCUSDT
 python3 -m signals --preset btc serve         # dashboard on 8080
 python3 -m signals --preset eurusd once       # Yahoo EUR/USD, order-flow disabled
+
+# spot gold / spot EUR-USD from Twelve Data (free key in TWELVEDATA_API_KEY)
+python3 -m signals --preset xauusd --provider twelvedata --no-order-flow doctor
 ```
 
 The preset changes the instrument arithmetic (`contract_units`, tick, volume) and the feed, never

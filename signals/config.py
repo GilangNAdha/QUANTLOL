@@ -96,6 +96,9 @@ class SignalConfig:
             raise ConfigError("timeframe_minutes must be one of 1,3,5,15,30,60,240")
         if self.lots <= 0:
             raise ConfigError("lots must be > 0")
+        if self.live_provider == "twelvedata" and not os.environ.get(self.apikey_env or "TWELVEDATA_API_KEY"):
+            raise ConfigError("provider twelvedata needs the key in $%s (free plan: 800 req/day, 8/min)"
+                              % (self.apikey_env or "TWELVEDATA_API_KEY"))
         if self.units_per_lot and not (0 < self.units_per_lot <= 10_000_000):
             raise ConfigError("units_per_lot must be in (0, 10000000]")
         if not (0 < self.ounces_per_lot <= 10000):
@@ -168,13 +171,26 @@ class SignalConfig:
             raise ConfigError("gex_source=deribit needs enable_gex=true")
         return self
 
+    def label_for_feed(self):
+        """The label must describe the feed actually in use, not the default one."""
+        m, p = self.market, (self.live_provider or "yahoo")
+        if self.data_mode != "live":
+            return self.label
+        if m == "xauusd":
+            if p == "twelvedata":
+                return "XAUUSD (spot, Twelve Data; no volume)"
+            return "XAUUSD (proxy: COMEX GC=F)"
+        if m == "eurusd":
+            return "EURUSD (spot, %s; no volume)" % ("Twelve Data" if p == "twelvedata" else "Yahoo")
+        return self.label
+
     def apply_preset(self, name):
         """Fills the instrument arithmetic for a well-known market. Rules and mandate are untouched."""
         p = (name or "").lower()
         if p == "xauusd":
             self.symbol = "XAUUSD"
             self.label, self.units_per_lot, self.tick = "XAUUSD (proxy: COMEX GC=F)", 100.0, 0.01
-            self.market, self.live_provider, self.live_symbol = "xauusd", "yahoo", "GC=F"
+            self.market, self.live_provider, self.live_symbol = "xauusd", "yahoo", ""
             self.commission_round_trip, self.assumed_spread_ticks = 0.14, 30
             self.lots, self.require_order_flow = 0.01, True
         elif p == "btc":
@@ -222,6 +238,9 @@ class SignalConfig:
             "max_risk_usd": self.max_risk_usd, "max_stop_distance": round(self.max_stop_distance, 4),
             "min_rr": self.min_rr,
             "assumed_spread_ticks": self.assumed_spread_ticks,
+            "market": self.market, "live_provider": self.live_provider,
+            "apikey_env": self.apikey_env,
+            "key_present": bool(os.environ.get(self.apikey_env or "")),
             "commission_round_trip": self.commission_round_trip,
             "slippage_ticks": self.slippage_ticks,
             "enable_vix": self.enable_vix, "enable_gex": self.enable_gex,

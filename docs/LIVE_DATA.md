@@ -4,8 +4,9 @@
 **Binance** (`data-api.binance.vision`, spot klines, real volume) with Kraken / Coinbase / OKX /
 Bitstamp / Deribit as fallbacks. For **forex** there is **no keyless intraday feed**; the honest
 options are Yahoo `EURUSD=X` (5-minute bars, ~60 days, **no volume**, delayed) or a **free API key**
-from Twelve Data (800 requests/day). For **XAUUSD there is nothing new** — this app's existing
-`GC=F` Yahoo proxy remains the only free intraday source.
+from Twelve Data (800 requests/day, verified working below). **XAUUSD**: Twelve Data's free key
+returns **spot XAU/USD intraday**, which is better than the `GC=F` futures proxy — but with **no
+volume**, so order-flow confirmation must be switched off (`--no-order-flow`).
 
 ## How this was verified
 
@@ -24,10 +25,12 @@ outbound network), run `39754396647` on 2026-10-22 09:18 UTC:
 | crypto | Bybit | **403** | 87 ms | 0 | none | – | **blocked from CI** — do not make it the primary |
 | crypto | **Deribit** (perp) | **200** | 220 ms | 289 | none | yes | venue chart feed |
 | crypto-options | **Deribit** chain | **200** | 184 ms | 930 contracts | none | n/a | 747 with open interest |
+| forex | **Twelve Data (free key)** | 200 | 100–200 ms | up to 5 000/call | **free key** | **no** | 5m spot FX **and spot gold**; 8 req/min, 800/day |
 | forex | **Yahoo `EURUSD=X`** | **200** | 281 ms | 1277 | none | **no** | 5m, ~60-day lookback |
 | forex | Frankfurter (ECB) | 200 | 101 ms | 1 | none | no | **daily fixing only** |
 | forex | open.er-api | 200 | 100 ms | 1 | none | no | daily rates, no OHLC |
 | forex | Twelve Data | 401 | 126 ms | 0 | **required** | n/a | works with a free key |
+| forex | Twelve Data (key) | **200** | – | **50** | free key | **no** | verified separately, see below |
 | forex | Binance `EURUSDT` | 200 | 550 ms | 1 | none | n/a | **not forex** — stablecoin pair |
 | control | Yahoo `GC=F` | 200 | 175 ms | 997 | none | yes | the app's existing gold proxy |
 | control | Yahoo `BTC-USD` | 200 | 232 ms | 1265 | none | yes | fine, but Binance is better |
@@ -72,7 +75,65 @@ which commits `tools/probe/out/live_probe.{json,md}` and `tools/probe/out/app_do
 | Bybit | `api.bybit.com/v5/market/kline` | 1000 | 1m…1d | 20 req/s | yes | **403 in the probe** — treat as optional |
 | Deribit | `get_tradingview_chart_data` | 1000 | 1m…1d | generous | yes | perp volume can be 0 on quiet bars |
 | Yahoo | `query1.finance.yahoo.com/v8/finance/chart/{sym}` | 1000+ | 1m…1d | unofficial, may throttle | **no FX volume** | delayed; ToS restricts redistribution; 1m only ~7 days |
-| Twelve Data | `api.twelvedata.com/time_series` | 5000 | 1m…1d | 800/day, 8/min | optional | needs a free key; `time_series` FX is on the free tier |
+| Twelve Data | `api.twelvedata.com/time_series` | 5000 | 1m…1d | 800/day, 8/min | **no** | free key; FX **and** spot gold; `datetime` is account-local unless you pass `timezone=UTC` |
+
+## Twelve Data with a free key (verified 2026-10-22)
+
+The key was exercised against the live API from this session. What it actually returns:
+
+| request | result |
+|---|---|
+| `time_series?symbol=EUR/USD&interval=5min&timezone=UTC` | **200**, 5-minute **spot** EUR/USD (1.12309 at 09:30Z), **no volume** |
+| `time_series?symbol=XAU/USD&interval=5min&timezone=UTC` | **200**, 5-minute **spot gold** (4084.04 at 09:30Z), **no volume** |
+| `time_series?symbol=XAU/USD&interval=1min&timezone=UTC` | **200** — 1-minute gold works on the free plan |
+| `api_usage` | `plan_category: basic`, **8 req/min**, **800 req/day** (4 used at test time) |
+| `time_series` without a key | **401** (as the probe table shows) |
+
+### Three traps this API sets
+
+1. **`datetime` is in your account's timezone, not UTC.** This account defaults to UTC+11: the same
+   request returned `20:25` for a bar that closed at `09:25` UTC. The adapter pins
+   `timezone=UTC` on every call; without it every bar lands 11 hours in the future, the freshness
+   check passes on bars that do not exist yet, and session labels (London/New York) are wrong.
+   *Verified:* the same query with `&timezone=UTC` returned bars aligned to wall-clock UTC.
+2. **Errors arrive as HTTP 200.** A rate-limit or bad symbol returns
+   `{"code": 429, "status": "error", "message": ...}`, so the body is checked, not just the status.
+3. **No volume on either FX or spot gold.** The engine's order-flow confirmation needs volume, so on
+   this feed it can never pass. The app now says so on the dashboard, in `doctor`, and in the health
+   block, and `--no-order-flow` is the explicit way to run without it. It is **not** silently
+   disabled.
+
+### Using it
+
+```bash
+export TWELVEDATA_API_KEY=...            # never committed; never in a JSON config
+
+# spot gold, 5-minute bars, order-flow off (Twelve Data publishes no volume)
+python3 -m signals --preset xauusd --provider twelvedata --no-order-flow doctor
+python3 -m signals --preset xauusd --provider twelvedata --no-order-flow serve --port 8080
+
+# spot EUR/USD
+python3 -m signals --preset eurusd --provider twelvedata --no-order-flow once
+```
+
+The key is read from the environment variable named by `apikey_env` (default
+`TWELVEDATA_API_KEY`). `SignalConfig` stores **only the variable name**; a test asserts the key
+value never appears in the serialised config.
+
+**Where the key lives:** locally in your shell environment, and in CI as the repository secret
+`TWELVEDATA_API_KEY`. The CI probe and the live-smoke job read it via `${{ secrets.TWELVEDATA_API_KEY }}`
+and report **SKIP** (not failure) when it is absent. The GitHub token available in this session could
+not create repository secrets (HTTP 403), so **adding the secret is a one-time manual step**:
+Settings → Secrets and variables → Actions → *New repository secret* → name `TWELVEDATA_API_KEY`.
+After that the workflow verifies the key end-to-end on every push that touches `signals/`.
+
+### Gold: spot vs the futures proxy
+
+At the same instant, Twelve Data's **spot XAU/USD** printed `4084.04` while the `GC=F` futures proxy
+used by the default gold config printed `4152.10` — a ~$68 basis. They are different instruments, so
+signals computed on one must not be described as if they came from the other. The app labels the
+feed `XAUUSD (spot, Twelve Data; no volume)` or `XAUUSD (proxy: COMEX GC=F)` accordingly, and the
+risk arithmetic ($1.00 per 1.00 price move at 0.01 lot) is identical for both.
 
 ## Why forex is the weak spot
 
@@ -80,7 +141,8 @@ which commits `tools/probe/out/live_probe.{json,md}` and `tools/probe/out/app_do
   a key (Twelve Data, Alpha Vantage — and `FX_INTRADAY` is now a **premium** endpoint at 25 req/day)
   or only publishes **daily** fixings (Frankfurter / ECB, open.er-api).
 * **OANDA** has no free API tier anymore; **live-rates.com** allows 3 requests/hour, unusable for 5m.
-* **Yahoo `EURUSD=X`** is the only keyless intraday option, and it has **no volume**. The engine's
+* **Twelve Data's free key is the only genuinely free intraday option**, and it publishes no volume.
+* **Yahoo `EURUSD=X`** is the only *keyless* intraday option, and it has **no volume**. The engine's
   order-flow confirmation is a CLV/volume proxy, so with this feed it cannot work at all. The app
   therefore sets `require_order_flow=false` in the EURUSD preset instead of silently computing
   confirmations from a column that is always zero.

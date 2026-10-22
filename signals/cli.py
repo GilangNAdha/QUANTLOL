@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import sys
+from dataclasses import asdict
 
 from . import datafeed, engine
 from .config import SignalConfig, ConfigError
@@ -42,6 +43,9 @@ def cmd_doctor(args):
                                   ("key required" if cfg.live_provider == "twelvedata" else "keyless")))
     vix = datafeed.load_vix(cfg)
     gex = datafeed.load_gex(cfg, spot=feed.bars[-1].c if feed.ok and feed.bars else None)
+    if feed.ok and cfg.require_order_flow and feed.bars and not any(b.v > 0 for b in feed.bars[-50:]):
+        print("WARN   : this feed publishes no volume, so order-flow confirmation can never pass.")
+        print("         Re-run with --no-order-flow (the engine then scores location/structure only).")
     print("vix    :", vix.status)
     print("gex    :", gex.status)
     if not feed.ok:
@@ -143,29 +147,33 @@ def _print_record(rec, st):
 
 
 def _cfg(args):
+    """Config precedence: flags > preset > config file > defaults.
+
+    The preset owns the instrument/feed fields (symbol, contract size, tick, lots, provider,
+    commission, spread). It deliberately does not touch the risk mandate: max_risk_usd,
+    daily_loss_usd, equity_dd_usd, min_rr and max_spread_ticks always come from the config file.
+    """
     try:
         cfg = SignalConfig.load(getattr(args, "config", None))
         preset = getattr(args, "preset", None)
         if preset:
             cfg.apply_preset(preset)
-            # an explicit --config still wins over the preset for the values the user set there
-            if getattr(args, "config", None):
-                base = SignalConfig.load(args.config)
-                for k, v in base.to_dict().items():
-                    if k in ("label", "units_per_lot", "tick", "lots", "live_provider",
-                             "live_symbol", "require_order_flow", "commission_round_trip",
-                             "assumed_spread_ticks") and v != SignalConfig().__dict__.get(k):
-                        setattr(cfg, k, v)
         if getattr(args, "data_mode", None):
             cfg.data_mode = args.data_mode
         if getattr(args, "provider", None):
             cfg.live_provider = args.provider
+            cfg.live_symbol = ""            # re-resolve from market + provider
             cfg.data_mode = "live"
         if getattr(args, "symbol", None):
             cfg.live_symbol = args.symbol
+        if getattr(args, "timeframe", None):
+            cfg.timeframe_minutes = args.timeframe
+        if getattr(args, "no_order_flow", False):
+            cfg.require_order_flow = False
         if getattr(args, "gex_source", None):
             cfg.gex_source = args.gex_source
             cfg.enable_gex = args.gex_source == "deribit" or cfg.enable_gex
+        cfg.label = cfg.label_for_feed()
         return cfg.validate()
     except ConfigError as e:
         print("configuration error:", e, file=sys.stderr)
@@ -182,6 +190,10 @@ def main(argv=None):
     ap.add_argument("--provider", help="live provider (default: tested fallback chain)")
     ap.add_argument("--symbol", help="provider symbol, e.g. BTCUSDT / BTC-USD / XBTUSD")
     ap.add_argument("--gex-source", dest="gex_source", choices=("file", "deribit"))
+    ap.add_argument("--no-order-flow", dest="no_order_flow", action="store_true",
+                    help="disable the order-flow confirmation for feeds that publish no volume")
+    ap.add_argument("--timeframe", type=int, choices=(1, 3, 5, 15, 30, 60, 240),
+                    help="bar size in minutes (provider must support it)")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     d = sub.add_parser("doctor", help="validate config, data, external inputs (like the cBot banner)")

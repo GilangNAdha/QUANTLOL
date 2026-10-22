@@ -124,6 +124,12 @@ class SignalService:
                     issues.append({"severity": "warn",
                                    "text": "last bar is %.0f min old%s" % (
                                        feed.age_minutes(now), " (market closed)" if closed else "")})
+            # A feed with no volume cannot pass an order-flow confirmation. Say so out loud,
+            # otherwise the dashboard just sits on NoSetup forever and looks like a quiet market.
+            if self.cfg.require_order_flow and feed.bars and not any(b.v > 0 for b in feed.bars[-50:]):
+                issues.append({"severity": "warn",
+                               "text": "feed has no volume: order-flow confirmation cannot pass, so no "
+                                       "signal can qualify. Run with --no-order-flow for this feed."})
         if vix and vix.available and not vix.fresh:
             issues.append({"severity": "info", "text": "VIX is stale (%s); it will not score new signals" % vix.status})
         if vix and not vix.available and self.cfg.enable_vix:

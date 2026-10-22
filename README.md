@@ -35,13 +35,17 @@ assumed away (see `docs/BUILD.md` §5).
 
 ## Two products in one repository
 
-| | **cBot** (`src/QuantLOL`) | **Signals app** (`signals/`) |
-|---|---|---|
-| What it is | the trading bot for cTrader | a standalone advisory signal app |
-| Runs on | cTrader Automate, C# net6.0 | plain Python 3, stdlib only |
-| Can trade | yes | **no — no broker connection at all** |
-| Get started | `docs/QUICKSTART.md` | `python3 -m signals doctor` → `docs/SIGNAL_APP.md` |
-| Live data (BTC / FX) | `docs/LIVE_DATA.md` | `python3 -m signals --preset btc doctor` |
+| | **cBot** (`src/QuantLOL`) | **Signals app** (`signals/`) | **Terminal** (`terminal/`) |
+|---|---|---|---|
+| What it is | the trading bot for cTrader | a standalone advisory signal app | a full terminal workspace around the engine |
+| Runs on | cTrader Automate, C# net6.0 | plain Python 3, stdlib only | Next.js + Express (Node 22) + the Python engine |
+| Can trade | yes | **no — no broker connection at all** | **no — displays what the engine decided** |
+| Get started | `docs/QUICKSTART.md` | `python3 -m signals doctor` → `docs/SIGNAL_APP.md` | `./tools/terminal_dev.sh` → `docs/TERMINAL.md` |
+| Live data (BTC / FX) | `docs/LIVE_DATA.md` | `python3 -m signals --preset btc doctor` | keyless providers, no API key |
+
+The **terminal** is [OpenTerminal](https://github.com/ErTasselli/OpenTerminal) (MIT, vendored at a
+pinned commit) with a QuantLOL signal panel wired to the engine over a read-only HTTP bridge — see
+`docs/TERMINAL.md` and `terminal/NOTICE.md`.
 
 Both call the **same rules** (`research/quantlol_ref.py`, parity-tested against the C# core), so a
 signal you see in the app is the decision the bot would make on that closed bar.
@@ -50,7 +54,8 @@ signal you see in the app is the decision the bot would make on that closed bar.
 python3 -m signals doctor                 # validate config + data + external inputs
 python3 -m signals once                   # one advisory read on the newest closed bar
 python3 -m signals serve --port 8080      # local dashboard at http://localhost:8080
-python3 -m unittest tests.test_signals    # 34 tests, offline
+python3 -m unittest tests.test_signals    # 69 tests, offline
+./tools/terminal_dev.sh                   # engine + terminal at http://localhost:3000
 ```
 
 ## Layout

@@ -174,6 +174,8 @@ class SignalConfig:
     def label_for_feed(self):
         """The label must describe the feed actually in use, not the default one."""
         m, p = self.market, (self.live_provider or "yahoo")
+        if self.data_mode == "csv":
+            return "%s (CSV export)" % self.symbol
         if self.data_mode != "live":
             return self.label
         if m == "xauusd":

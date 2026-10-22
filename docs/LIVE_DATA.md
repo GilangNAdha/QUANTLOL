@@ -114,7 +114,20 @@ python3 -m signals --preset xauusd --provider twelvedata --no-order-flow serve -
 
 # spot EUR/USD
 python3 -m signals --preset eurusd --provider twelvedata --no-order-flow once
+
+# no key? evaluate any bar series you already have
+python3 -m signals --preset xauusd --csv-path ~/Downloads/XAUUSD_5m.csv --no-order-flow once
 ```
+
+Without `--no-order-flow`, a volume-less feed now prints:
+
+```
+[warn] feed has no volume: order-flow confirmation cannot pass, so no signal can qualify.
+       Run with --no-order-flow for this feed.
+```
+
+...and the same warning is in `/api/health`, because a dashboard that silently shows `NoSetup`
+forever is worse than one that says why.
 
 The key is read from the environment variable named by `apikey_env` (default
 `TWELVEDATA_API_KEY`). `SignalConfig` stores **only the variable name**; a test asserts the key

@@ -166,6 +166,12 @@ def _cfg(args):
             cfg.data_mode = "live"
         if getattr(args, "symbol", None):
             cfg.live_symbol = args.symbol
+        if getattr(args, "csv_path", None):
+            cfg.csv_path = args.csv_path
+            cfg.data_mode = "csv"
+        if getattr(args, "data_path", None):
+            cfg.data_path = args.data_path
+            cfg.data_mode = "local"
         if getattr(args, "timeframe", None):
             cfg.timeframe_minutes = args.timeframe
         if getattr(args, "no_order_flow", False):
@@ -189,6 +195,8 @@ def main(argv=None):
     ap.add_argument("--data-mode", dest="data_mode", choices=("local", "live", "csv"))
     ap.add_argument("--provider", help="live provider (default: tested fallback chain)")
     ap.add_argument("--symbol", help="provider symbol, e.g. BTCUSDT / BTC-USD / XBTUSD")
+    ap.add_argument("--csv-path", dest="csv_path", help="evaluate a broker/platform CSV export")
+    ap.add_argument("--data-path", dest="data_path", help="evaluate a committed local snapshot")
     ap.add_argument("--gex-source", dest="gex_source", choices=("file", "deribit"))
     ap.add_argument("--no-order-flow", dest="no_order_flow", action="store_true",
                     help="disable the order-flow confirmation for feeds that publish no volume")

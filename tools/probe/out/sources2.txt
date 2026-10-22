@@ -1,19 +1,19 @@
 === DUKASCOPY CONTROL: EURUSD ===
-  EURUSD/2024/00/BID_candles_min_1.bi5 status=ERR bytes=35 decode_fail(LZMAError) len=35 head=55524c4572726f723a203c75726c6f70656e206572726f72
-  EURUSD/2024/00/01/BID_candles_min_1.bi5 status=ERR bytes=35 decode_fail(LZMAError) len=35 head=55524c4572726f723a203c75726c6f70656e206572726f72
-  EURUSD/2024/00/BID_candles_day_1.bi5 status=ERR bytes=35 decode_fail(LZMAError) len=35 head=55524c4572726f723a203c75726c6f70656e206572726f72
+  EURUSD/2024/00/BID_candles_min_1.bi5 status=404 bytes=0 empty
+  EURUSD/2024/00/01/BID_candles_min_1.bi5 status=200 bytes=2694 decode_fail(LZMAError) len=2694 head=5d000040000087000000000000000068feb231fd9edce225
+  EURUSD/2024/00/BID_candles_day_1.bi5 status=200 bytes=473 decode_fail(LZMAError) len=473 head=5d00004000e802000000000000000068feb235312414b573
 === DUKASCOPY XAUUSD VARIANTS ===
-  XAUUSD/2024/00/BID_candles_min_1.bi5 status=ERR bytes=62 decode_fail(LZMAError) len=62 head=55524c4572726f723a203c75726c6f70656e206572726f72
+  XAUUSD/2024/00/BID_candles_min_1.bi5 status=404 bytes=0 empty
   XAUUSD/2024/00/15/BID_candles_min_1.bi5 status=200 bytes=13376 decode_fail(LZMAError) len=13376 head=5d000040000087000000000000000069062423539db731f7
   XAUUSD/2024/00/BID_candles_day_1.bi5 status=200 bytes=517 decode_fail(LZMAError) len=517 head=5d00004000e802000000000000000069062b815eeb5b2ed4
-  XAUUSD/2024/00/BID_candles_hour_1.bi5 status=ERR bytes=35 decode_fail(LZMAError) len=35 head=55524c4572726f723a203c75726c6f70656e206572726f72
-  XAUUSD/2024/00/15/10h_ticks.bi5 status=ERR bytes=35 decode_fail(LZMAError) len=35 head=55524c4572726f723a203c75726c6f70656e206572726f72
-  XAGUSD/2024/00/BID_candles_min_1.bi5 status=404 bytes=0 empty
+  XAUUSD/2024/00/BID_candles_hour_1.bi5 status=503 bytes=0 empty
+  XAUUSD/2024/00/15/10h_ticks.bi5 status=503 bytes=0 empty
+  XAGUSD/2024/00/BID_candles_min_1.bi5 status=503 bytes=0 empty
 === DUKASCOPY freeserv chart JSON ===
   XAU/USD status=403 bytes=0 head=b''
   EUR/USD status=403 bytes=0 head=b''
 === YAHOO ranges ===
-  GC=F 5m/60d status=200 bytes=1125242 bars=17183
-  GC=F 1m/7d status=200 bytes=628726 bars=9583
-  GC=F 1h/730d status=200 bytes=1228473 bars=17399
-  GC=F 1d/10y status=200 bytes=239861 bars=2517
+  GC=F 5m/60d status=200 bytes=1116940 bars=17065
+  GC=F 1m/7d status=200 bytes=586683 bars=8991
+  GC=F 1h/730d status=200 bytes=1227667 bars=17389
+  GC=F 1d/10y status=200 bytes=239826 bars=2517

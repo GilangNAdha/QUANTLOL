@@ -31,14 +31,14 @@ DUKA 2023/05/BID status=404 bytes=0
 DUKA 2023/05/ASK status=404 bytes=0
 
 === Yahoo (COMEX GC=F continuous futures, free delayed) ===
-  status=200 bytes=1225914
-  bars=17399 start=2024-05-30 end=2026-10-21 keylen=17399
+  status=200 bytes=1227667
+  bars=17389 start=2024-05-31 end=2026-10-22 keylen=17389
 
 === Stooq daily XAUUSD ===
   status=200 bytes=796 head=b'<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"></head><body><noscript>T'
 
 === FRED (no key endpoints for gold: LBMA) ===
-  status=200 bytes=902 tail=b'ed</p>\n    </div>\n</article>\n<script type="text/javascript"  src="/KJ6NpT8c4lxzOehSjxfs2rl0OI4/DEapr2hzm2bGrX/UmhvDi0VAQM/fHp-/Dws7Cno"></script></body>\n</html>'
+  status=404 bytes=0 tail=b''
 
 === VIX history (CBOE public csv) ===
-  status=200 bytes=473941 head=b'DATE,OPEN,HIGH,LOW,CLOSE\n01/02/1990,17.240000,17.240000,17.240000,17.240000\n01/03/1990,18.190000,18.190000,18.190000,18.' tail=b'.720000,19.990000\n10/19/2026,18.370000,18.930000,17.390000,18.440000\n10/20/2026,18.420000,19.130000,17.250000,17.310000\n'
+  status=200 bytes=473992 head=b'DATE,OPEN,HIGH,LOW,CLOSE\n01/02/1990,17.240000,17.240000,17.240000,17.240000\n01/03/1990,18.190000,18.190000,18.190000,18.' tail=b'.390000,18.440000\n10/20/2026,18.420000,19.130000,17.250000,17.310000\n10/21/2026,17.250000,17.580000,16.510000,16.680000\n'

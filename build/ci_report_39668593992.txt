@@ -1,0 +1,34 @@
+=== dotnet --info ===
+6.0.428 [/usr/share/dotnet/sdk]
+8.0.132 [/usr/share/dotnet/sdk]
+8.0.206 [/usr/share/dotnet/sdk]
+8.0.319 [/usr/share/dotnet/sdk]
+8.0.426 [/usr/share/dotnet/sdk]
+9.0.122 [/usr/share/dotnet/sdk]
+9.0.205 [/usr/share/dotnet/sdk]
+9.0.319 [/usr/share/dotnet/sdk]
+10.0.113 [/usr/share/dotnet/sdk]
+10.0.204 [/usr/share/dotnet/sdk]
+10.0.303 [/usr/share/dotnet/sdk]
+10.0.402 [/usr/share/dotnet/sdk]
+
+=== BUILD cBot (net6.0, cTrader.Automate 1.0.21) ===
+  Determining projects to restore...
+  Restored /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj (in 566 ms).
+/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(61,16): warning CS0169: The field 'QuantLOLBot._sessionDayRefEquity' is never used [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
+  QuantLOL -> /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/bin/Release/net6.0/QuantLOL.dll
+  QuantLOL -> /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/bin/Release/net6.0/src.algo
+  QuantLOL -> cAlgo/Sources/Robots/src.algo
+
+Build succeeded.
+
+/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(61,16): warning CS0169: The field 'QuantLOLBot._sessionDayRefEquity' is never used [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
+    1 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:05.16
+BUILD_EXIT=0
+
+=== UNIT TESTS ===
+/home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/ParityTests.cs(264,34): error CS0266: Cannot implicitly convert type 'double' to 'int'. An explicit conversion exists (are you missing a cast?) [/home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/QuantLOL.Tests.csproj]
+TEST_EXIT=1

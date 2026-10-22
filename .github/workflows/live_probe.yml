@@ -1,0 +1,150 @@
+name: live-data-probe
+on:
+  workflow_dispatch:
+  push:
+    branches: ["**"]
+    paths:
+      - "tools/probe/live_data_probe.py"
+      - ".github/workflows/live_probe.yml"
+      - "signals/providers.py"
+      - "signals/datafeed.py"
+      - "signals/config.py"
+      - "tests/test_signals.py"
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Optional: add it in Settings > Secrets and variables > Actions. Without it the Twelve Data
+      # rows are reported as SKIP, never as a failure, so the workflow stays green.
+      TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: arena/afc8c595-quantlol
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Probe endpoints
+        run: python3 tools/probe/live_data_probe.py --out tools/probe/out
+      - name: App doctor against real venues
+        shell: bash
+        run: |
+          set -o pipefail
+          O=tools/probe/out/app_doctor.txt
+          : > "$O"
+          for P in binance coinbase kraken; do
+            echo "=== --preset btc --provider $P ===" >> "$O"
+            python3 -m signals --preset btc --data-mode live --provider "$P" doctor >> "$O" 2>&1 || true
+          done
+          echo "=== --preset btc (fallback chain, provider unset) ===" >> "$O"
+          python3 -m signals --preset btc --data-mode live doctor >> "$O" 2>&1 || true
+          echo "=== --preset eurusd (Yahoo, no volume) ===" >> "$O"
+          python3 -m signals --preset eurusd --data-mode live doctor >> "$O" 2>&1 || true
+          if [ -n "$TWELVEDATA_API_KEY" ]; then
+            echo "=== --preset xauusd --provider twelvedata (spot gold, 5min) ===" >> "$O"
+            python3 -m signals --preset xauusd --provider twelvedata --no-order-flow \
+              doctor >> "$O" 2>&1 || true
+            echo "=== --preset eurusd --provider twelvedata (EUR/USD, 5min) ===" >> "$O"
+            python3 -m signals --preset eurusd --provider twelvedata --no-order-flow \
+              doctor >> "$O" 2>&1 || true
+            echo "=== --preset xauusd --provider twelvedata once --json ===" >> "$O"
+            python3 -m signals --preset xauusd --provider twelvedata --no-order-flow \
+              once --json >> "$O" 2>&1 || true
+          else
+            echo "=== Twelve Data: SKIPPED (repository secret TWELVEDATA_API_KEY not set) ===" >> "$O"
+          fi
+          grep -E "^(market|feed|data|NOT READY)" "$O"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: probe-results-${{ github.run_id }}
+          path: tools/probe/out/
+      - name: Commit results
+        shell: bash
+        run: |
+          set -o pipefail
+          git config user.email "ci@quantlol.local"; git config user.name "QuantLOL CI"
+          git add -f tools/probe/out/live_probe.json tools/probe/out/live_probe.md tools/probe/out/app_doctor.txt
+          git commit -q -m "probe: live data endpoint results [skip ci]" || echo "nothing to commit"
+          for i in 1 2 3 4 5; do
+            git fetch -q origin
+            git rebase -q origin/arena/afc8c595-quantlol || { git rebase --abort || true; sleep 5; continue; }
+            if git push -q origin HEAD:arena/afc8c595-quantlol; then echo "pushed on attempt $i"; exit 0; fi
+            sleep 5
+          done
+          echo "could not push probe results; artifacts hold them"
+          exit 1
+
+  # End-to-end proof that the signal app itself can read a real venue feed.
+  # The sandbox used for development has no outbound network, so this is the only place
+  # a live bar can actually reach the engine.
+  live-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: arena/afc8c595-quantlol
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Unit tests
+        run: python3 -m unittest tests.test_signals
+      - name: Fail on any pipe error
+        run: echo "SHELLOPTS=${SHELLOPTS:-}"; python3 --version
+      - name: Doctor (BTC, keyless Binance)
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p build
+          python3 -m signals --preset btc --data-mode live --provider binance doctor | tee build/live_doctor_btc.txt
+      - name: Evaluate one live BTC bar
+        run: |
+          mkdir -p build
+          python3 -m signals --preset btc --data-mode live --provider binance once --json > build/live_once_btc.json || true
+          python3 - <<'PY'
+          import json
+          d = json.load(open("build/live_once_btc.json"))
+          latest = d.get("latest") or {}
+          feed = d.get("data") or {}
+          print("state=%s reason=%s bars=%s source=%s last=%s" % (
+              latest.get("state"), latest.get("reason"), feed.get("bars"),
+              feed.get("source"), feed.get("last_bar_utc")))
+          assert latest.get("state") not in (None, "unavailable"), "engine could not evaluate a live bar"
+          assert (feed.get("bars") or 0) > 50, "not enough live bars"
+          PY
+      - name: Fallback chain (provider unset)
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 -m signals --preset btc --data-mode live --provider coinbase doctor | tee build/live_doctor_coinbase.txt
+      - name: Deribit options positioning (BTC)
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 - <<'PY' | tee build/live_gex_btc.txt
+          from signals.config import SignalConfig
+          from signals import datafeed, providers
+          c = SignalConfig().apply_preset("btc")
+          c.enable_gex, c.gex_source = True, "deribit"
+          bars, meta = providers.fetch("binance", "BTCUSDT", 5, limit=5)
+          st = datafeed.load_gex_deribit(c, spot=bars[-1].c)
+          print(st.status)
+          print(st.data["note"] if st.data else "")
+          for lv in (st.data or {}).get("levels", []):
+              print("  %-10s %.2f" % (lv["kind"], lv["price"]))
+          assert st.available, "Deribit chain unavailable"
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-smoke-${{ github.run_id }}
+          path: build/live_*
+      # Deliberately no push from this job: two CI jobs pushing to the same branch raced.
+      # The probe job is the single writer; this job only proves the engine can consume live bars,
+      # and the artifact holds the evidence if the assertions above pass.

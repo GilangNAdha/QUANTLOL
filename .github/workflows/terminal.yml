@@ -1,0 +1,93 @@
+name: terminal
+
+# Typecheck + build the vendored OpenTerminal tree, then prove the bridge and the signal panel
+# work against the real Python engine. No market data is needed: the engine runs on the committed
+# snapshot, so this job is deterministic and offline.
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "terminal/**"
+      - "signals/**"
+      - ".github/workflows/terminal.yml"
+  pull_request:
+    paths:
+      - "terminal/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: terminal/package-lock.json
+      - name: Install (exact lockfile)
+        working-directory: terminal
+        run: npm ci --no-audit --no-fund
+      - name: Typecheck server
+        working-directory: terminal
+        run: npx tsc --noEmit -p server
+      - name: Typecheck web
+        working-directory: terminal
+        run: npx tsc --noEmit -p web
+      - name: Production build
+        working-directory: terminal
+        run: npm run build -w server && npm run build -w web
+
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: terminal/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install terminal deps
+        working-directory: terminal
+        run: npm ci --no-audit --no-fund
+      - name: Start the signal engine (committed snapshot, no network)
+        run: |
+          rm -rf signals/out
+          python3 -u -m signals serve --port 8080 --preload > /tmp/engine.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf -o /dev/null http://127.0.0.1:8080/api/health && break
+            sleep 0.5
+          done
+          curl -sf http://127.0.0.1:8080/api/health > /dev/null
+          tail -3 /tmp/engine.log
+      - name: Start the terminal API
+        working-directory: terminal
+        run: |
+          npm run dev -w server > /tmp/api.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf -o /dev/null http://127.0.0.1:4000/api/status && break
+            sleep 0.5
+          done
+          tail -5 /tmp/api.log
+      - name: Bridge returns the engine's state
+        run: |
+          curl -sf http://127.0.0.1:4000/api/quantlol/status | tee /tmp/status.json
+          python3 - <<'PY'
+          import json
+          d = json.load(open("/tmp/status.json"))
+          assert d["ok"] is True, d
+          assert d["engine"]["version"], d
+          assert d["latest"]["state"] in ("long", "short", "neutral", "unavailable"), d
+          print("bridge ok:", d["engine"]["version"], d["latest"]["state"], d["latest"]["reason"])
+          PY
+      - name: The panel renders the engine's data
+        working-directory: terminal
+        run: npm run check:signals
+      - name: Engine log tail
+        if: always()
+        run: tail -40 /tmp/engine.log || true

@@ -1,0 +1,49 @@
+name: probe
+on:
+  push:
+    paths: ["tools/probe/**", ".github/workflows/probe.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: arena/afc8c595-quantlol
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Setup probe project (no cAlgo package reference -> avoids algo validator)
+        run: |
+          mkdir -p /tmp/api && cd /tmp/api
+          dotnet new console -o dump --force >/dev/null 2>&1
+          cp "$GITHUB_WORKSPACE/tools/probe/DumpAll.cs" dump/Program.cs
+      - name: Download cAlgo.API nupkg
+        run: |
+          cd /tmp/api
+          curl -sSL -o pkg.nupkg "https://api.nuget.org/v3-flatcontainer/ctrader.automate/1.0.21/ctrader.automate.1.0.21.nupkg"
+          ls -la pkg.nupkg && file pkg.nupkg || true
+          mkdir -p pkg && cd pkg && unzip -o -q ../pkg.nupkg && find . -name '*.dll' -o -name '*.xml' | head -20
+      - name: Dump API
+        run: |
+          cd /tmp/api/dump
+          dotnet build -c Release -v q --nologo 2>&1 | tail -5
+          DLL=$(find /tmp/api/pkg -name 'cAlgo.API.dll' | head -1)
+          echo "DLL=$DLL"
+          dotnet run -c Release --no-build -- "$DLL" "$GITHUB_WORKSPACE/tools/probe/out/api_dump.txt" || echo "DUMP_EXIT=$?"
+          ls -la "$GITHUB_WORKSPACE/tools/probe/out/" || true
+      - name: Data probe
+        run: |
+          mkdir -p tools/probe/out
+          python3 tools/probe/probe_data.py > tools/probe/out/data_probe.txt 2>&1 || echo "probe failed"
+          cat tools/probe/out/data_probe.txt
+      - name: Commit results
+        run: |
+          git config user.email "ci@quantlol.local"; git config user.name "QuantLOL CI"
+          mkdir -p tools/probe/out
+          git add -f tools/probe/out
+          git commit -q -m "ci: probe results [skip ci]" || echo "nothing to commit"
+          git push origin HEAD:arena/afc8c595-quantlol || (git pull --rebase -q origin arena/afc8c595-quantlol && git push origin HEAD:arena/afc8c595-quantlol)

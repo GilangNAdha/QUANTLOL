@@ -1,0 +1,8 @@
+{
+  "vix": 17.31,
+  "as_of": "2026-10-20T20:15:00Z",
+  "quality": "delayed",
+  "source": "Cboe VIX_History.csv (daily close, T+1)",
+  "note": "Daily close. Broad context only.",
+  "change_1d": -1.13
+}

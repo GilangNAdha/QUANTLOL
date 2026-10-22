@@ -1,0 +1,10 @@
+{
+  "meta": {"symbol": "EUR/USD", "interval": "5min", "currency_base": "Euro",
+           "currency_quote": "US Dollar", "type": "Physical Currency"},
+  "values": [
+    {"datetime": "2026-10-22 09:30:00", "open": "1.12309", "high": "1.12317", "low": "1.12309", "close": "1.12317"},
+    {"datetime": "2026-10-22 09:25:00", "open": "1.12322", "high": "1.12325", "low": "1.12302", "close": "1.12304"},
+    {"datetime": "2026-10-22 09:20:00", "open": "1.12330", "high": "1.12330", "low": "1.12302", "close": "1.12327"}
+  ],
+  "status": "ok"
+}

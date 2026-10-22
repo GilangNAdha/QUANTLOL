@@ -1,0 +1,61 @@
+{
+  "datasets": {
+    "gc_1d": {
+      "exchange_timezone": "America/New_York",
+      "fetched_utc": "2026-10-21T20:04:22.310607+00:00",
+      "file": "gc_1d.csv.gz",
+      "first": "2016-10-21 04:00:00",
+      "gmtoffset": -14400,
+      "interval": "1d",
+      "last": "2026-10-21 04:00:00",
+      "note": "Delayed/free data. GC=F is the COMEX front-month continuous series, not spot XAUUSD.",
+      "regular_market_price": 4152.2,
+      "requested_range": "10y",
+      "rows": 2514,
+      "source": "Yahoo Finance chart API",
+      "symbol": "GC%3DF",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=10y&includePrePost=false&events=div%2Csplits"
+    },
+    "gc_5m": {
+      "exchange_timezone": "America/New_York",
+      "fetched_utc": "2026-10-21T20:04:21.305913+00:00",
+      "file": "gc_5m.csv.gz",
+      "first": "2026-08-12 04:00:00",
+      "gmtoffset": -14400,
+      "interval": "5m",
+      "last": "2026-10-21 19:54:13",
+      "note": "Delayed/free data. GC=F is the COMEX front-month continuous series, not spot XAUUSD.",
+      "regular_market_price": 4152.1,
+      "requested_range": "60d",
+      "rows": 13612,
+      "source": "Yahoo Finance chart API",
+      "symbol": "GC%3DF",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=5m&range=60d&includePrePost=false&events=div%2Csplits"
+    },
+    "gc_60m": {
+      "exchange_timezone": "America/New_York",
+      "fetched_utc": "2026-10-21T20:04:21.837718+00:00",
+      "file": "gc_60m.csv.gz",
+      "first": "2024-05-30 04:00:00",
+      "gmtoffset": -14400,
+      "interval": "60m",
+      "last": "2026-10-21 19:54:20",
+      "note": "Delayed/free data. GC=F is the COMEX front-month continuous series, not spot XAUUSD.",
+      "regular_market_price": 4152.2,
+      "requested_range": "730d",
+      "rows": 13737,
+      "source": "Yahoo Finance chart API",
+      "symbol": "GC%3DF",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=60m&range=730d&includePrePost=false&events=div%2Csplits"
+    },
+    "vix_1d": {
+      "fetched_utc": "2026-10-21T20:04:23.087898+00:00",
+      "file": "vix_1d.csv.gz",
+      "first": "1990-01-02 00:00:00",
+      "last": "2026-10-20 00:00:00",
+      "rows": 9298,
+      "source": "Cboe VIX_History.csv (public)"
+    }
+  },
+  "fetched_utc": "2026-10-21T20:04:21.007899+00:00"
+}

@@ -1,0 +1,21 @@
+name: sources2
+on:
+  workflow_dispatch:
+  push:
+    paths: ["tools/probe/sources2.py", ".github/workflows/sources2.yml"]
+permissions: { contents: write }
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: arena/afc8c595-quantlol }
+      - run: |
+          mkdir -p tools/probe/out
+          python3 tools/probe/sources2.py 2>&1 | tee tools/probe/out/sources2.txt
+      - run: |
+          git config user.email "ci@quantlol.local"; git config user.name "QuantLOL CI"
+          git add -f tools/probe/out/sources2.txt
+          git commit -q -m "ci: data source probe 2 [skip ci]" || echo nothing
+          git push origin HEAD:arena/afc8c595-quantlol || (git pull --rebase -q && git push origin HEAD:arena/afc8c595-quantlol)

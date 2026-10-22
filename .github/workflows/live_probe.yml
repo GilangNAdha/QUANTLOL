@@ -48,8 +48,14 @@ jobs:
           python-version: "3.11"
       - name: Unit tests
         run: python3 -m unittest tests.test_signals
+      - name: Fail on any pipe error
+        run: echo "SHELLOPTS=${SHELLOPTS:-}"; python3 --version
       - name: Doctor (BTC, keyless Binance)
-        run: python3 -m signals --preset btc --data-mode live --provider binance doctor | tee build/live_doctor_btc.txt
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p build
+          python3 -m signals --preset btc --data-mode live --provider binance doctor | tee build/live_doctor_btc.txt
       - name: Evaluate one live BTC bar
         run: |
           mkdir -p build
@@ -66,9 +72,14 @@ jobs:
           assert (feed.get("bars") or 0) > 50, "not enough live bars"
           PY
       - name: Fallback chain (provider unset)
-        run: python3 -m signals --preset btc --data-mode live --provider coinbase doctor | tee build/live_doctor_coinbase.txt
-      - name: Deribit options positioning (BTC)
+        shell: bash
         run: |
+          set -o pipefail
+          python3 -m signals --preset btc --data-mode live --provider coinbase doctor | tee build/live_doctor_coinbase.txt
+      - name: Deribit options positioning (BTC)
+        shell: bash
+        run: |
+          set -o pipefail
           python3 - <<'PY' | tee build/live_gex_btc.txt
           from signals.config import SignalConfig
           from signals import datafeed, providers
@@ -85,7 +96,7 @@ jobs:
       - name: Commit evidence
         run: |
           git config user.email "ci@quantlol.local"; git config user.name "QuantLOL CI"
-          git add -f build/live_doctor_btc.txt build/live_doctor_coinbase.txt build/live_once_btc.json build/live_gex_btc.txt
+          git add -f build/live_doctor_btc.txt build/live_doctor_coinbase.txt build/live_doctor_kraken.txt build/live_once_btc.json build/live_gex_btc.txt
           git commit -q -m "probe: live signal-app smoke results [skip ci]" || echo nothing
           git pull --rebase -q || true
           git push origin HEAD:arena/afc8c595-quantlol

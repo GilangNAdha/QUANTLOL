@@ -82,9 +82,10 @@ python3 -m signals --preset btc doctor
 python3 -m signals --preset btc once
 python3 -m signals --preset btc serve --port 8080
 
-# same, but pin a venue / symbol
-python3 -m signals --preset btc --provider kraken --symbol XBTUSD once
-python3 -m signals --preset btc --provider coinbase --symbol BTC-USD once
+# same, but pin a venue (the symbol spelling is resolved per venue: BTCUSDT / BTC-USD / XBTUSD)
+python3 -m signals --preset btc --provider kraken once
+python3 -m signals --preset btc --provider coinbase once
+python3 -m signals --preset btc --provider kraken --symbol XBTUSD once   # explicit override
 
 # EUR/USD via Yahoo (no volume -> order-flow confirmation disabled by the preset)
 python3 -m signals --preset eurusd once
@@ -116,7 +117,9 @@ mandate ($5/trade, $15/day, $30 DD, fixed volume, no resizing):
 * **flip** — strike where cumulative call-minus-put open interest changes sign.
 
 **Honesty note:** Deribit's summary endpoint publishes `mark_iv` and `open_interest` but **no
-gamma**, so these are *open-interest concentrations*, not dealer gamma. The status string says
+gamma** - and it does not even return a `strike_price` field, so the strike is parsed out of the
+instrument name (`BTC-27MAR26-100000-C`). These are therefore *open-interest concentrations*, not
+dealer gamma. The status string says
 `oi-derived` and the payload carries the same disclaimer. This is still strictly better than the
 file-based `GLD` proxy that was previously the only option, which is why `enable_gex` remains
 `false` by default: turning it on now means something.

@@ -50,6 +50,16 @@ PROVIDERS = {
 }
 
 # Sensible defaults so a user can say provider=binance without knowing the pair format.
+# The same market is spelled differently per venue (BTCUSDT / BTC-USD / XBTUSD), so a market
+# preset resolves the symbol per provider instead of pinning one venue's spelling.
+PRESET_SYMBOLS = {
+    "btc": {"binance": "BTCUSDT", "bybit": "BTCUSDT", "okx": "BTC-USDT", "coinbase": "BTC-USD",
+            "bitstamp": "btcusd", "kraken": "XBTUSD", "deribit": "BTC-PERPETUAL",
+            "yahoo": "BTC-USD"},
+    "eurusd": {"yahoo": "EURUSD=X", "twelvedata": "EUR/USD", "binance": "EURUSDT"},
+    "xauusd": {"yahoo": "GC=F"},
+}
+
 DEFAULT_SYMBOLS = {
     "binance": "BTCUSDT", "bybit": "BTCUSDT", "okx": "BTC-USDT", "coinbase": "BTC-USD",
     "bitstamp": "btcusd", "kraken": "XBTUSD", "deribit": "BTC-PERPETUAL",
@@ -269,13 +279,21 @@ ADAPTERS = {
 FALLBACK_ORDER = ["binance", "bybit", "okx", "coinbase", "kraken", "bitstamp", "deribit", "yahoo"]
 
 
-def fetch(provider, symbol=None, timeframe_minutes=5, limit=500, api_key=None, yahoo_range="5d"):
+def default_symbol(provider, market=None):
+    """BTC is BTCUSDT on Binance, BTC-USD on Coinbase and XBTUSD on Kraken. Resolve per venue."""
+    if market and provider in PRESET_SYMBOLS.get(market, {}):
+        return PRESET_SYMBOLS[market][provider]
+    return DEFAULT_SYMBOLS.get(provider, "")
+
+
+def fetch(provider, symbol=None, timeframe_minutes=5, limit=500, api_key=None, yahoo_range="5d",
+          market=None):
     """Fetches and normalises closed bars from one provider. Returns (bars, meta)."""
     if provider not in ADAPTERS:
         raise ProviderError("unknown provider '%s' (choose from %s)" % (provider, ", ".join(sorted(ADAPTERS))))
-    sym = symbol or DEFAULT_SYMBOLS.get(provider, "")
+    sym = symbol or default_symbol(provider, market)
     if not sym:
-        raise ProviderError("provider '%s' needs an explicit symbol" % provider)
+        raise ProviderError("provider '%s' needs an explicit symbol for market %r" % (provider, market))
     kw = {"api_key": api_key} if provider == "twelvedata" else {}
     if provider == "yahoo":
         kw["range_"] = yahoo_range
@@ -290,32 +308,60 @@ def fetch(provider, symbol=None, timeframe_minutes=5, limit=500, api_key=None, y
 
 
 # --------------------------------------------------------------- options positioning
+def parse_option_name(name):
+    """BTC-31DEC26-100000-C -> (strike=100000.0, kind='call'). Deribit encodes the strike in the
+    instrument name; the book-summary payload does NOT carry a strike_price field."""
+    parts = str(name or "").split("-")
+    if len(parts) < 4:
+        return None, None
+    try:
+        strike = float(parts[-2])
+    except ValueError:
+        return None, None
+    kind = "call" if parts[-1].upper() == "C" else ("put" if parts[-1].upper() == "P" else None)
+    if not kind or strike <= 0:
+        return None, None
+    return strike, kind
+
+
 def btc_option_chain(currency="BTC", timeout=DEFAULT_TIMEOUT):
     """Whole options chain in one keyless call: strike, mark_iv, open_interest, expiry.
 
-    Deribit publishes the summary (not the raw greeks) here; the greeks endpoint is per instrument,
-    so anything derived below is OI concentration, not computed gamma. Label it as such.
+    Deribit's summary endpoint publishes open interest and mark IV but **no greeks**, and it does
+    not even include the strike as a field - the strike is parsed out of the instrument name.
+    Anything derived below is therefore OI concentration, not computed gamma.
     """
     url = ("https://www.deribit.com/api/v2/public/get_book_summary_by_currency"
            "?currency=%s&kind=option" % currency.upper())
     d = _json(url, timeout=timeout)
-    rows = (d.get("result") or [])
+    if "result" not in d:
+        raise ProviderError("deribit chain: %s" % str(d.get("error") or list(d))[:160])
+    rows = d.get("result") or []
     out = []
     for r in rows:
+        name = r.get("instrument_name")
+        strike, kind = parse_option_name(name)
+        if strike is None and r.get("strike_price") is not None:
+            try:
+                strike = float(r["strike_price"])
+            except (TypeError, ValueError):
+                strike = None
+            kind = "call" if str(name).endswith("-C") else "put"
+        if strike is None:
+            continue
         try:
-            strike = float(r["strike_price"])
             oi = float(r.get("open_interest") or 0.0)
             iv = float(r.get("mark_iv") or 0.0)
-        except (KeyError, TypeError, ValueError):
+        except (TypeError, ValueError):
             continue
-        if strike <= 0 or oi < 0:
+        if oi < 0:
             continue
-        out.append({"instrument": r.get("instrument_name"), "strike": strike, "oi": oi,
-                    "iv": iv, "expiry": r.get("expiration_timestamp"),
-                    "type": "call" if str(r.get("instrument_name", "")).endswith("-C") else "put",
+        out.append({"instrument": name, "strike": strike, "oi": oi, "iv": iv,
+                    "expiry": r.get("expiration_timestamp"), "type": kind,
                     "underlying": r.get("underlying_price")})
     if not out:
-        raise ProviderError("empty options chain for %s" % currency)
+        raise ProviderError("options chain for %s had %d rows but no parseable strikes"
+                            % (currency, len(rows)))
     return out
 
 

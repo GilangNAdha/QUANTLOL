@@ -233,7 +233,8 @@ def load_feed(cfg):
     for name in order:
         try:
             bars, meta = providers.fetch(name, cfg.live_symbol or None, cfg.timeframe_minutes,
-                                         limit=cfg.live_limit, api_key=key, yahoo_range=cfg.live_range)
+                                         limit=cfg.live_limit, api_key=key, yahoo_range=cfg.live_range,
+                                         market=cfg.market)
             res = _from_provider(bars, meta, cfg)
             if errors:
                 res.note = ("fell back to %s after %d failure(s): %s | %s"

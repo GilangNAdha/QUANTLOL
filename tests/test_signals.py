@@ -548,7 +548,7 @@ class TestLiveProvidersOffline(unittest.TestCase):
         cfg = SignalConfig(data_mode="live", live_limit=2, require_order_flow=True)
         calls = []
 
-        def fake_fetch(name, symbol=None, tf=5, limit=500, api_key=None, yahoo_range="5d"):
+        def fake_fetch(name, symbol=None, tf=5, limit=500, api_key=None, yahoo_range="5d", market=None):
             calls.append(name)
             if name in ("binance", "bybit"):
                 raise self.pv.ProviderError("HTTP 451")
@@ -609,6 +609,17 @@ class TestInstrumentPresets(unittest.TestCase):
         self.assertAlmostEqual(995.5, c.max_stop_distance, places=1)
         self.assertTrue(c.require_order_flow)                  # venue feed has real volume
 
+    def test_symbol_spelling_follows_the_venue_not_the_preset(self):
+        from signals import providers
+        from signals.config import SignalConfig
+        c = SignalConfig().apply_preset("btc").validate()
+        self.assertEqual("", c.live_symbol)          # no venue pinned
+        self.assertEqual("btc", c.market)
+        self.assertEqual("BTCUSDT", providers.default_symbol("binance", c.market))
+        self.assertEqual("BTC-USD", providers.default_symbol("coinbase", c.market))
+        self.assertEqual("XBTUSD", providers.default_symbol("kraken", c.market))
+        self.assertEqual("btcusd", providers.default_symbol("bitstamp", c.market))
+
     def test_eurusd_preset_disables_an_impossible_order_flow_test(self):
         from signals.config import SignalConfig
         c = SignalConfig().apply_preset("eurusd").validate()
@@ -626,6 +637,50 @@ class TestInstrumentPresets(unittest.TestCase):
         c.gex_source = "deribit"
         with self.assertRaises(ConfigError):
             c.validate()
+
+
+class TestOptionChainParsing(unittest.TestCase):
+    """Deribit's chain summary carries no strike_price field; the strike lives in the name."""
+
+    def test_strike_comes_from_the_instrument_name(self):
+        from signals import providers
+        real = providers._json
+        providers._json = lambda *a, **k: {"result": [
+            {"instrument_name": "BTC-27MAR26-100000-C", "open_interest": 500.0, "mark_iv": 52.5,
+             "underlying_price": 101000.0},
+            {"instrument_name": "BTC-27MAR26-100000-P", "open_interest": 300.0, "mark_iv": 54.0},
+            {"instrument_name": "BTC-27MAR26-105000-C", "open_interest": 0.0, "mark_iv": 51.0}]}
+        try:
+            chain = providers.btc_option_chain("BTC")
+        finally:
+            providers._json = real
+        self.assertEqual(3, len(chain))
+        self.assertEqual(100000.0, chain[0]["strike"])
+        self.assertEqual("call", chain[0]["type"])
+        self.assertEqual("put", chain[1]["type"])
+        self.assertEqual(105000.0, chain[2]["strike"])
+
+    def test_an_api_error_is_reported_not_swallowed(self):
+        from signals import providers
+        real = providers._json
+        providers._json = lambda *a, **k: {"error": {"code": 10001, "message": "bad request"}}
+        try:
+            with self.assertRaises(providers.ProviderError) as ctx:
+                providers.btc_option_chain("BTC")
+        finally:
+            providers._json = real
+        self.assertIn("bad request", str(ctx.exception))
+
+    def test_rows_without_parseable_strikes_fail_loudly(self):
+        from signals import providers
+        real = providers._json
+        providers._json = lambda *a, **k: {"result": [{"instrument_name": "BTC-PERPETUAL"}]}
+        try:
+            with self.assertRaises(providers.ProviderError) as ctx:
+                providers.btc_option_chain("BTC")
+        finally:
+            providers._json = real
+        self.assertIn("no parseable strikes", str(ctx.exception))
 
 
 class TestOptionsOpenInterest(unittest.TestCase):

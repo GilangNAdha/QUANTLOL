@@ -30,9 +30,16 @@ def cmd_doctor(args):
     feed = datafeed.load_feed(cfg)
     print("data   :", feed.describe())
     if cfg.data_mode == "live":
-        print("feed   : %s (%s) %s" % (cfg.live_provider or "auto-chain", cfg.live_symbol or "default",
-                                       "KEY SET" if os.environ.get(cfg.apikey_env or "") else
-                                       ("key required" if cfg.live_provider == "twelvedata" else "keyless")))
+        from . import providers as _pv
+        if cfg.live_provider:
+            sym = cfg.live_symbol or _pv.default_symbol(cfg.live_provider, cfg.market)
+            feedtxt = "%s (%s)" % (cfg.live_provider, sym or "?")
+        else:
+            feedtxt = "auto-chain " + " > ".join(
+                "%s:%s" % (p, _pv.default_symbol(p, cfg.market)) for p in _pv.FALLBACK_ORDER
+                if _pv.default_symbol(p, cfg.market))
+        print("feed   : %s %s" % (feedtxt, "KEY SET" if os.environ.get(cfg.apikey_env or "") else
+                                  ("key required" if cfg.live_provider == "twelvedata" else "keyless")))
     vix = datafeed.load_vix(cfg)
     gex = datafeed.load_gex(cfg, spot=feed.bars[-1].c if feed.ok and feed.bars else None)
     print("vix    :", vix.status)

@@ -21,8 +21,9 @@ class SignalConfig:
     data_mode: str = "local"                 # local | live | csv
     data_path: str = "research/data/gc_5m.csv.gz"
     # live: a keyless public venue feed. provider="" tries the tested fallback chain.
+    market: str = "xauusd"                   # xauusd | btc | eurusd - selects per-venue symbol spelling
     live_provider: str = ""                  # binance | kraken | coinbase | okx | bitstamp | bybit | deribit | yahoo | twelvedata
-    live_symbol: str = ""                    # empty = the provider's BTC default
+    live_symbol: str = ""                    # empty = resolved from market + provider
     live_range: str = "5d"                   # yahoo only
     live_limit: int = 500                    # bars requested per poll
     apikey_env: str = "TWELVEDATA_API_KEY"   # only for providers that need a key; never stored here
@@ -99,6 +100,8 @@ class SignalConfig:
             raise ConfigError("units_per_lot must be in (0, 10000000]")
         if not (0 < self.ounces_per_lot <= 10000):
             raise ConfigError("ounces_per_lot must be in (0, 10000]")
+        if self.market not in ("xauusd", "btc", "eurusd"):
+            raise ConfigError("market must be xauusd|btc|eurusd")
         if self.live_provider and self.live_provider not in (
                 "binance", "bybit", "okx", "coinbase", "kraken", "bitstamp", "deribit", "yahoo", "twelvedata"):
             raise ConfigError("unknown live_provider '%s'" % self.live_provider)
@@ -171,14 +174,14 @@ class SignalConfig:
         if p == "xauusd":
             self.symbol = "XAUUSD"
             self.label, self.units_per_lot, self.tick = "XAUUSD (proxy: COMEX GC=F)", 100.0, 0.01
-            self.live_provider, self.live_symbol = "yahoo", "GC=F"
+            self.market, self.live_provider, self.live_symbol = "xauusd", "yahoo", "GC=F"
             self.commission_round_trip, self.assumed_spread_ticks = 0.14, 30
             self.lots, self.require_order_flow = 0.01, True
         elif p == "btc":
             self.symbol = "BTCUSD"
             self.label = "BTCUSD (spot, venue feed)"
             self.units_per_lot, self.tick = 1.0, 0.1
-            self.live_provider, self.live_symbol = "binance", "BTCUSDT"
+            self.market, self.live_provider, self.live_symbol = "btc", "binance", ""
             self.data_mode = "live"          # there is no committed BTC snapshot to replay
             self.commission_round_trip, self.assumed_spread_ticks = 0.02, 2
             # 0.005 BTC ~ $500 notional at $100k: a 1% stop (~$1000) stays inside the $5 cap
@@ -188,7 +191,7 @@ class SignalConfig:
             self.symbol = "EURUSD"
             self.label = "EURUSD (spot, Yahoo; no volume)"
             self.units_per_lot, self.tick = 100000.0, 0.00001
-            self.live_provider, self.live_symbol = "yahoo", "EURUSD=X"
+            self.market, self.live_provider, self.live_symbol = "eurusd", "yahoo", ""
             self.data_mode = "live"         # there is no committed EURUSD snapshot to replay
             self.commission_round_trip, self.assumed_spread_ticks = 0.10, 10
             self.lots = 0.01
@@ -210,7 +213,8 @@ class SignalConfig:
             "data_mode": self.data_mode,
             "data_source": (self.data_path if self.data_mode == "local" else
                             (self.csv_path if self.data_mode == "csv" else
-                             "%s/%s" % (self.live_provider or "auto-chain", self.live_symbol or "default"))),
+                             "%s/%s" % (self.live_provider or "auto-chain",
+                                        self.live_symbol or ("auto:" + self.market)))),
             "lots": self.lots, "ounces_per_lot": self.ounces_per_lot,
             "volume": "%.4f lot fixed = %.4f units (never resized)" % (self.lots, self.lots * self.contract_units),
             "contract_units": self.contract_units,

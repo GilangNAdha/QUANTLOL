@@ -25,6 +25,21 @@ jobs:
           python-version: "3.11"
       - name: Probe endpoints
         run: python3 tools/probe/live_data_probe.py --out tools/probe/out
+      - name: App doctor against real venues
+        shell: bash
+        run: |
+          set -o pipefail
+          O=tools/probe/out/app_doctor.txt
+          : > "$O"
+          for P in binance coinbase kraken; do
+            echo "=== --preset btc --provider $P ===" >> "$O"
+            python3 -m signals --preset btc --data-mode live --provider "$P" doctor >> "$O" 2>&1 || true
+          done
+          echo "=== --preset btc (fallback chain, provider unset) ===" >> "$O"
+          python3 -m signals --preset btc --data-mode live doctor >> "$O" 2>&1 || true
+          echo "=== --preset eurusd (Yahoo, no volume) ===" >> "$O"
+          python3 -m signals --preset eurusd --data-mode live doctor >> "$O" 2>&1 || true
+          grep -E "^(market|feed|data|NOT READY)" "$O"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -35,7 +50,7 @@ jobs:
         run: |
           set -o pipefail
           git config user.email "ci@quantlol.local"; git config user.name "QuantLOL CI"
-          git add -f tools/probe/out/live_probe.json tools/probe/out/live_probe.md
+          git add -f tools/probe/out/live_probe.json tools/probe/out/live_probe.md tools/probe/out/app_doctor.txt
           git commit -q -m "probe: live data endpoint results [skip ci]" || echo "nothing to commit"
           for i in 1 2 3 4 5; do
             git fetch -q origin
@@ -111,18 +126,6 @@ jobs:
         with:
           name: live-smoke-${{ github.run_id }}
           path: build/live_*
-      - name: Commit evidence
-        shell: bash
-        run: |
-          set -o pipefail
-          git config user.email "ci@quantlol.local"; git config user.name "QuantLOL CI"
-          git add -f build/live_doctor_btc.txt build/live_doctor_coinbase.txt build/live_doctor_kraken.txt build/live_once_btc.json build/live_gex_btc.txt
-          git commit -q -m "probe: live signal-app smoke results [skip ci]" || echo "nothing to commit"
-          for i in 1 2 3 4 5; do
-            git fetch -q origin
-            git rebase -q origin/arena/afc8c595-quantlol || { git rebase --abort || true; sleep 5; continue; }
-            if git push -q origin HEAD:arena/afc8c595-quantlol; then echo "pushed on attempt $i"; exit 0; fi
-            sleep 5
-          done
-          echo "could not push smoke evidence; artifacts hold it"
-          exit 1
+      # Deliberately no push from this job: two CI jobs pushing to the same branch raced.
+      # The probe job is the single writer; this job only proves the engine can consume live bars,
+      # and the artifact holds the evidence if the assertions above pass.

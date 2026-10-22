@@ -251,6 +251,52 @@ PROBES = [
 ]
 
 
+def app_checks():
+    """Runs the signal app's own adapters against the real venues.
+
+    This is the part that matters: an endpoint can answer 200 and still hand back candles the
+    engine cannot use (wrong column order, no volume, an in-progress bar). These rows are produced
+    by signals.providers, i.e. exactly the code path `python3 -m signals --preset btc` uses.
+    """
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    from signals import providers  # noqa: E402
+
+    out = []
+    for name in ("binance", "coinbase", "kraken", "okx", "bitstamp", "deribit", "bybit"):
+        t0 = time.time()
+        rec = {"class": "app", "name": "signals.providers/%s" % name,
+               "base": providers.PROVIDERS[name][2], "bars": 0, "first": "?", "last": "?",
+               "volume": "?", "key": "none", "status": None, "ms": None, "note": ""}
+        try:
+            bars, meta = providers.fetch(name, None, 5, limit=200, market="btc")
+            rec.update(status=200, bars=len(bars), first=bars[0].t.strftime("%Y-%m-%d %H:%M"),
+                       last=bars[-1].t.strftime("%Y-%m-%d %H:%M"),
+                       volume="yes" if meta.get("volume_available") else "NO",
+                       note="%s:%s | %s" % (meta.get("provider"), meta.get("symbol"), meta.get("note", "")))
+        except Exception as e:
+            rec.update(status="ERR", note=str(e)[:150])
+        rec["ms"] = int((time.time() - t0) * 1000)
+        out.append(rec)
+
+    rec = {"class": "app", "name": "signals / Deribit OI levels", "base": "https://www.deribit.com",
+           "bars": 0, "first": "?", "last": "?", "volume": "n/a", "key": "none", "status": None,
+           "ms": None, "note": ""}
+    t0 = time.time()
+    try:
+        chain = providers.btc_option_chain("BTC")
+        spot = providers.fetch("binance", None, 5, limit=5, market="btc")[0][-1].c
+        levels, info = providers.oi_levels(chain, spot, band=0.25)
+        rec.update(status=200, bars=len(chain),
+                   first="strikes=%d" % info["strikes"], last="levels=%d" % len(levels),
+                   note="spot=%.0f | %s | %s" % (spot, ", ".join("%s@%.0f" % (l["kind"], l["price"]) for l in levels),
+                                                 "OI concentration, not gamma"))
+    except Exception as e:
+        rec.update(status="ERR", note=str(e)[:150])
+    rec["ms"] = int((time.time() - t0) * 1000)
+    out.append(rec)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="tools/probe/out")
@@ -267,6 +313,13 @@ def main():
         print("%-14s %-34s status=%-5s %6sms bars=%-4s key=%s %s" % (
             klass, name, rec["status"], rec["ms"], rec["bars"], rec["key"],
             (rec.get("api_error") or rec.get("parse_error") or rec.get("error") or "")[:70]))
+
+    print("\n--- the app's own adapters (signals.providers) ---")
+    for rec in app_checks():
+        results.append(rec)
+        print("%-14s %-34s status=%-5s %6sms bars=%-4s vol=%-3s %s" % (
+            rec["class"], rec["name"], rec["status"], rec["ms"], rec["bars"], rec["volume"],
+            (rec.get("note") or rec.get("error") or "")[:80]))
 
     stamp = datetime.now(timezone.utc)
     doc = {"generated_utc": stamp.isoformat(), "runner": os.environ.get("RUNNER_OS", "unknown"),

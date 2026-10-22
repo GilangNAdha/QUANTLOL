@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>QuantLOL Signals</title>
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#121821; --panel2:#0e141c; --line:#1f2a37;
+    --txt:#e6edf3; --dim:#8b98a8; --dim2:#5f6c7b;
+    --long:#2ea043; --short:#da3633; --neutral:#8b949e; --accent:#388bfd;
+    --warn:#d29922; --ok:#3fb950; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+       font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:1240px;margin:0 auto;padding:18px 20px 48px}
+  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+  .brand{font-weight:700;letter-spacing:.2px;font-size:17px}
+  .brand span{color:var(--dim);font-weight:500}
+  .tag{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
+  .tag.advisory{border-color:#3a2f12;background:#1a1509;color:#d8b25a}
+  .pill{font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid var(--line)}
+  .pill.ok{border-color:#1d3a24;background:#0f2013;color:var(--ok)}
+  .pill.warn{border-color:#3a2f12;background:#1a1509;color:var(--warn)}
+  .pill.err{border-color:#3d1d1d;background:#20100f;color:#f85149}
+  .spacer{flex:1}
+  button{background:#182230;color:var(--txt);border:1px solid var(--line);border-radius:8px;
+         padding:7px 12px;cursor:pointer;font-size:13px}
+  button:hover{border-color:#2f4056;background:#1c2839}
+  .grid{display:grid;grid-template-columns:1.35fr 1fr;gap:14px}
+  @media(max-width:980px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .card h3{margin:0 0 12px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600}
+  .hero{display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap}
+  .badge{font-size:13px;font-weight:700;letter-spacing:.06em;padding:8px 14px;border-radius:9px;border:1px solid var(--line)}
+  .badge.long{background:#0f2416;border-color:#1f5130;color:#56d364}
+  .badge.short{background:#25100f;border-color:#5c2321;color:#ff7b72}
+  .badge.neutral{background:#161b22;color:var(--dim)}
+  .badge.unavailable{background:#1a1509;border-color:#3a2f12;color:var(--warn)}
+  .price{font:600 34px/1.1 var(--mono)}
+  .sub{color:var(--dim);font-size:12px}
+  .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:14px}
+  .kv div{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+  .kv .k{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--dim2)}
+  .kv .v{font:600 15px/1.4 var(--mono);margin-top:2px}
+  .v.pos{color:#56d364}.v.neg{color:#ff7b72}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{text-align:left;color:var(--dim2);font-weight:600;font-size:10.5px;letter-spacing:.06em;
+     text-transform:uppercase;padding:0 8px 7px 0;border-bottom:1px solid var(--line)}
+  td{padding:7px 8px 7px 0;border-bottom:1px solid #161d26;font-family:var(--mono);white-space:nowrap}
+  td.t{font-family:inherit;color:var(--dim)}
+  .muted{color:var(--dim)}
+  .mono{font-family:var(--mono)}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .bars{margin-top:6px}
+  .bar{display:grid;grid-template-columns:132px 1fr 46px;gap:8px;align-items:center;margin:5px 0;font-size:12px}
+  .bar .track{background:#0d131b;border-radius:5px;height:8px;overflow:hidden}
+  .bar .fill{height:8px;background:#2b3947}
+  .bar .fill.hot{background:#3d4f63}
+  .note{font-size:11.5px;color:var(--dim);margin-top:10px;line-height:1.5}
+  .warnbox{border:1px solid #3a2f12;background:#171208;color:#e3c26d;border-radius:9px;padding:10px 12px;font-size:12px;margin-top:12px}
+  .errbox{border:1px solid #3d1d1d;background:#1b0f0f;color:#ff9d96;border-radius:9px;padding:10px 12px;font-size:12px;margin-top:12px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .chip{border:1px solid var(--line);background:var(--panel2);border-radius:7px;padding:4px 8px;font-size:11.5px;color:var(--dim)}
+  .chip b{color:var(--txt);font-weight:600}
+  svg{display:block;width:100%;height:auto}
+  footer{margin-top:18px;color:var(--dim2);font-size:11.5px;display:flex;gap:14px;flex-wrap:wrap}
+  .dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px}
+  .dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.err{background:#f85149}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">QuantLOL <span>Signals</span></div>
+    <span class="tag advisory">advisory only · no orders</span>
+    <span class="tag" id="modeTag">data: …</span>
+    <div class="spacer"></div>
+    <span class="pill" id="healthPill"><span class="dot warn"></span>connecting…</span>
+    <button id="refresh">Refresh now</button>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h3>Current read <span id="barInfo" class="muted" style="text-transform:none;letter-spacing:0"></span></h3>
+      <div class="hero">
+        <span class="badge neutral" id="badge">…</span>
+        <div>
+          <div class="price" id="price">—</div>
+          <div class="sub" id="priceSub">waiting for data</div>
+        </div>
+      </div>
+      <div class="kv" id="plan"></div>
+      <div id="planNote"></div>
+      <div id="alerts"></div>
+    </section>
+
+    <section class="card">
+      <h3>Context &amp; data quality</h3>
+      <div class="chips" id="chips"></div>
+      <div id="gexLevels" class="note"></div>
+      <div class="note" id="dataNote"></div>
+      <div class="note" id="riskNote"></div>
+    </section>
+  </div>
+
+  <div class="grid" style="margin-top:14px">
+    <section class="card">
+      <h3>Recent signals</h3>
+      <table>
+        <thead><tr><th>Bar (UTC)</th><th>Side</th><th>Setup</th><th>Entry</th><th>Stop</th><th>Target</th><th>Risk $</th><th>R:R</th><th>Score</th></tr></thead>
+        <tbody id="signals"><tr><td colspan="9" class="muted">no signal yet</td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h3>Why there is no signal (this session)</h3>
+      <div class="bars" id="reasons"><div class="muted" style="font-size:12px">waiting…</div></div>
+      <div class="note" id="engineNote"></div>
+    </section>
+  </div>
+
+  <footer>
+    <span id="footer">…</span>
+  </footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const fmt = (v, d = 2) => (v === null || v === undefined || Number.isNaN(v)) ? "—" : Number(v).toFixed(d);
+const esc = (s) => String(s ?? "").replace(/[<>&]/g, c => ({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]));
+
+function badgeFor(state){
+  const map = {long:["badge long","LONG"], short:["badge short","SHORT"],
+               neutral:["badge neutral","NO SIGNAL"], unavailable:["badge unavailable","DATA UNAVAILABLE"]};
+  return map[state] || map.neutral;
+}
+
+function render(s){
+  const latest = s.latest || {};
+  const cfg = s.config || {};
+  const data = s.data || {};
+  const h = s.health || {};
+
+  // header
+  $("modeTag").textContent = `${cfg.label || cfg.symbol || "—"} · M${cfg.timeframe_minutes || "?"} · ${data.quality || "?"}`;
+  const pill = $("healthPill");
+  const sev = !h.ok ? "err" : (h.issues || []).some(i => i.severity === "warn") ? "warn" : "ok";
+  pill.className = "pill " + sev;
+  pill.innerHTML = `<span class="dot ${sev}"></span>${h.ok ? (sev === "warn" ? "degraded" : "healthy") : "error"}`;
+  pill.title = (h.issues || []).map(i => i.text).join("\n");
+
+  // hero
+  const [cls, txt] = badgeFor(latest.state);
+  $("badge").className = cls; $("badge").textContent = txt;
+  $("price").textContent = fmt(latest.price, 2);
+  const bt = latest.bar_time_utc ? latest.bar_time_utc.replace("T", " ").slice(0, 16) : "—";
+  $("priceSub").textContent = latest.bar_time_utc
+    ? `bar ${bt}Z · ${fmt(latest.bar_age_minutes, 0)} min old · ${latest.session || ""} · bar close confirmed`
+    : "no evaluated bar yet";
+  $("barInfo").textContent = latest.bar_time_utc ? `· bar ${bt}Z` : "";
+
+  // plan
+  const plan = $("plan");
+  if (latest.state === "long" || latest.state === "short") {
+    plan.innerHTML = [
+      ["Entry", fmt(latest.entry, 2)],
+      ["Stop", fmt(latest.stop, 2)],
+      ["Target", fmt(latest.target, 2)],
+      ["Planned risk", `$${fmt(latest.risk_usd, 2)}`],
+      ["Net R:R", fmt(latest.rr_net, 2)],
+      ["Score", fmt(latest.score, 1)],
+    ].map(([k, v]) => `<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
+    $("planNote").innerHTML = `<div class="note">stop ${fmt(latest.stop_ticks,0)} ticks · target ${fmt(latest.target_ticks,0)} ticks` +
+      (latest.synthetic_target ? " · target is a synthetic 2R fallback (no structural level beyond the minimum R:R)" : " · structural target") +
+      `<br>evidence: ${esc((latest.evidence || []).join(" · ") || "—")}</div>`;
+  } else {
+    plan.innerHTML = [["Reason", latest.reason || "—"], ["Detail", latest.detail || "—"],
+                      ["ATR", fmt(latest.atr, 2)], ["Session", latest.session || "—"]]
+      .map(([k, v]) => `<div><div class="k">${k}</div><div class="v" style="font-size:12.5px">${esc(v)}</div></div>`).join("");
+    $("planNote").innerHTML = `<div class="note">A rejection is a result, not a failure. The engine only emits when a sweep, a confirmed shift, location, order-flow and the $5 cap all agree.</div>`;
+  }
+
+  // alerts
+  const alerts = [];
+  (h.issues || []).forEach(i => {
+    alerts.push(`<div class="${i.severity === "error" ? "errbox" : "warnbox"}">${esc(i.text)}</div>`);
+  });
+  if (data.quality === "proxy") {
+    alerts.push(`<div class="warnbox">Data is <b>${esc(data.source || "proxy")}</b> — ${esc(data.note || "a proxy for the traded instrument")}. Levels are indicative, not your broker's quote.</div>`);
+  }
+  $("alerts").innerHTML = alerts.join("");
+
+  // chips
+  const vix = (s.external || {}).vix || {}, gex = (s.external || {}).gex || {};
+  const chips = [
+    ["session", latest.session || "—"],
+    ["data", `${data.quality || "?"} · ${fmt(data.age_minutes,0)}m old`],
+    ["VIX", vix.data ? `${fmt(vix.data.level,2)} (${vix.quality})` : (vix.status || "off")],
+    ["GEX", gex.available ? `${gex.quality} · ${(gex.data?.levels||[]).length} levels` : (gex.status || "off")],
+    ["spread", `${cfg.assumed_spread_ticks} ticks (assumed)`],
+  ];
+  $("chips").innerHTML = chips.map(([k, v]) => `<span class="chip">${k} <b>${esc(v)}</b></span>`).join("");
+
+  if (gex.available && gex.data) {
+    const lv = (gex.data.levels || []).slice(0, 8).map(l => `${esc(l.kind)} ${fmt(l.price,2)}`).join(" · ");
+    $("gexLevels").innerHTML = `<b>GEX levels</b> (${esc(gex.data.quality)}, as of ${esc((gex.data.as_of||"").slice(0,16))}Z): ${lv}` +
+      (gex.fresh ? "" : " <span style='color:#e3c26d'>— stale</span>");
+  } else { $("gexLevels").innerHTML = `<b>GEX</b>: ${esc(gex.status || "disabled")} — no dealer exposure is derived from gold candles.`; }
+
+  $("dataNote").innerHTML = `<b>Data</b>: ${esc(data.source || "—")} · ${data.bars || 0} bars · rejected rows ${data.rows_rejected || 0} · last ${esc((data.last_bar_utc||"—").replace("T"," ").slice(0,16))}Z`;
+  $("riskNote").innerHTML = `<b>Risk</b>: ${esc(cfg.volume || "0.01 lot fixed")} · $${fmt(cfg.money_per_price,2)} per 1.00 price · cap $${fmt(cfg.max_risk_usd,2)} → max stop ${fmt(cfg.max_stop_distance,2)} price units. Wider structural stops are <b>skipped, never tightened</b>.`;
+
+  // signals table
+  const rows = (s.recent_signals || []);
+  $("signals").innerHTML = rows.length ? rows.map(r => `
+    <tr>
+      <td class="t">${esc((r.bar_time_utc||"").replace("T"," ").slice(0,16))}</td>
+      <td style="color:${r.state === "long" ? "#56d364" : "#ff7b72"}">${esc(r.direction)}</td>
+      <td class="t">${esc((r.setup||"").replace(/_/g," "))}</td>
+      <td>${fmt(r.entry,2)}</td><td>${fmt(r.stop,2)}</td><td>${fmt(r.target,2)}</td>
+      <td>${fmt(r.risk_usd,2)}</td><td>${fmt(r.rr_net,2)}</td><td>${fmt(r.score,1)}</td>
+    </tr>`).join("") : `<tr><td colspan="9" class="muted">no signal yet — see the rejection breakdown</td></tr>`;
+
+  // reasons
+  const reasons = (s.stats || {}).by_reason || {};
+  const entries = Object.entries(reasons).sort((a,b) => b[1]-a[1]).slice(0,7);
+  const max = Math.max(1, ...entries.map(e => e[1]));
+  $("reasons").innerHTML = entries.length ? entries.map(([k,v]) => `
+    <div class="bar"><span class="muted">${esc(k)}</span>
+      <span class="track"><span class="fill ${v===max?"hot":""}" style="width:${(100*v/max).toFixed(1)}%"></span></span>
+      <span class="mono" style="text-align:right">${v}</span></div>`).join("")
+    : `<div class="muted" style="font-size:12px">no evaluation yet</div>`;
+
+  $("engineNote").innerHTML = `<b>Engine</b>: ${esc(s.app?.engine?.module || "")} · eval ${fmt((s.stats||{}).last_eval_ms,2)} ms · ` +
+    `${(s.stats||{}).evaluations || 0} bars evaluated · ${(s.stats||{}).signals || 0} signals emitted`;
+
+  $("footer").textContent = `${s.app?.name || ""} v${s.app?.version || ""} · ${s.app?.execution || ""} · generated ${(s.generated_utc||"").replace("T"," ").slice(0,19)}Z`;
+}
+
+async function tick(){
+  try{
+    const r = await fetch("/api/state", {cache:"no-store"});
+    const s = await r.json();
+    render(s);
+  }catch(e){
+    $("healthPill").className = "pill err";
+    $("healthPill").innerHTML = `<span class="dot err"></span>offline`;
+  }
+}
+
+$("refresh").onclick = async () => {
+  $("refresh").disabled = true; $("refresh").textContent = "Evaluating…";
+  try{ await fetch("/api/evaluate", {method:"POST"}); }catch(e){}
+  await tick();
+  $("refresh").disabled = false; $("refresh").textContent = "Refresh now";
+};
+
+tick();
+setInterval(tick, 5000);
+</script>
+</body>
+</html>

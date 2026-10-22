@@ -7,6 +7,8 @@ on:
       - "tests/**"
       - "research/**"
       - "tools/**"
+      - "signals/**"
+      - "config/**"
       - ".github/workflows/build.yml"
   workflow_dispatch:
 permissions:
@@ -40,6 +42,12 @@ jobs:
           cat parity_raw.txt >> ci_report.txt
           echo "PARITY_EXIT=$PARITY_GEN_RC/$PARITY_DIFF_RC" >> ci_report.txt
           echo "" >> ci_report.txt
+          echo "=== SIGNAL APP TESTS (stdlib, no broker) ===" >> ci_report.txt
+          python3 -m unittest tests.test_signals -v > signals_raw.txt 2>&1
+          SIGNAL_RC=$?
+          tail -n 25 signals_raw.txt >> ci_report.txt
+          echo "SIGNALS_EXIT=$SIGNAL_RC" >> ci_report.txt
+          echo "" >> ci_report.txt
           echo "=== BUILD cBot (net6.0, cTrader.Automate 1.0.21) ===" >> ci_report.txt
           dotnet build src/QuantLOL/QuantLOL.csproj -c Release --nologo -v m > build_raw.txt 2>&1
           BUILD_RC=$?
@@ -68,7 +76,7 @@ jobs:
           git push origin HEAD:arena/afc8c595-quantlol || (git pull --rebase -q && git push origin HEAD:arena/afc8c595-quantlol)
       - name: Fail on error
         run: |
-          if grep -q "PARITY_EXIT=0/0" ci_report.txt && grep -q "BUILD_EXIT=0" ci_report.txt && grep -q "TEST_EXIT=0" ci_report.txt; then
+          if grep -q "PARITY_EXIT=0/0" ci_report.txt && grep -q "SIGNALS_EXIT=0" ci_report.txt && grep -q "BUILD_EXIT=0" ci_report.txt && grep -q "TEST_EXIT=0" ci_report.txt; then
             echo "build and tests succeeded"; exit 0;
           else
             echo "build or tests failed - see build/ci_report.txt"; exit 1;

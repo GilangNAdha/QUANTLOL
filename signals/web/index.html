@@ -222,7 +222,11 @@ function render(s){
       <td class="t">${esc((r.setup||"").replace(/_/g," "))}</td>
       <td>${fmt(r.entry,2)}</td><td>${fmt(r.stop,2)}</td><td>${fmt(r.target,2)}</td>
       <td>${fmt(r.risk_usd,2)}</td><td>${fmt(r.rr_net,2)}</td><td>${fmt(r.score,1)}</td>
-    </tr>`).join("") : `<tr><td colspan="9" class="muted">no signal yet — see the rejection breakdown</td></tr>`;
+    </tr>`).join("") : `<tr><td colspan="9" class="muted">
+      no signal emitted yet on this feed${latest.reason ? ` — current bar was rejected with <b>${esc(latest.reason)}</b>` : ""}.<br>
+      <span style="font-size:11.5px">Historical check: <code>python3 -m signals replay --limit 10</code>.
+      Fresh bars: set <code>data_mode: live</code> or point <code>csv_path</code> at your broker export.</span>
+      </td></tr>`;
 
   // reasons
   const reasons = (s.stats || {}).by_reason || {};

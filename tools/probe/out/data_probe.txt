@@ -1,17 +1,17 @@
-URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/00/BID_candles_min_1.bi5 status=404 bytes=25
-URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/00/ASK_candles_min_1.bi5 status=404 bytes=25
-URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/05/BID_candles_min_1.bi5 status=503 bytes=35
+URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/00/BID_candles_min_1.bi5 status=503 bytes=35
+URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/00/ASK_candles_min_1.bi5 status=503 bytes=35
+URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/05/BID_candles_min_1.bi5 status=404 bytes=25
 URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/05/ASK_candles_min_1.bi5 status=503 bytes=35
 URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2025/00/BID_candles_min_1.bi5 status=503 bytes=35
 URL https://datafeed.dukascopy.com/datafeed/XAUUSD/2025/00/ASK_candles_min_1.bi5 status=503 bytes=35
-ALT /XAUUSD/2024/00/01/BID_candles_min_1.bi5 status=200 bytes=2606
-ALT /XAUUSD/2024/00/01/00h_ticks.bi5 status=ERR bytes=28
+ALT /XAUUSD/2024/00/01/BID_candles_min_1.bi5 status=503 bytes=35
+ALT /XAUUSD/2024/00/01/00h_ticks.bi5 status=503 bytes=35
 ALT /XAUUSD/2024/00/BID_candles_hour_1.bi5 status=503 bytes=35
-ALT /XAUUSD/2024/00/BID_candles_day_1.bi5 status=200 bytes=517
-SIZE year=2015 month=0 status=404 bytes=25 bars=?
-SIZE year=2018 month=0 status=404 bytes=25 bars=?
-SIZE year=2020 month=0 status=404 bytes=25 bars=?
-SIZE year=2022 month=0 status=404 bytes=25 bars=?
+ALT /XAUUSD/2024/00/BID_candles_day_1.bi5 status=503 bytes=35
+SIZE year=2015 month=0 status=503 bytes=35 bars=?
+SIZE year=2018 month=0 status=503 bytes=35 bars=?
+SIZE year=2020 month=0 status=503 bytes=35 bars=?
+SIZE year=2022 month=0 status=503 bytes=35 bars=?
 SIZE year=2024 month=0 status=503 bytes=35 bars=?
 SIZE year=2025 month=0 status=503 bytes=35 bars=?
 RES /XAUUSD/2021/00/BID_candles_hour_1.bi5 status=503 bytes=35

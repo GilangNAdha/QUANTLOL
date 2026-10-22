@@ -89,7 +89,9 @@ class Handler(BaseHTTPRequestHandler):
 
 def make_server(service: SignalService, host=None, port=None):
     handler = type("BoundHandler", (Handler,), {"service": service})
-    httpd = ThreadingHTTPServer((host or service.cfg.host, port or service.cfg.port), handler)
+    bind_host = service.cfg.host if host is None else host
+    bind_port = service.cfg.port if port is None else port      # port 0 means "pick a free port"
+    httpd = ThreadingHTTPServer((bind_host, bind_port), handler)
     httpd.daemon_threads = True
     return httpd
 

@@ -150,6 +150,7 @@ class SignalConfig:
             "symbol": self.symbol, "label": self.label, "timeframe_minutes": self.timeframe_minutes,
             "data_mode": self.data_mode, "data_path": self.data_path if self.data_mode != "csv" else self.csv_path,
             "lots": self.lots, "ounces_per_lot": self.ounces_per_lot,
+            "volume": "%.2f lot fixed = %.2f oz (never resized)" % (self.lots, self.lots * self.ounces_per_lot),
             "money_per_price": self.money_per_price,
             "max_risk_usd": self.max_risk_usd, "max_stop_distance": round(self.max_stop_distance, 4),
             "min_rr": self.min_rr,

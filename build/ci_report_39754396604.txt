@@ -1,0 +1,164 @@
+=== dotnet --info ===
+6.0.428 [/usr/share/dotnet/sdk]
+8.0.132 [/usr/share/dotnet/sdk]
+8.0.206 [/usr/share/dotnet/sdk]
+8.0.319 [/usr/share/dotnet/sdk]
+8.0.426 [/usr/share/dotnet/sdk]
+9.0.122 [/usr/share/dotnet/sdk]
+9.0.205 [/usr/share/dotnet/sdk]
+9.0.319 [/usr/share/dotnet/sdk]
+10.0.113 [/usr/share/dotnet/sdk]
+10.0.204 [/usr/share/dotnet/sdk]
+10.0.303 [/usr/share/dotnet/sdk]
+10.0.402 [/usr/share/dotnet/sdk]
+
+=== PARITY FIXTURE REPRODUCIBILITY (Python reference) ===
+wrote /home/runner/work/QUANTLOL/QUANTLOL/tests/fixtures/parity.json
+  bar407_bull_None             bull     None               score=6.5
+  bar485_bull_None             bull     None               score=6.5
+  bar556_bull_None             bull     None               score=6.5
+  bar517_bear_None             bear     None               score=6.5
+  bar535_bear_None             bear     None               score=6.5
+  bar536_bear_None             bear     None               score=6.5
+  bar200_neutral_NoSetup       neutral  NoSetup            score=None
+  bar267_neutral_RiskCapExceeded neutral  RiskCapExceeded    score=None
+  forced_spread                neutral  SpreadTooWide      score=None
+  forced_vix                   neutral  VixFilter          score=None
+  forced_low_score             neutral  ScoreBelowThreshold score=None
+  forced_tight_cap             neutral  RiskCapExceeded    score=None
+  forced_no_of                 neutral  NoSetup            score=None
+PARITY_EXIT=0/0
+
+=== SIGNAL APP TESTS (stdlib, no broker) ===
+test_eurusd_preset_disables_an_impossible_order_flow_test (tests.test_signals.TestInstrumentPresets.test_eurusd_preset_disables_an_impossible_order_flow_test) ... ok
+test_gold_preset_keeps_the_published_arithmetic (tests.test_signals.TestInstrumentPresets.test_gold_preset_keeps_the_published_arithmetic) ... ok
+test_symbol_spelling_follows_the_venue_not_the_preset (tests.test_signals.TestInstrumentPresets.test_symbol_spelling_follows_the_venue_not_the_preset) ... ok
+test_unknown_preset_is_rejected (tests.test_signals.TestInstrumentPresets.test_unknown_preset_is_rejected) ... ok
+test_a_provider_error_is_loud (tests.test_signals.TestLiveProvidersOffline.test_a_provider_error_is_loud) ... ok
+test_binance_kline_parsing (tests.test_signals.TestLiveProvidersOffline.test_binance_kline_parsing) ... ok
+test_coinbase_column_order_is_low_high_open_close (tests.test_signals.TestLiveProvidersOffline.test_coinbase_column_order_is_low_high_open_close) ... ok
+test_every_provider_failing_is_an_error_not_an_empty_feed (tests.test_signals.TestLiveProvidersOffline.test_every_provider_failing_is_an_error_not_an_empty_feed) ... ok
+test_fallback_chain_moves_to_the_next_venue (tests.test_signals.TestLiveProvidersOffline.test_fallback_chain_moves_to_the_next_venue) ... ok
+test_in_progress_candle_is_dropped (tests.test_signals.TestLiveProvidersOffline.test_in_progress_candle_is_dropped) ... ok
+test_kraken_last_row_is_dropped_as_in_progress (tests.test_signals.TestLiveProvidersOffline.test_kraken_last_row_is_dropped_as_in_progress) ... ok
+test_no_volume_is_flagged_because_order_flow_cannot_work (tests.test_signals.TestLiveProvidersOffline.test_no_volume_is_flagged_because_order_flow_cannot_work) ... ok
+test_okx_unconfirmed_rows_are_skipped (tests.test_signals.TestLiveProvidersOffline.test_okx_unconfirmed_rows_are_skipped) ... ok
+test_unknown_provider_is_rejected (tests.test_signals.TestLiveProvidersOffline.test_unknown_provider_is_rejected) ... ok
+test_an_api_error_is_reported_not_swallowed (tests.test_signals.TestOptionChainParsing.test_an_api_error_is_reported_not_swallowed) ... ok
+test_rows_without_parseable_strikes_fail_loudly (tests.test_signals.TestOptionChainParsing.test_rows_without_parseable_strikes_fail_loudly) ... ok
+test_strike_comes_from_the_instrument_name (tests.test_signals.TestOptionChainParsing.test_strike_comes_from_the_instrument_name) ... ok
+test_gex_status_never_claims_dealer_gamma (tests.test_signals.TestOptionsOpenInterest.test_gex_status_never_claims_dealer_gamma) ... ok
+test_gex_without_a_spot_price_is_unavailable (tests.test_signals.TestOptionsOpenInterest.test_gex_without_a_spot_price_is_unavailable) ... ok
+test_levels_are_open_interest_concentrations_inside_the_band (tests.test_signals.TestOptionsOpenInterest.test_levels_are_open_interest_concentrations_inside_the_band) ... ok
+
+----------------------------------------------------------------------
+Ran 58 tests in 3.262s
+
+OK
+SIGNALS_EXIT=0
+
+=== BUILD cBot (net6.0, cTrader.Automate 1.0.21) ===
+  Determining projects to restore...
+  Restored /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj (in 2 sec).
+/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(61,16): warning CS0169: The field 'QuantLOLBot._sessionDayRefEquity' is never used [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
+  QuantLOL -> /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/bin/Release/net6.0/QuantLOL.dll
+  QuantLOL -> /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/bin/Release/net6.0/src.algo
+  QuantLOL -> cAlgo/Sources/Robots/src.algo
+
+Build succeeded.
+
+/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(61,16): warning CS0169: The field 'QuantLOLBot._sessionDayRefEquity' is never used [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
+    1 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:05.56
+BUILD_EXIT=0
+
+=== UNIT TESTS ===
+Test run for /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/bin/Release/net8.0/QuantLOL.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+/home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/bin/Release/net8.0/QuantLOL.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.5.7+8f2703126a (64-bit .NET 8.0.32)
+[xUnit.net 00:00:00.08]   Discovering: QuantLOL.Tests
+[xUnit.net 00:00:00.13]   Discovered:  QuantLOL.Tests
+[xUnit.net 00:00:00.13]   Starting:    QuantLOL.Tests
+  Passed QuantLOL.Tests.StructureTests.NoFutureDataLeaksIntoTheAnalysis [12 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.SignalKeyIsStableAndUniquePerBarAndPrice [11 ms]
+  Passed QuantLOL.Tests.OrderFlowTests.RisingClosesProducePositiveDelta [12 ms]
+  Passed QuantLOL.Tests.OrderFlowTests.FallingClosesProduceNegativeDelta [< 1 ms]
+  Passed QuantLOL.Tests.OrderFlowTests.ZeroRangeBarsDoNotDivideByZero [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.SwingsAreOnlyKnowableAfterTheirConfirmationBar [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.SweepRequiresPierceAndReclaim [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.FairValueGapDetectedAndTracked [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.ConflictingDirectionsAreRefused [7 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.SyntheticTargetIsFlagged [2 ms]
+  Passed QuantLOL.Tests.StructureTests.ContextLevelsAreAlsoSweepCandidates [6 ms]
+  Passed QuantLOL.Tests.StructureTests.AtrIsPositiveAndBoundedByObservedRanges [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.AnalysisIsDeterministic [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.BullishBreakOfStructureChangesTrendAndRecordsChoch [< 1 ms]
+  Passed QuantLOL.Tests.MarketProfileTests.ValueAreaContainsAtLeastTheRequestedShare [7 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.SpreadFilterRejectsBeforeAnySetupWork [7 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.StructuralOnlyModeRefusesToInventATarget [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.VixVetoBlocksEntries [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.OrderFlowVetoWhenRequired [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.ScoreThresholdCanSuppressAValidSetup [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.ProducesBullishSetupWhenAllCoreConditionsHold [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.WideStructuralStopIsRejectedNotTightened [1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.MissingConfirmationYieldsNoSetup [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.CooldownAndDuplicateSuppression [6 ms]
+  Passed QuantLOL.Tests.RiskTests.LifetimeDrawdownFromReferenceBalanceLatches [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.MarkdownReportContainsAllHeadlineMetrics [36 ms]
+  Passed QuantLOL.Tests.RiskTests.DayEquityDrawdownBlocksWithoutLatchedKillSwitch [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.StopIsNeverTightenedToFitTheCap [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.RejectsInadequateRewardToRiskEvenWhenRiskFits [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.OpenPositionPnlCountsThroughEquity [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.DailyLossLimitBlocksRestOfDayAndResetsNextDay [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.ShortPlansMeasureRewardAheadOfEntry [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.LatchSurvivesRecoveryAndOnlyResetClearsIt [< 1 ms]
+  Passed QuantLOL.Tests.MarketProfileTests.PocValueAreaAndSessionExtremes [10 ms]
+  Passed QuantLOL.Tests.PerformanceTests.BreakdownsUseTheDeclaredDimensions [4 ms]
+  Passed QuantLOL.Tests.MarketProfileTests.EmptyAndDegenerateInputsAreSafe [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.ZeroPointZeroOneLotIsOneUnitOnHundredOunceContract [3 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.OneOuncePerLotContractIsAlsoRepresentable [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.CommissionModelsAndMinimum [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.MoneyPerPriceUnitIsOneDollarPerDollarForOneOunce [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.FiveDollarCapImpliesMaxStructuralStopDistance [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.RejectsMisalignedVolumeStep [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.RejectsWhenBrokerMinimumExceedsIntendedSize [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.TenOuncePerLotContractGivesPointOneUnits [< 1 ms]
+  Passed QuantLOL.Tests.NumericTests.RoundToTickIsStableAtMidpoints [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.SmallSamplesAreFlaggedNotAnnualised [3 ms]
+  Passed QuantLOL.Tests.NumericTests.EpochHeuristicHandlesSecondsAndMilliseconds [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.MaxDrawdownFollowsTheClosedEquityCurve [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.CoreAggregatesAreCorrect [< 1 ms]
+  Passed QuantLOL.Tests.NumericTests.PercentilesUseLinearInterpolation [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.EmptyInputProducesAWarningNotAnException [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.BootstrapIntervalAppearsOnceTheSampleCanSupportIt [6 ms]
+  Passed QuantLOL.Tests.LatencyTests.SummaryReportsPercentilesAndCount [< 1 ms]
+  Passed QuantLOL.Tests.LatencyTests.EmptySeriesIsSafe [< 1 ms]
+  Passed QuantLOL.Tests.LatencyTests.RegistryTableExplainsNetworkAttribution [4 ms]
+  Passed QuantLOL.Tests.JsonTests.RejectsMalformedDocuments [18 ms]
+  Passed QuantLOL.Tests.JsonTests.KeysAreCaseInsensitive [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.ImplausiblePriceScaleIsRejected [24 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.EpochMillisecondTimestampsAreAccepted [< 1 ms]
+  Passed QuantLOL.Tests.JsonTests.ParsesObjectsArraysAndNumbers [4 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.GldDerivedDataIsMarkedAsProxy [4 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.InstrumentMismatchIsRejected [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.MissingDataBlocksOnlyWhenRequired [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.VixParsingValidatesLevelAndTime [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.FutureTimestampsAreRejected [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.ValidGexFileParsesWithProvenance [1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.FreshnessAndStalePolicy [< 1 ms]
+  Passed QuantLOL.Tests.ParityTests.OrderFlowMatchesReferenceEngine [30 ms]
+  Passed QuantLOL.Tests.ParityTests.MarketProfileMatchesReferenceEngine [1 ms]
+  Passed QuantLOL.Tests.ParityTests.SignalDecisionsMatchReferenceEngine [4 ms]
+  Passed QuantLOL.Tests.ParityTests.StructureMatchesReferenceEngine [2 ms]
+  Passed QuantLOL.Tests.ParityTests.RiskMathMatchesReferenceEngine [< 1 ms]
+[xUnit.net 00:00:00.26]   Finished:    QuantLOL.Tests
+  Passed QuantLOL.Tests.ParityTests.DrawdownGuardMatchesReferenceEngine [< 1 ms]
+
+Test Run Successful.
+Total tests: 73
+     Passed: 73
+ Total time: 1.2016 Seconds
+TEST_EXIT=0

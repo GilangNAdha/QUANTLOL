@@ -158,4 +158,4 @@ Every parameter is also validated at start-up: out-of-range values stop the bot 
 
 ## Safety-critical parameters
 
-`Lots`, `MaxRiskPerTradeUsd`, `DailyLossLimitUsd`, `EquityDrawdownLimitUsd`, `MaxOpenPositions`, `MinRewardRisk`, `EnforceRiskCap`, `RejectIfSpecUnverified`, and `RequireExternalData` change what the bot is allowed to do. Changing them changes the risk mandate described in `docs/BUILD.md`; do not loosen them to make a backtest look better.
+`Lots`, `MaxRiskPerTradeUsd`, `DailyLossLimitUsd`, `EquityDrawdownLimitUsd`, `MaxOpenPositions`, `MinRewardRisk`, `EnforceRiskCap`, `RejectIfSpecUnverified`, `StalePolicy` and `EnableGex`/`EnableVix` change what the bot is allowed to do. Changing them changes the risk mandate described in `docs/BUILD.md`; do not loosen them to make a backtest look better.

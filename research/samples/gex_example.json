@@ -1,0 +1,20 @@
+{
+  "instrument": "XAUUSD",
+  "as_of": "2026-10-20T17:30:00Z",
+  "quote": "USD",
+  "spot": 4321.5,
+  "gamma_flip": 4300.0,
+  "call_wall": 4400.0,
+  "put_wall": 4250.0,
+  "net_gex": -1250000000,
+  "delta_exposure": 987654,
+  "vanna": -1234,
+  "levels": [
+    { "price": 4350.0, "kind": "call_wall" },
+    { "price": 4290.0, "kind": "gamma_flip" }
+  ],
+  "greeks_note": "Dealer-long-gamma positive; units as published by the provider. Method: aggregated open interest by strike x gamma.",
+  "units": "USD/oz price levels",
+  "expiry": "2026-11-20",
+  "source": "manual-entry"
+}

@@ -1,0 +1,164 @@
+=== dotnet --info ===
+6.0.428 [/usr/share/dotnet/sdk]
+8.0.132 [/usr/share/dotnet/sdk]
+8.0.206 [/usr/share/dotnet/sdk]
+8.0.319 [/usr/share/dotnet/sdk]
+8.0.426 [/usr/share/dotnet/sdk]
+9.0.122 [/usr/share/dotnet/sdk]
+9.0.205 [/usr/share/dotnet/sdk]
+9.0.319 [/usr/share/dotnet/sdk]
+10.0.113 [/usr/share/dotnet/sdk]
+10.0.204 [/usr/share/dotnet/sdk]
+10.0.303 [/usr/share/dotnet/sdk]
+10.0.402 [/usr/share/dotnet/sdk]
+
+=== PARITY FIXTURE REPRODUCIBILITY (Python reference) ===
+wrote /home/runner/work/QUANTLOL/QUANTLOL/tests/fixtures/parity.json
+  bar407_bull_None             bull     None               score=6.5
+  bar485_bull_None             bull     None               score=6.5
+  bar556_bull_None             bull     None               score=6.5
+  bar517_bear_None             bear     None               score=6.5
+  bar535_bear_None             bear     None               score=6.5
+  bar536_bear_None             bear     None               score=6.5
+  bar200_neutral_NoSetup       neutral  NoSetup            score=None
+  bar267_neutral_RiskCapExceeded neutral  RiskCapExceeded    score=None
+  forced_spread                neutral  SpreadTooWide      score=None
+  forced_vix                   neutral  VixFilter          score=None
+  forced_low_score             neutral  ScoreBelowThreshold score=None
+  forced_tight_cap             neutral  RiskCapExceeded    score=None
+  forced_no_of                 neutral  NoSetup            score=None
+PARITY_EXIT=0/0
+
+=== SIGNAL APP TESTS (stdlib, no broker) ===
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/runner/work/QUANTLOL/QUANTLOL/tests/test_signals.py:433: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/runner/work/QUANTLOL/QUANTLOL/signals/server.py' mode='r' encoding='UTF-8'>
+  text = open(os.path.join(pkg, name)).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/runner/work/QUANTLOL/QUANTLOL/tests/test_signals.py:433: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/runner/work/QUANTLOL/QUANTLOL/signals/core_bridge.py' mode='r' encoding='UTF-8'>
+  text = open(os.path.join(pkg, name)).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/runner/work/QUANTLOL/QUANTLOL/tests/test_signals.py:433: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/runner/work/QUANTLOL/QUANTLOL/signals/__main__.py' mode='r' encoding='UTF-8'>
+  text = open(os.path.join(pkg, name)).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_dashboard_and_json_endpoints (tests.test_signals.ServerTests.test_dashboard_and_json_endpoints) ... ok
+test_evaluate_endpoint_produces_a_read_and_writes_a_signal (tests.test_signals.ServerTests.test_evaluate_endpoint_produces_a_read_and_writes_a_signal) ... ok
+test_unknown_path_is_404 (tests.test_signals.ServerTests.test_unknown_path_is_404) ... /usr/lib/python3.14/tempfile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 404: 'Not Found'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+ok
+test_missing_data_keeps_the_service_alive (tests.test_signals.ServiceTests.test_missing_data_keeps_the_service_alive) ... ok
+test_signal_is_written_once_per_bar (tests.test_signals.ServiceTests.test_signal_is_written_once_per_bar) ... ok
+test_state_exposes_health_data_and_stats (tests.test_signals.ServiceTests.test_state_exposes_health_data_and_stats) ... ok
+test_store_csv_and_state_round_trip (tests.test_signals.ServiceTests.test_store_csv_and_state_round_trip) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 3.662s
+
+OK
+SIGNALS_EXIT=0
+
+=== BUILD cBot (net6.0, cTrader.Automate 1.0.21) ===
+  Determining projects to restore...
+  Restored /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj (in 1.26 sec).
+/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(61,16): warning CS0169: The field 'QuantLOLBot._sessionDayRefEquity' is never used [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
+  QuantLOL -> /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/bin/Release/net6.0/QuantLOL.dll
+  QuantLOL -> /home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/bin/Release/net6.0/src.algo
+  QuantLOL -> cAlgo/Sources/Robots/src.algo
+
+Build succeeded.
+
+/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.cs(61,16): warning CS0169: The field 'QuantLOLBot._sessionDayRefEquity' is never used [/home/runner/work/QUANTLOL/QUANTLOL/src/QuantLOL/QuantLOL.csproj]
+    1 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:05.60
+BUILD_EXIT=0
+
+=== UNIT TESTS ===
+Test run for /home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/bin/Release/net8.0/QuantLOL.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+/home/runner/work/QUANTLOL/QUANTLOL/tests/QuantLOL.Tests/bin/Release/net8.0/QuantLOL.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.5.7+8f2703126a (64-bit .NET 8.0.32)
+[xUnit.net 00:00:00.30]   Discovering: QuantLOL.Tests
+[xUnit.net 00:00:00.48]   Discovered:  QuantLOL.Tests
+[xUnit.net 00:00:00.49]   Starting:    QuantLOL.Tests
+  Passed QuantLOL.Tests.MarketProfileTests.ValueAreaContainsAtLeastTheRequestedShare [7 ms]
+  Passed QuantLOL.Tests.StructureTests.NoFutureDataLeaksIntoTheAnalysis [21 ms]
+  Passed QuantLOL.Tests.StructureTests.SwingsAreOnlyKnowableAfterTheirConfirmationBar [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.SweepRequiresPierceAndReclaim [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.FairValueGapDetectedAndTracked [< 1 ms]
+  Passed QuantLOL.Tests.MarketProfileTests.PocValueAreaAndSessionExtremes [7 ms]
+  Passed QuantLOL.Tests.MarketProfileTests.EmptyAndDegenerateInputsAreSafe [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.ContextLevelsAreAlsoSweepCandidates [7 ms]
+  Passed QuantLOL.Tests.StructureTests.AtrIsPositiveAndBoundedByObservedRanges [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.AnalysisIsDeterministic [< 1 ms]
+  Passed QuantLOL.Tests.StructureTests.BullishBreakOfStructureChangesTrendAndRecordsChoch [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.ImplausiblePriceScaleIsRejected [31 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.EpochMillisecondTimestampsAreAccepted [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.ZeroPointZeroOneLotIsOneUnitOnHundredOunceContract [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.OneOuncePerLotContractIsAlsoRepresentable [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.CommissionModelsAndMinimum [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.MoneyPerPriceUnitIsOneDollarPerDollarForOneOunce [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.FiveDollarCapImpliesMaxStructuralStopDistance [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.RejectsMisalignedVolumeStep [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.RejectsWhenBrokerMinimumExceedsIntendedSize [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.GldDerivedDataIsMarkedAsProxy [3 ms]
+  Passed QuantLOL.Tests.NumericTests.RoundToTickIsStableAtMidpoints [< 1 ms]
+  Passed QuantLOL.Tests.NumericTests.EpochHeuristicHandlesSecondsAndMilliseconds [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.InstrumentMismatchIsRejected [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.MarkdownReportContainsAllHeadlineMetrics [36 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.MissingDataBlocksOnlyWhenRequired [< 1 ms]
+  Passed QuantLOL.Tests.NumericTests.PercentilesUseLinearInterpolation [< 1 ms]
+  Passed QuantLOL.Tests.BrokerMathTests.TenOuncePerLotContractGivesPointOneUnits [2 ms]
+  Passed QuantLOL.Tests.PerformanceTests.BreakdownsUseTheDeclaredDimensions [3 ms]
+  Passed QuantLOL.Tests.PerformanceTests.SmallSamplesAreFlaggedNotAnnualised [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.MaxDrawdownFollowsTheClosedEquityCurve [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.CoreAggregatesAreCorrect [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.EmptyInputProducesAWarningNotAnException [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.SignalKeyIsStableAndUniquePerBarAndPrice [5 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.VixParsingValidatesLevelAndTime [6 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.FutureTimestampsAreRejected [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.ValidGexFileParsesWithProvenance [< 1 ms]
+  Passed QuantLOL.Tests.ExternalDataTests.FreshnessAndStalePolicy [2 ms]
+  Passed QuantLOL.Tests.RiskTests.CooldownAndDuplicateSuppression [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.ConflictingDirectionsAreRefused [4 ms]
+  Passed QuantLOL.Tests.RiskTests.LifetimeDrawdownFromReferenceBalanceLatches [1 ms]
+  Passed QuantLOL.Tests.RiskTests.DayEquityDrawdownBlocksWithoutLatchedKillSwitch [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.StopIsNeverTightenedToFitTheCap [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.RejectsInadequateRewardToRiskEvenWhenRiskFits [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.OpenPositionPnlCountsThroughEquity [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.DailyLossLimitBlocksRestOfDayAndResetsNextDay [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.ShortPlansMeasureRewardAheadOfEntry [< 1 ms]
+  Passed QuantLOL.Tests.RiskTests.LatchSurvivesRecoveryAndOnlyResetClearsIt [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.SyntheticTargetIsFlagged [3 ms]
+  Passed QuantLOL.Tests.OrderFlowTests.RisingClosesProducePositiveDelta [1 ms]
+  Passed QuantLOL.Tests.OrderFlowTests.FallingClosesProduceNegativeDelta [< 1 ms]
+  Passed QuantLOL.Tests.OrderFlowTests.ZeroRangeBarsDoNotDivideByZero [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.SpreadFilterRejectsBeforeAnySetupWork [1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.StructuralOnlyModeRefusesToInventATarget [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.VixVetoBlocksEntries [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.OrderFlowVetoWhenRequired [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.ScoreThresholdCanSuppressAValidSetup [< 1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.ProducesBullishSetupWhenAllCoreConditionsHold [< 1 ms]
+  Passed QuantLOL.Tests.PerformanceTests.BootstrapIntervalAppearsOnceTheSampleCanSupportIt [11 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.WideStructuralStopIsRejectedNotTightened [1 ms]
+  Passed QuantLOL.Tests.LatencyTests.SummaryReportsPercentilesAndCount [3 ms]
+  Passed QuantLOL.Tests.LatencyTests.EmptySeriesIsSafe [< 1 ms]
+  Passed QuantLOL.Tests.LatencyTests.RegistryTableExplainsNetworkAttribution [1 ms]
+  Passed QuantLOL.Tests.SignalEngineTests.MissingConfirmationYieldsNoSetup [2 ms]
+  Passed QuantLOL.Tests.ParityTests.OrderFlowMatchesReferenceEngine [31 ms]
+  Passed QuantLOL.Tests.JsonTests.RejectsMalformedDocuments [16 ms]
+  Passed QuantLOL.Tests.JsonTests.KeysAreCaseInsensitive [< 1 ms]
+[xUnit.net 00:00:00.64]   Finished:    QuantLOL.Tests
+  Passed QuantLOL.Tests.JsonTests.ParsesObjectsArraysAndNumbers [< 1 ms]
+  Passed QuantLOL.Tests.ParityTests.MarketProfileMatchesReferenceEngine [2 ms]
+  Passed QuantLOL.Tests.ParityTests.SignalDecisionsMatchReferenceEngine [6 ms]
+  Passed QuantLOL.Tests.ParityTests.StructureMatchesReferenceEngine [3 ms]
+  Passed QuantLOL.Tests.ParityTests.RiskMathMatchesReferenceEngine [< 1 ms]
+  Passed QuantLOL.Tests.ParityTests.DrawdownGuardMatchesReferenceEngine [< 1 ms]
+
+Test Run Successful.
+Total tests: 73
+     Passed: 73
+ Total time: 4.3281 Seconds
+TEST_EXIT=0

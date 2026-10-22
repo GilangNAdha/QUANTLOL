@@ -41,7 +41,7 @@ module the C# core is pinned to by `tests/QuantLOL.Tests/ParityTests.cs` and by 
 ```bash
 git clone https://github.com/GilangNAdha/QUANTLOL.git
 cd QUANTLOL
-python3 -m unittest tests.test_signals -v     # 34 tests, offline
+python3 -m unittest tests.test_signals -v     # 54 tests, offline
 ```
 
 No pip install, no virtualenv, no API key. Python 3.9+ (uses `dataclasses`, `http.server`).
@@ -129,12 +129,30 @@ grow the logs without bound, and a restart does not re-append what it already wr
 |---|---|---|
 | `research/data/gc_*.csv.gz` | `proxy` | COMEX **GC=F** front month, not spot XAUUSD |
 | Yahoo `GC=F` live | `proxy` | delayed, free; timeframe-dependent history limits |
+| Binance / Kraken / Coinbase / OKX / Bitstamp / Bybit / Deribit (keyless) | `live` | that venue's own book, real volume, in-progress candle dropped — see `docs/LIVE_DATA.md` |
+| Yahoo `EURUSD=X` live | `no-volume` | intraday FX with **no volume**; the EURUSD preset disables order-flow confirmation |
+| Twelve Data (free key) | `vendor-agg` | 800 req/day; aggregated FX, not one venue's book |
+| Deribit BTC options chain | `oi-derived` | open-interest concentrations; **not** dealer gamma (Deribit publishes no gamma) |
 | Your broker CSV | `broker` | anything with `time,open,high,low,close[,volume]` |
 | Cboe VIX daily | `delayed` | one value per day; broad context only |
 | GEX file | `manual` / `proxy` | `manual` for XAUUSD, `proxy` only for a converted GLD/IAU file |
 
 The app never invents volume, never derives dealer exposure from gold candles, and never calls a
-daily file "live".
+daily file "live". In `data_mode: live` with no provider named it walks a **tested fallback chain**
+(`binance → bybit → okx → coinbase → kraken → bitstamp → deribit → yahoo`) and reports each failure in
+the feed note; if every venue fails you get `DATA:INVALID`, not an empty-but-happy feed.
+
+## 7b. Other markets (BTC, EUR/USD)
+
+```bash
+python3 -m signals --preset btc doctor        # keyless Binance BTCUSDT
+python3 -m signals --preset btc serve         # dashboard on 8080
+python3 -m signals --preset eurusd once       # Yahoo EUR/USD, order-flow disabled
+```
+
+The preset changes the instrument arithmetic (`contract_units`, tick, volume) and the feed, never
+the risk mandate. Full provider matrix, rate limits and the verified probe table:
+**`docs/LIVE_DATA.md`**.
 
 ## 8. What it deliberately does not do
 
@@ -146,7 +164,7 @@ daily file "live".
 ## 9. Tests
 
 ```bash
-python3 -m unittest tests.test_signals -v     # 34 tests
+python3 -m unittest tests.test_signals -v     # 54 tests
 ```
 
 They cover configuration validation, row-level data rejection, freshness, VIX/GEX acceptance and

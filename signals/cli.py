@@ -21,14 +21,18 @@ def cmd_doctor(args):
     cfg = _cfg(args)
     print("QuantLOL Signals %s - signal-only application (no broker, no orders)" % APP_VERSION)
     print("engine :", describe_engine()["module"], "|", describe_engine()["rules"])
-    print("config : %s lots, %.2f oz/lot -> $%.2f per 1.00 price move" % (
-        cfg.lots, cfg.ounces_per_lot, cfg.money_per_price))
+    print("market : %s | %s lots x %.4g units -> $%.2f per 1.00 price move" % (
+        cfg.label, cfg.lots, cfg.contract_units, cfg.money_per_price))
     print("risk   : cap $%.2f -> max structural stop %.3f price units (%.0f ticks)" % (
         cfg.max_risk_usd, cfg.max_stop_distance, cfg.max_stop_distance / cfg.tick))
     print("costs  : commission $%.2f round turn, slippage %d ticks, assumed spread %d ticks (ASSUMPTION)" % (
         cfg.commission_round_trip, cfg.slippage_ticks, cfg.assumed_spread_ticks))
     feed = datafeed.load_feed(cfg)
     print("data   :", feed.describe())
+    if cfg.data_mode == "live":
+        print("feed   : %s (%s) %s" % (cfg.live_provider or "auto-chain", cfg.live_symbol or "default",
+                                       "KEY SET" if os.environ.get(cfg.apikey_env or "") else
+                                       ("key required" if cfg.live_provider == "twelvedata" else "keyless")))
     vix = datafeed.load_vix(cfg)
     gex = datafeed.load_gex(cfg, spot=feed.bars[-1].c if feed.ok and feed.bars else None)
     print("vix    :", vix.status)
@@ -133,7 +137,29 @@ def _print_record(rec, st):
 
 def _cfg(args):
     try:
-        return SignalConfig.load(getattr(args, "config", None))
+        cfg = SignalConfig.load(getattr(args, "config", None))
+        preset = getattr(args, "preset", None)
+        if preset:
+            cfg.apply_preset(preset)
+            # an explicit --config still wins over the preset for the values the user set there
+            if getattr(args, "config", None):
+                base = SignalConfig.load(args.config)
+                for k, v in base.to_dict().items():
+                    if k in ("label", "units_per_lot", "tick", "lots", "live_provider",
+                             "live_symbol", "require_order_flow", "commission_round_trip",
+                             "assumed_spread_ticks") and v != SignalConfig().__dict__.get(k):
+                        setattr(cfg, k, v)
+        if getattr(args, "data_mode", None):
+            cfg.data_mode = args.data_mode
+        if getattr(args, "provider", None):
+            cfg.live_provider = args.provider
+            cfg.data_mode = "live"
+        if getattr(args, "symbol", None):
+            cfg.live_symbol = args.symbol
+        if getattr(args, "gex_source", None):
+            cfg.gex_source = args.gex_source
+            cfg.enable_gex = args.gex_source == "deribit" or cfg.enable_gex
+        return cfg.validate()
     except ConfigError as e:
         print("configuration error:", e, file=sys.stderr)
         raise SystemExit(3)
@@ -143,6 +169,12 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog="python3 -m signals",
                                  description="QuantLOL Signals - advisory signals, no broker, no orders")
     ap.add_argument("--config", help="path to a JSON config (see config/signals.example.json)")
+    ap.add_argument("--preset", choices=("xauusd", "btc", "eurusd"),
+                    help="instrument arithmetic + a sensible venue feed for that market")
+    ap.add_argument("--data-mode", dest="data_mode", choices=("local", "live", "csv"))
+    ap.add_argument("--provider", help="live provider (default: tested fallback chain)")
+    ap.add_argument("--symbol", help="provider symbol, e.g. BTCUSDT / BTC-USD / XBTUSD")
+    ap.add_argument("--gex-source", dest="gex_source", choices=("file", "deribit"))
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     d = sub.add_parser("doctor", help="validate config, data, external inputs (like the cBot banner)")

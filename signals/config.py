@@ -20,15 +20,20 @@ class SignalConfig:
     # ---- data -----------------------------------------------------------------
     data_mode: str = "local"                 # local | live | csv
     data_path: str = "research/data/gc_5m.csv.gz"
-    live_symbol: str = "GC=F"
-    live_range: str = "60d"
+    # live: a keyless public venue feed. provider="" tries the tested fallback chain.
+    live_provider: str = ""                  # binance | kraken | coinbase | okx | bitstamp | bybit | deribit | yahoo | twelvedata
+    live_symbol: str = ""                    # empty = the provider's BTC default
+    live_range: str = "5d"                   # yahoo only
+    live_limit: int = 500                    # bars requested per poll
+    apikey_env: str = "TWELVEDATA_API_KEY"   # only for providers that need a key; never stored here
     csv_path: str = ""
     csv_has_header: bool = True
     max_bar_age_minutes: int = 30            # a bar older than this is reported stale
 
     # ---- contract / money -----------------------------------------------------
     lots: float = 0.01
-    ounces_per_lot: float = 100.0            # XAUUSD: 1 lot = 100 oz  -> 0.01 lot = 1 oz
+    ounces_per_lot: float = 100.0            # XAUUSD: 1 lot = 100 oz -> 0.01 lot = 1 oz
+    units_per_lot: float = 0.0               # overrides ounces_per_lot: BTC=1, EURUSD=100000, XAUUSD=100
     tick: float = 0.01
     commission_round_trip: float = 0.14      # USD for 1 oz round turn (assumption; verify)
     slippage_ticks: int = 5
@@ -66,6 +71,8 @@ class SignalConfig:
     vix_high: float = 30.0
 
     enable_gex: bool = False
+    gex_source: str = "file"                 # file | deribit (keyless live BTC options chain)
+    gex_currency: str = "BTC"
     gex_path: str = "research/samples/gex_example.json"
     gex_max_age_minutes: int = 240
     gex_min_price: float = 2000.0
@@ -88,11 +95,16 @@ class SignalConfig:
             raise ConfigError("timeframe_minutes must be one of 1,3,5,15,30,60,240")
         if self.lots <= 0:
             raise ConfigError("lots must be > 0")
+        if self.units_per_lot and not (0 < self.units_per_lot <= 10_000_000):
+            raise ConfigError("units_per_lot must be in (0, 10000000]")
         if not (0 < self.ounces_per_lot <= 10000):
             raise ConfigError("ounces_per_lot must be in (0, 10000]")
+        if self.live_provider and self.live_provider not in (
+                "binance", "bybit", "okx", "coinbase", "kraken", "bitstamp", "deribit", "yahoo", "twelvedata"):
+            raise ConfigError("unknown live_provider '%s'" % self.live_provider)
         money_per_price = self.money_per_price
         if money_per_price <= 0:
-            raise ConfigError("lots * ounces_per_lot must be > 0 (money per 1.0 price unit)")
+            raise ConfigError("lots * contract_units must be > 0 (money per 1.0 price unit)")
         if self.max_risk_usd <= 0:
             raise ConfigError("max_risk_usd must be > 0")
         if self.assumed_spread_ticks < 0:
@@ -109,14 +121,20 @@ class SignalConfig:
             raise ConfigError("csv file not found: " + self.csv_path)
         if self.poll_seconds < 5:
             raise ConfigError("poll_seconds must be >= 5")
+        self._validate_gex()
         if not (1 <= self.port <= 65535):
             raise ConfigError("port out of range")
         return self
 
     @property
+    def contract_units(self):
+        """Units of the underlying per 1.00 lot: 100 oz (XAUUSD), 1 BTC, 100000 EUR (EURUSD)."""
+        return self.units_per_lot or self.ounces_per_lot
+
+    @property
     def money_per_price(self):
         """USD P&L per 1.00 move in price for the configured volume."""
-        return self.lots * self.ounces_per_lot
+        return self.lots * self.contract_units
 
     @property
     def max_stop_distance(self):
@@ -140,6 +158,47 @@ class SignalConfig:
             cfg.extra = {"unknown_keys": unknown} if unknown else {}
         return cfg.validate()
 
+    def _validate_gex(self):
+        if self.gex_source not in ("file", "deribit"):
+            raise ConfigError("gex_source must be 'file' or 'deribit'")
+        if self.gex_source == "deribit" and not self.enable_gex:
+            raise ConfigError("gex_source=deribit needs enable_gex=true")
+        return self
+
+    def apply_preset(self, name):
+        """Fills the instrument arithmetic for a well-known market. Rules and mandate are untouched."""
+        p = (name or "").lower()
+        if p == "xauusd":
+            self.symbol = "XAUUSD"
+            self.label, self.units_per_lot, self.tick = "XAUUSD (proxy: COMEX GC=F)", 100.0, 0.01
+            self.live_provider, self.live_symbol = "yahoo", "GC=F"
+            self.commission_round_trip, self.assumed_spread_ticks = 0.14, 30
+            self.lots, self.require_order_flow = 0.01, True
+        elif p == "btc":
+            self.symbol = "BTCUSD"
+            self.label = "BTCUSD (spot, venue feed)"
+            self.units_per_lot, self.tick = 1.0, 0.1
+            self.live_provider, self.live_symbol = "binance", "BTCUSDT"
+            self.data_mode = "live"          # there is no committed BTC snapshot to replay
+            self.commission_round_trip, self.assumed_spread_ticks = 0.02, 2
+            # 0.005 BTC ~ $500 notional at $100k: a 1% stop (~$1000) stays inside the $5 cap
+            self.lots, self.require_order_flow = 0.005, True
+            self.min_rr = 1.5
+        elif p == "eurusd":
+            self.symbol = "EURUSD"
+            self.label = "EURUSD (spot, Yahoo; no volume)"
+            self.units_per_lot, self.tick = 100000.0, 0.00001
+            self.live_provider, self.live_symbol = "yahoo", "EURUSD=X"
+            self.data_mode = "live"         # there is no committed EURUSD snapshot to replay
+            self.commission_round_trip, self.assumed_spread_ticks = 0.10, 10
+            self.lots = 0.01
+            # Yahoo FX has no volume: the order-flow proxy cannot work, so it is switched off
+            # explicitly rather than silently producing zero-delta confirmations.
+            self.require_order_flow = False
+        else:
+            raise ConfigError("unknown preset '%s' (xauusd | btc | eurusd)" % name)
+        return self
+
     def save(self, path):
         os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
         with open(path, "w") as f:
@@ -148,9 +207,13 @@ class SignalConfig:
     def summary(self):
         return {
             "symbol": self.symbol, "label": self.label, "timeframe_minutes": self.timeframe_minutes,
-            "data_mode": self.data_mode, "data_path": self.data_path if self.data_mode != "csv" else self.csv_path,
+            "data_mode": self.data_mode,
+            "data_source": (self.data_path if self.data_mode == "local" else
+                            (self.csv_path if self.data_mode == "csv" else
+                             "%s/%s" % (self.live_provider or "auto-chain", self.live_symbol or "default"))),
             "lots": self.lots, "ounces_per_lot": self.ounces_per_lot,
-            "volume": "%.2f lot fixed = %.2f oz (never resized)" % (self.lots, self.lots * self.ounces_per_lot),
+            "volume": "%.4f lot fixed = %.4f units (never resized)" % (self.lots, self.lots * self.contract_units),
+            "contract_units": self.contract_units,
             "money_per_price": self.money_per_price,
             "max_risk_usd": self.max_risk_usd, "max_stop_distance": round(self.max_stop_distance, 4),
             "min_rr": self.min_rr,
@@ -158,5 +221,6 @@ class SignalConfig:
             "commission_round_trip": self.commission_round_trip,
             "slippage_ticks": self.slippage_ticks,
             "enable_vix": self.enable_vix, "enable_gex": self.enable_gex,
+            "gex_source": self.gex_source, "gex_currency": self.gex_currency,
             "execution": "none (advisory signals only)",
         }

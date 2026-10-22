@@ -41,6 +41,7 @@ assumed away (see `docs/BUILD.md` §5).
 | Runs on | cTrader Automate, C# net6.0 | plain Python 3, stdlib only |
 | Can trade | yes | **no — no broker connection at all** |
 | Get started | `docs/QUICKSTART.md` | `python3 -m signals doctor` → `docs/SIGNAL_APP.md` |
+| Live data (BTC / FX) | `docs/LIVE_DATA.md` | `python3 -m signals --preset btc doctor` |
 
 Both call the **same rules** (`research/quantlol_ref.py`, parity-tested against the C# core), so a
 signal you see in the app is the decision the bot would make on that closed bar.

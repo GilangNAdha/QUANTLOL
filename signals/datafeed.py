@@ -204,13 +204,45 @@ def fetch_live(symbol="GC=F", interval="5m", rng="60d", timeout=20):
         first=first, last=last)
 
 
+def _from_provider(bars, meta, cfg):
+    if not bars:
+        return FeedResult(False, [], source=meta.get("source", "?"), quality="unknown", error="no bars returned")
+    note = meta.get("note", "")
+    if not meta.get("volume_available", True):
+        note += (" | NO VOLUME: order-flow confirmations will be skipped; "
+                 "set require_order_flow=false or the engine will reject every bar")
+    return FeedResult(True, bars, source=meta.get("source", "?"), quality=meta.get("quality", "unknown"),
+                      note=note, fetched_utc=datetime.now(timezone.utc), rows_read=len(bars),
+                      rows_rejected=0, first=bars[0].t, last=bars[-1].t)
+
+
 def load_feed(cfg):
+    """local | csv | live. In live mode a named provider is used, or the tested fallback chain."""
+    from . import providers
+
     if cfg.data_mode == "local":
         return load_local(cfg.data_path)
     if cfg.data_mode == "csv":
         return load_local(cfg.csv_path, has_header=cfg.csv_has_header)
-    interval = "%dm" % cfg.timeframe_minutes if cfg.timeframe_minutes < 60 else "60m"
-    return fetch_live(cfg.live_symbol, interval=interval, rng=cfg.live_range)
+    if cfg.data_mode != "live":
+        return FeedResult(False, [], source=cfg.data_mode, quality="unknown",
+                          error="unknown data_mode %r" % cfg.data_mode)
+    key = os.environ.get(cfg.apikey_env or "", "").strip() or None
+    order = [cfg.live_provider] if cfg.live_provider else list(providers.FALLBACK_ORDER)
+    errors = []
+    for name in order:
+        try:
+            bars, meta = providers.fetch(name, cfg.live_symbol or None, cfg.timeframe_minutes,
+                                         limit=cfg.live_limit, api_key=key, yahoo_range=cfg.live_range)
+            res = _from_provider(bars, meta, cfg)
+            if errors:
+                res.note = ("fell back to %s after %d failure(s): %s | %s"
+                            % (name, len(errors), "; ".join(errors), res.note))
+            return res
+        except Exception as e:
+            errors.append("%s:%s" % (name, str(e)[:90]))
+    return FeedResult(False, [], source="live-chain", quality="unknown",
+                      error="every provider failed -> " + "; ".join(errors))
 
 
 # ----------------------------------------------------------------------- context IO
@@ -256,6 +288,8 @@ def load_vix(cfg, now=None):
 
 def load_gex(cfg, spot=None, now=None):
     now = now or datetime.now(timezone.utc)
+    if cfg.enable_gex and getattr(cfg, "gex_source", "file") == "deribit":
+        return load_gex_deribit(cfg, spot=spot, now=now)
     if not cfg.enable_gex:
         return ExternalStatus("GEX", False, "disabled", float("inf"), False, "GEX:disabled")
     if not os.path.exists(cfg.gex_path):
@@ -307,6 +341,35 @@ def load_gex(cfg, spot=None, now=None):
         return ExternalStatus("GEX", True, quality, age, fresh, status, snap)
     except Exception as e:
         return ExternalStatus("GEX", False, "invalid", float("inf"), False, "GEX:INVALID(%s)" % e)
+
+
+def load_gex_deribit(cfg, spot=None, now=None, chain=None):
+    """Real positioning data: Deribit's public BTC options chain, one keyless request.
+
+    Derived levels are open-interest concentrations. They are NOT dealer gamma - Deribit's
+    summary endpoint has no gamma field - and the status string says so.
+    """
+    from . import providers
+
+    now = now or datetime.now(timezone.utc)
+    if spot is None:
+        return ExternalStatus("GEX", False, "unavailable", float("inf"), False,
+                              "GEX:missing(spot price is required to centre the chain)")
+    try:
+        chain = chain if chain is not None else providers.btc_option_chain(cfg.gex_currency)
+        levels, info = providers.oi_levels(chain, spot)
+    except Exception as e:
+        return ExternalStatus("GEX", False, "unavailable", float("inf"), False,
+                              "GEX:UNAVAILABLE(%s)" % str(e)[:120])
+    if not levels:
+        return ExternalStatus("GEX", False, "unavailable", float("inf"), False, "GEX:empty")
+    snap = {"as_of": now.isoformat(), "quality": "oi-derived", "instrument": cfg.gex_currency.upper(),
+            "levels": levels, "spot": round(spot, 2), "expiry": "all",
+            "note": ("open interest from Deribit's keyless chain summary; no gamma field is "
+                     "published there, so no dealer-gamma sign is claimed | strikes=%d contracts=%d"
+                     % (info["strikes"], info["contracts"]))}
+    return ExternalStatus("GEX", True, "oi-derived", 0.0, True,
+                          "GEX:FRESH(oi-derived,levels=%d,src=deribit)" % len(levels), snap)
 
 
 def _parse_iso(text):

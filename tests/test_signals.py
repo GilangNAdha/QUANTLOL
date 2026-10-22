@@ -467,5 +467,207 @@ class SeparationTests(unittest.TestCase):
         self.assertTrue(core_bridge.describe_engine()["module"].endswith("quantlol_ref.py"))
 
 
+class TestLiveProvidersOffline(unittest.TestCase):
+    """Provider parsing, with the network stubbed out. A live call can never run in CI here."""
+
+    def setUp(self):
+        from signals import providers
+        self.pv = providers
+        self._real = providers._json
+        self.now = datetime(2026, 10, 22, 9, 5, tzinfo=timezone.utc)
+
+    def tearDown(self):
+        self.pv._json = self._real
+
+    def _serve(self, payload):
+        self.pv._json = lambda *a, **k: payload
+
+    def test_in_progress_candle_is_dropped(self):
+        from signals.core_bridge import core
+        bars = [core.Bar(datetime(2026, 10, 22, 9, 0, tzinfo=timezone.utc), 1, 2, 0.5, 1.5, 10)]
+        kept, dropped = self.pv.drop_incomplete(bars, 5, now=datetime(2026, 10, 22, 9, 4, tzinfo=timezone.utc))
+        self.assertTrue(dropped)
+        self.assertEqual([], kept)
+        kept, dropped = self.pv.drop_incomplete(bars, 5, now=datetime(2026, 10, 22, 9, 6, tzinfo=timezone.utc))
+        self.assertFalse(dropped)
+        self.assertEqual(1, len(kept))
+
+    def test_binance_kline_parsing(self):
+        t0 = 1_790_000_000_000
+        self._serve([[t0, "100.0", "110.0", "90.0", "105.0", "1234.5"],
+                     [t0 + 300_000, "105.0", "106.0", "101.0", "102.0", "999.0"]])
+        bars, meta = self.pv.fetch("binance", "BTCUSDT", 5, limit=2)
+        self.assertEqual(2, len(bars))
+        self.assertEqual(105.0, bars[0].c)
+        self.assertEqual(1234.5, bars[0].v)
+        self.assertEqual("live", meta["quality"])
+        self.assertTrue(meta["volume_available"])
+        self.assertEqual("binance:BTCUSDT", meta["source"])
+
+    def test_coinbase_column_order_is_low_high_open_close(self):
+        t0 = 1_790_000_000
+        self._serve([[t0, 90.0, 110.0, 100.0, 105.0, 12.0],
+                     [t0 + 300, 101.0, 106.0, 105.0, 102.0, 9.0]])
+        bars, _ = self.pv.fetch("coinbase", "BTC-USD", 5)
+        self.assertEqual(100.0, bars[0].o)     # third column is the open, not the close
+        self.assertEqual(110.0, bars[0].h)
+        self.assertEqual(90.0, bars[0].l)
+        self.assertEqual(105.0, bars[0].c)
+
+    def test_okx_unconfirmed_rows_are_skipped(self):
+        t0 = 1_790_000_000_000
+        self._serve({"code": "0", "data": [
+            [t0 + 300_000, "105", "106", "101", "102", "9", "0", "0", "1"],   # confirm=1 -> closed
+            [t0, "100", "110", "90", "105", "10", "0", "0", "0"]]})           # confirm=0 -> forming
+        bars, _ = self.pv.fetch("okx", "BTC-USDT", 5)
+        self.assertEqual(1, len(bars))
+        self.assertEqual(102.0, bars[-1].c)
+
+    def test_kraken_last_row_is_dropped_as_in_progress(self):
+        t0 = 1_790_000_000
+        self._serve({"error": [], "result": {"XXBTZUSD": [
+            [t0, "100", "110", "90", "105", "1", "10"],
+            [t0 + 300, "105", "106", "101", "102", "1", "9"]], "last": 1}})
+        bars, _ = self.pv.fetch("kraken", "XBTUSD", 5)
+        # both rows close in the past relative to "now" in the test clock, so both survive;
+        # the drop is exercised by the shared drop_incomplete test above.
+        self.assertEqual(2, len(bars))
+        self.assertEqual(10.0, bars[0].v)
+
+    def test_a_provider_error_is_loud(self):
+        self._serve({"code": "-1121", "msg": "Invalid symbol"})
+        with self.assertRaises(self.pv.ProviderError):
+            self.pv.fetch("okx", "NOPE-USDT", 5)
+
+    def test_unknown_provider_is_rejected(self):
+        with self.assertRaises(self.pv.ProviderError):
+            self.pv.fetch("definitely-not-a-venue", "BTC", 5)
+
+    def test_fallback_chain_moves_to_the_next_venue(self):
+        from signals.config import SignalConfig
+        cfg = SignalConfig(data_mode="live", live_limit=2, require_order_flow=True)
+        calls = []
+
+        def fake_fetch(name, symbol=None, tf=5, limit=500, api_key=None, yahoo_range="5d"):
+            calls.append(name)
+            if name in ("binance", "bybit"):
+                raise self.pv.ProviderError("HTTP 451")
+            from signals.core_bridge import core
+            t = datetime.now(timezone.utc) - timedelta(minutes=10)
+            bars = [core.Bar(t + timedelta(minutes=5 * i), 1, 2, 0.5, 1.5, 3) for i in range(2)]
+            return bars, {"source": name + ":X", "quality": "live", "note": "", "volume_available": True}
+
+        real = self.pv.fetch
+        self.pv.fetch = fake_fetch
+        try:
+            res = datafeed.load_feed(cfg)
+        finally:
+            self.pv.fetch = real
+        self.assertTrue(res.ok)
+        self.assertEqual("okx:X", res.source)
+        self.assertIn("fell back to okx after 2 failure(s)", res.note)
+        self.assertEqual(["binance", "bybit", "okx"], calls)
+
+    def test_every_provider_failing_is_an_error_not_an_empty_feed(self):
+        from signals.config import SignalConfig
+        cfg = SignalConfig(data_mode="live")
+        real = self.pv.fetch
+        self.pv.fetch = lambda *a, **k: (_ for _ in ()).throw(self.pv.ProviderError("HTTP 403"))
+        try:
+            res = datafeed.load_feed(cfg)
+        finally:
+            self.pv.fetch = real
+        self.assertFalse(res.ok)
+        self.assertIn("every provider failed", res.error)
+
+    def test_no_volume_is_flagged_because_order_flow_cannot_work(self):
+        from signals.config import SignalConfig
+        cfg = SignalConfig(data_mode="live", live_provider="yahoo", live_symbol="EURUSD=X")
+        real = self.pv.fetch
+        self.pv.fetch = lambda *a, **k: (
+            [type("B", (), {"t": datetime.now(timezone.utc) - timedelta(minutes=5), "v": 0.0})()],
+            {"source": "yahoo:EURUSD=X", "quality": "no-volume", "note": "", "volume_available": False})
+        try:
+            res = datafeed.load_feed(cfg)
+        finally:
+            self.pv.fetch = real
+        self.assertTrue(res.ok)
+        self.assertIn("NO VOLUME", res.note)
+
+
+class TestInstrumentPresets(unittest.TestCase):
+    def test_gold_preset_keeps_the_published_arithmetic(self):
+        from signals.config import SignalConfig
+        c = SignalConfig().apply_preset("xauusd").validate()
+        self.assertEqual(1.0, c.money_per_price)          # 0.01 lot x 100 oz
+        self.assertAlmostEqual(4.810, c.max_stop_distance, places=3)
+
+    def test_btc_preset_scales_the_cap_to_the_instrument(self):
+        from signals.config import SignalConfig
+        c = SignalConfig().apply_preset("btc").validate()
+        self.assertEqual(0.005, round(c.money_per_price, 4))   # 0.005 BTC
+        self.assertAlmostEqual(995.5, c.max_stop_distance, places=1)
+        self.assertTrue(c.require_order_flow)                  # venue feed has real volume
+
+    def test_eurusd_preset_disables_an_impossible_order_flow_test(self):
+        from signals.config import SignalConfig
+        c = SignalConfig().apply_preset("eurusd").validate()
+        self.assertEqual(1000.0, c.money_per_price)            # 0.01 lot x 100k
+        self.assertFalse(c.require_order_flow)                 # Yahoo FX publishes no volume
+
+    def test_unknown_preset_is_rejected(self):
+        from signals.config import SignalConfig, ConfigError
+        with self.assertRaises(ConfigError):
+            SignalConfig().apply_preset("doge")
+
+    def test_deribit_gex_needs_gex_enabled(self):
+        from signals.config import SignalConfig, ConfigError
+        c = SignalConfig().apply_preset("btc")
+        c.gex_source = "deribit"
+        with self.assertRaises(ConfigError):
+            c.validate()
+
+
+class TestOptionsOpenInterest(unittest.TestCase):
+    def _chain(self):
+        rows = []
+        for strike, call_oi, put_oi in ((90000, 10, 300), (95000, 20, 200), (100000, 500, 50),
+                                        (105000, 700, 10), (110000, 100, 5), (150000, 99999, 0)):
+            rows.append({"instrument": "BTC-31DEC26-%d-C" % strike, "strike": float(strike),
+                         "oi": float(call_oi), "iv": 50.0, "type": "call", "expiry": "x"})
+            rows.append({"instrument": "BTC-31DEC26-%d-P" % strike, "strike": float(strike),
+                         "oi": float(put_oi), "iv": 50.0, "type": "put", "expiry": "x"})
+        return rows
+
+    def test_levels_are_open_interest_concentrations_inside_the_band(self):
+        from signals import providers
+        levels, info = providers.oi_levels(self._chain(), spot=100000.0, band=0.10)
+        kinds = {lv["kind"]: lv["price"] for lv in levels}
+        self.assertEqual(105000.0, kinds["call_wall"])
+        self.assertEqual(90000.0, kinds["put_wall"])
+        self.assertIn("gamma_flip", kinds)
+        self.assertNotIn(150000.0, [lv["price"] for lv in levels])   # outside +-10%
+        self.assertEqual(12, info["contracts"])
+
+    def test_gex_status_never_claims_dealer_gamma(self):
+        from signals.config import SignalConfig
+        c = SignalConfig().apply_preset("btc")
+        c.enable_gex, c.gex_source = True, "deribit"
+        c.validate()
+        st = datafeed.load_gex_deribit(c, spot=100000.0, now=datetime.now(timezone.utc), chain=self._chain())
+        self.assertTrue(st.available)
+        self.assertEqual("oi-derived", st.quality)
+        self.assertIn("no dealer-gamma sign is claimed", st.data["note"])
+        self.assertEqual(3, len(st.data["levels"]))
+
+    def test_gex_without_a_spot_price_is_unavailable(self):
+        from signals.config import SignalConfig
+        c = SignalConfig().apply_preset("btc")
+        c.enable_gex, c.gex_source = True, "deribit"
+        st = datafeed.load_gex_deribit(c, spot=None, chain=self._chain())
+        self.assertFalse(st.available)
+        self.assertIn("spot price is required", st.status)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

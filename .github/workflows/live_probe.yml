@@ -25,13 +25,26 @@ jobs:
           python-version: "3.11"
       - name: Probe endpoints
         run: python3 tools/probe/live_data_probe.py --out tools/probe/out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: probe-results-${{ github.run_id }}
+          path: tools/probe/out/
       - name: Commit results
+        shell: bash
         run: |
+          set -o pipefail
           git config user.email "ci@quantlol.local"; git config user.name "QuantLOL CI"
           git add -f tools/probe/out/live_probe.json tools/probe/out/live_probe.md
-          git commit -q -m "probe: live data endpoint results [skip ci]" || echo nothing
-          git pull --rebase -q || true
-          git push origin HEAD:arena/afc8c595-quantlol
+          git commit -q -m "probe: live data endpoint results [skip ci]" || echo "nothing to commit"
+          for i in 1 2 3 4 5; do
+            git fetch -q origin
+            git rebase -q origin/arena/afc8c595-quantlol || { git rebase --abort || true; sleep 5; continue; }
+            if git push -q origin HEAD:arena/afc8c595-quantlol; then echo "pushed on attempt $i"; exit 0; fi
+            sleep 5
+          done
+          echo "could not push probe results; artifacts hold them"
+          exit 1
 
   # End-to-end proof that the signal app itself can read a real venue feed.
   # The sandbox used for development has no outbound network, so this is the only place
@@ -93,10 +106,23 @@ jobs:
               print("  %-10s %.2f" % (lv["kind"], lv["price"]))
           assert st.available, "Deribit chain unavailable"
           PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-smoke-${{ github.run_id }}
+          path: build/live_*
       - name: Commit evidence
+        shell: bash
         run: |
+          set -o pipefail
           git config user.email "ci@quantlol.local"; git config user.name "QuantLOL CI"
           git add -f build/live_doctor_btc.txt build/live_doctor_coinbase.txt build/live_doctor_kraken.txt build/live_once_btc.json build/live_gex_btc.txt
-          git commit -q -m "probe: live signal-app smoke results [skip ci]" || echo nothing
-          git pull --rebase -q || true
-          git push origin HEAD:arena/afc8c595-quantlol
+          git commit -q -m "probe: live signal-app smoke results [skip ci]" || echo "nothing to commit"
+          for i in 1 2 3 4 5; do
+            git fetch -q origin
+            git rebase -q origin/arena/afc8c595-quantlol || { git rebase --abort || true; sleep 5; continue; }
+            if git push -q origin HEAD:arena/afc8c595-quantlol; then echo "pushed on attempt $i"; exit 0; fi
+            sleep 5
+          done
+          echo "could not push smoke evidence; artifacts hold it"
+          exit 1

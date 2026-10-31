@@ -19,8 +19,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: arena/afc8c595-quantlol
+        # pakai commit yang memicu workflow, bukan nama branch yang di-hardcode
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
@@ -73,7 +72,7 @@ jobs:
           echo "${GITHUB_SHA}" > "build/ci_report_${GITHUB_RUN_ID}.sha"
           git add -f "build/ci_report_${GITHUB_RUN_ID}.txt" "build/ci_report_${GITHUB_RUN_ID}.sha"
           git commit -q -m "ci: build report ${GITHUB_RUN_ID} [skip ci]" || echo nothing
-          git push origin HEAD:arena/afc8c595-quantlol || (git pull --rebase -q && git push origin HEAD:arena/afc8c595-quantlol)
+          git push origin HEAD:${GITHUB_REF_NAME} || (git pull --rebase -q && git push origin HEAD:${GITHUB_REF_NAME})
       - name: Fail on error
         run: |
           if grep -q "PARITY_EXIT=0/0" ci_report.txt && grep -q "SIGNALS_EXIT=0" ci_report.txt && grep -q "BUILD_EXIT=0" ci_report.txt && grep -q "TEST_EXIT=0" ci_report.txt; then

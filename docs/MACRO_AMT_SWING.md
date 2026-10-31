@@ -109,6 +109,9 @@ atau harga close melewati tepi VA lawan.
 
 ## 3. Tabel parameter
 
+76 parameter dalam 10 grup. Semua divalidasi di `OnStart`; yang tidak valid membuat bot monitor-only
+(tidak trading) dengan alasan di log, bukan crash.
+
 Kolom **Opt** = prioritas optimasi: **P1** optimasi dulu (paling berpengaruh), **P2** setelah
 itu, **P3** biarkan tetap (risiko/eksekusi).
 

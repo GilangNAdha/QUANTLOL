@@ -38,7 +38,7 @@ assumed away (see `docs/BUILD.md` §5).
 `src/MacroAmtSwingBot/MacroAmtSwingBot.cs` — satu file cBot untuk swing trading: hanya entry
 searah bias makro, hanya saat positioning (COT) setuju, dan hanya saat harga memberi sinyal
 failed-auction / breakout-retest di sekitar value area harga 20 hari.
-Detail lengkap: **`docs/MACRO_AMT_SWING.md`**.
+76 parameter dalam 10 grup; detail lengkap: **`docs/MACRO_AMT_SWING.md`**.
 
 | Siklus makro | Imbal hasil / suku bunga | USD | Emas | Saham | Crypto | Cara mengisi bias |
 |---|---|---|---|---|---|---|

@@ -36,4 +36,16 @@ jobs:
         run: dotnet build src/MacroAmtSwingBot/MacroAmtSwingBot.csproj -c Release --nologo -v m
 
       - name: Unit tests (pure core, tanpa cAlgo)
-        run: dotnet test tests/MacroAmt.Tests/MacroAmt.Tests.csproj -c Release --nologo -v n
+        run: |
+          set +e
+          dotnet test tests/MacroAmt.Tests/MacroAmt.Tests.csproj -c Release --nologo -v n > test_out.txt 2>&1
+          RC=$?
+          echo "TEST_EXIT=$RC"
+          cat test_out.txt
+          if [ $RC -ne 0 ]; then
+            # ringkas kegagalan jadi anotasi supaya mudah dibaca dari ringkasan run
+            grep -E "Failed |Error Message|Assert|Expected|Actual|Stack Trace|error CS" test_out.txt | head -80 | while IFS= read -r line; do
+              echo "::error::${line}"
+            done
+          fi
+          exit $RC

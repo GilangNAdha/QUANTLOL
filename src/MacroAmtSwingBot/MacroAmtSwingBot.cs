@@ -1382,8 +1382,10 @@ namespace cAlgo.Robots
     // =================================================================================================
     //  9. ROBOT
     // =================================================================================================
+#pragma warning disable 618 // ctor RobotAttribute(string) obsolete tapi Name tidak punya setter di versi ini
     [Robot("MacroAmtSwingBot", TimeZone = TimeZones.UTC, AccessRights = AccessRights.FullAccess,
            DefaultSymbolName = "XAUUSD", AddIndicators = false)]
+#pragma warning restore 618
     public class MacroAmtSwingBot : Robot
     {
         const string Version = "1.0.0";
@@ -1393,6 +1395,10 @@ namespace cAlgo.Robots
         [Parameter("Market preset", DefaultValue = MarketPreset.Gold, Group = "1. Preset",
             Description = "Gold / Forex / Index. Preset menentukan model mana yang boleh jalan.")]
         public MarketPreset Preset { get; set; }
+
+        [Parameter("Entry timeframe", DefaultValue = EntryTimeframeOption.H4, Group = "1. Preset",
+            Description = "Timeframe sinyal (hanya bar yang sudah close yang dipakai).")]
+        public EntryTimeframeOption EntryTf { get; set; }
 
         [Parameter("Expected symbol (opsional)", DefaultValue = "", Group = "1. Preset",
             Description = "Kalau diisi, bot menolak jalan bila simbol chart tidak mengandung teks ini. Kosong = bebas.")]
@@ -1651,6 +1657,7 @@ namespace cAlgo.Robots
         DirectionalMovementSystem _dmsD1;
         ValueProfileEngine _engine;
         readonly Dictionary<int, ManagedTrade> _states = new Dictionary<int, ManagedTrade>();
+        readonly SignalGate _gate = new SignalGate();
         readonly Dictionary<string, DateTime> _logThrottle = new Dictionary<string, DateTime>(32);
         readonly List<CotRecord> _cotRecords = new List<CotRecord>();
         readonly List<List<string>> _groups = new List<List<string>>();
@@ -2798,8 +2805,7 @@ namespace cAlgo.Robots
                 try
                 {
                     pr = PlaceLimitOrder(tt, SymbolName, units, Math.Round(limitPrice, Symbol.Digits), label,
-                                         (double?)(Math.Abs(limitPrice - stop) / Symbol.PipSize),
-                                         (double?)(Math.Abs(tp2 - limitPrice) / Symbol.PipSize),
+                                         (double?)stop, (double?)tp2, (ProtectionType?)ProtectionType.Absolute,
                                          (DateTime?)expiry, comment, false);
                 }
                 catch (Exception ex) { LogSignal("limit exception: " + ex.Message); return false; }

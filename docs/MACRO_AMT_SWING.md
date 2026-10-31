@@ -120,8 +120,8 @@ itu, **P3** biarkan tetap (risiko/eksekusi).
 | Entry timeframe | H4 | H4 / D1 | P2 | sinyal hanya di bar close TF ini |
 | Expected symbol | (kosong) | teks | P3 | kosong = simbol apa pun |
 | Index min pullback % (20D high) | 2.0 | 0.1–20 | P1 | hanya preset Index |
-| VIX symbol | (kosong) | teks | P3 | kosong = kondisi VIX diabaikan |
-| VIX minimum | 20 | 0–100 | P2 | hanya preset VixExperimental |
+| VIX symbol | (kosong) | teks | P3 | kalau diisi, preset Index & VIX wajib VIX ≥ minimum; kosong = diabaikan |
+| VIX minimum | 20 | 0–100 | P2 | ambang VIX |
 | Allow experimental VIX preset | false | bool | P3 | harus true untuk preset VIX |
 
 ### 3.2 Bias
@@ -211,6 +211,23 @@ itu, **P3** biarkan tetap (risiko/eksekusi).
 | Max swap negatif per lot/hari | 0 | 0 = mati | P3 |
 | Dry run | false | bool | P3 |
 | Label prefix | MAS | teks | P3 |
+
+### 3.8 Visual, log & eksekusi
+
+| Parameter | Default | Range | Opt |
+|---|---|---|---|
+| Gambar garis profil | true | bool | P3 |
+| Tampilkan info panel | true | bool | P3 |
+| Tandai sinyal di chart | true | bool | P3 |
+| Log level | Normal | Signals / Normal / Verbose | P3 |
+| CSV trade log | false | bool | P3 |
+| CSV log directory | (kosong) | path | P3 |
+| Dry run (tidak kirim order) | false | bool | P3 |
+| Label prefix | MAS | teks | P3 |
+
+Label order berbentuk `<prefix>-<SYM>-M<model>-<seq>` (mis. `MAS-XAU-M1-007`) sehingga satu
+simbol + satu model mudah dilacak di tab History, dan bot bisa mengadopsi posisinya sendiri
+setelah restart.
 
 ---
 

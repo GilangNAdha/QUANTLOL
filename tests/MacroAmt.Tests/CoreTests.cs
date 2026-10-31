@@ -309,6 +309,10 @@ namespace MacroAmt.Tests
                 MarketRegime.TrendUp, BiasDirection.Long, true, true).Allowed);
             Assert.False(PresetPolicy.Evaluate(MarketPreset.VixExperimental, SignalModel.BreakoutRetest, TradeSide.Long,
                 MarketRegime.TrendUp, BiasDirection.Long, true, false).Allowed);
+            Assert.False(PresetPolicy.Evaluate(MarketPreset.Index, SignalModel.BreakoutRetest, TradeSide.Long,
+                MarketRegime.TrendUp, BiasDirection.Long, true, false).Allowed);
+            Assert.True(PresetPolicy.Evaluate(MarketPreset.Index, SignalModel.BreakoutRetest, TradeSide.Long,
+                MarketRegime.TrendUp, BiasDirection.Long, true, true).Allowed);
         }
 
         [Fact]

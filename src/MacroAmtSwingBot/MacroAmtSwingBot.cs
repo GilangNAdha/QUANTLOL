@@ -419,6 +419,7 @@ namespace cAlgo.Robots
         public int CompositeDays { get; set; }
         public int MaxBins { get; set; }
         public int MinCompositeDays { get; set; }
+        public int RetainExtraDays { get; set; }
 
         public ValueProfile Session { get; private set; }
         public ValueProfile Composite { get; private set; }
@@ -436,6 +437,7 @@ namespace cAlgo.Robots
             CompositeDays = Math.Max(2, compositeDays);
             MaxBins = maxBins > 0 ? maxBins : VolumeProfile.HardMaxBins;
             MinCompositeDays = 2;
+            RetainExtraDays = 3;
             Migration = new MigrationTracker();
             LastBuiltDay = DateTime.MinValue;
             LastError = "";
@@ -471,7 +473,7 @@ namespace cAlgo.Robots
             if (pos < 0) _keys.Insert(~pos, key);
 
             // simpan hanya yang masih relevan (N hari + beberapa hari untuk perbandingan)
-            int keep = CompositeDays + 3;
+            int keep = CompositeDays + Math.Max(2, RetainExtraDays);
             while (_keys.Count > keep)
             {
                 _daily.Remove(_keys[0]);
@@ -898,8 +900,8 @@ namespace cAlgo.Robots
                 if (bias != BiasDirection.Long) return PresetDecision.No("preset index: bias bukan long");
                 if (regime != MarketRegime.TrendUp) return PresetDecision.No("preset index: butuh regime trend up");
                 if (!indexPullbackOk) return PresetDecision.No("preset index: pullback dari high 20D belum cukup");
-                if (preset == MarketPreset.VixExperimental && !vixOk)
-                    return PresetDecision.No("preset VIX: VIX < ambang / data VIX tidak ada");
+                if (!vixOk)
+                    return PresetDecision.No("preset index: VIX < ambang minimum");
                 return PresetDecision.Yes();
             }
 
@@ -1959,6 +1961,7 @@ namespace cAlgo.Robots
             if (_d1Bars.Count < 3) { _monitorReason = "D1 kurang dari 3 bar"; return false; }
             _engine = new ValueProfileEngine(ValueAreaPercent, CompositeDays, MaxProfileBins);
             _engine.MinCompositeDays = Math.Min(5, Math.Max(2, CompositeDays));
+            _engine.RetainExtraDays = Math.Max(3, WarmupDays + 2);
             _atr = AtrValue();
             _binSize = ComputeBinSize();
             if (!(_binSize > 0)) { _monitorReason = "bin size tidak valid (ATR belum siap)"; return false; }
@@ -2610,7 +2613,7 @@ namespace cAlgo.Robots
 
         bool VixOk(DateTime now)
         {
-            if (Preset != MarketPreset.VixExperimental) return true;
+            if (Preset != MarketPreset.Index && Preset != MarketPreset.VixExperimental) return true;
             if (string.IsNullOrWhiteSpace(VixSymbol)) return true;
             if (!double.IsNaN(_vixLevel) && (now - _lastVixCheck).TotalMinutes < 30) return _vixLevel >= VixMinLevel;
             _lastVixCheck = now;

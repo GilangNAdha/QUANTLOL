@@ -55,7 +55,7 @@ analisis fundamental.
 
 ```bash
 dotnet build src/MacroAmtSwingBot/MacroAmtSwingBot.csproj -c Release   # cek compile
-dotnet test  tests/MacroAmt.Tests/MacroAmt.Tests.csproj                # pure core, tanpa cAlgo
+dotnet test  tests/MacroAmt.Tests/MacroAmt.Tests.csproj                # 34 test pure core, tanpa cAlgo
 ```
 
 ## Two products in one repository

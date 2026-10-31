@@ -225,6 +225,10 @@ itu, **P3** biarkan tetap (risiko/eksekusi).
 | Dry run (tidak kirim order) | false | bool | P3 |
 | Label prefix | MAS | teks | P3 |
 
+Arti log level: *Signals* = hanya trade & manajemen; *Normal* = tambah penolakan yang sempat
+membentuk setup (mis. "RR 1.1 < 1.5"); *Verbose* = setiap alasan penolakan, termasuk preset dan
+COT. Untuk backtest panjang, pakai *Normal*.
+
 Label order berbentuk `<prefix>-<SYM>-M<model>-<seq>-<HHmm>` (mis. `MAS-XAU-M1-007-1030`) sehingga satu
 simbol + satu model mudah dilacak di tab History, dan bot bisa mengadopsi posisinya sendiri
 setelah restart.

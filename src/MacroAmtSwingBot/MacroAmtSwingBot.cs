@@ -1637,7 +1637,8 @@ namespace cAlgo.Robots
         [Parameter("Tandai sinyal di chart", DefaultValue = true, Group = "9. Visual & log")]
         public bool ShowSignalMarkers { get; set; }
 
-        [Parameter("Log level", DefaultValue = LogVerbosity.Normal, Group = "9. Visual & log")]
+        [Parameter("Log level", DefaultValue = LogVerbosity.Normal, Group = "9. Visual & log",
+            Description = "Signals = hanya trade; Normal = tambah penolakan yang hampir jadi setup; Verbose = semua alasan.")]
         public LogVerbosity LogLevel { get; set; }
 
         [Parameter("CSV trade log", DefaultValue = false, Group = "9. Visual & log")]
@@ -2332,6 +2333,10 @@ namespace cAlgo.Robots
             Log(message);
         }
 
+        /// <summary>Log level minimal: hanya trade dan manajemen posisi.</summary>
+        void LogTrade(string message) { Log(message); }
+
+        /// <summary>Log sinyal dan alasan penolakan (tidak tampil pada level Signals).</summary>
         void LogSignal(string message)
         {
             if (LogLevel == LogVerbosity.Signals) return;
@@ -2548,7 +2553,7 @@ namespace cAlgo.Robots
                         continue;
                     }
 
-                    LogSignal("SINYAL " + res.Short() + " | regime " + _regime + " | " + cotWhy + " | " + comp.Short());
+                    LogTrade("SINYAL " + res.Short() + " | regime " + _regime + " | " + cotWhy + " | " + comp.Short());
                     double cotMultiplier = cot == CotVerdict.PassSoftCut ? 0.5 : 1.0;
                     if (TryEnter(res, cotMultiplier, now, barOpen, comp, cotWhy)) return;
                 }

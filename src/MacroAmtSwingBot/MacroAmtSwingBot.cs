@@ -2720,16 +2720,11 @@ namespace cAlgo.Robots
                 }
             }
 
-            if (Account.AccountType == AccountType.Netted)
+            // akun netting menggabungkan posisi -> state per-posisi tidak bisa dipisah lagi
+            if (Account.AccountType == AccountType.Netted && _states.Count > 0)
             {
-                foreach (var kv in _states)
-                {
-                    if (kv.Value.Side != res.Side)
-                    {
-                        LogSignal(res.Tag() + " ditolak: akun netting sudah punya arah lawan");
-                        return false;
-                    }
-                }
+                LogSignal(res.Tag() + " ditolak: akun netting hanya boleh satu posisi per simbol");
+                return false;
             }
 
             double stopDistance = Math.Abs(price - stop);
@@ -2791,7 +2786,8 @@ namespace cAlgo.Robots
             }
 
             string label = _labelPrefix + "-" + _labelSymbol + "-M" + (int)res.Model + "-" +
-                           (++_seq).ToString("000", CultureInfo.InvariantCulture);
+                           (++_seq).ToString("000", CultureInfo.InvariantCulture) + "-" +
+                           now.ToString("HHmm", CultureInfo.InvariantCulture);
             string comment = "M" + (int)res.Model + " " + res.Side + " rr" + Fmt.N(rr, 2);
 
             if (DryRun)
@@ -2963,7 +2959,8 @@ namespace cAlgo.Robots
                 if (units < Symbol.VolumeInUnitsMin) continue;
 
                 string label = _labelPrefix + "-" + _labelSymbol + "-S" + (int)st.Model + "-" +
-                               (++_seq).ToString("000", CultureInfo.InvariantCulture);
+                               (++_seq).ToString("000", CultureInfo.InvariantCulture) + "-" +
+                               now.ToString("HHmm", CultureInfo.InvariantCulture);
                 double slPips = stopDistance / Symbol.PipSize;
                 double tpPips = Math.Abs(st.Tp2 - price) / Symbol.PipSize;
 

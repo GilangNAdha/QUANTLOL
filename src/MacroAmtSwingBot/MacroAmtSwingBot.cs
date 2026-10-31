@@ -1382,7 +1382,7 @@ namespace cAlgo.Robots
     // =================================================================================================
     //  9. ROBOT
     // =================================================================================================
-    [Robot(Name = "MacroAmtSwingBot", TimeZone = TimeZones.UTC, AccessRights = AccessRights.FullAccess,
+    [Robot("MacroAmtSwingBot", TimeZone = TimeZones.UTC, AccessRights = AccessRights.FullAccess,
            DefaultSymbolName = "XAUUSD", AddIndicators = false)]
     public class MacroAmtSwingBot : Robot
     {

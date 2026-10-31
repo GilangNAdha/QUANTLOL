@@ -1686,13 +1686,16 @@ namespace cAlgo.Robots
         int _entryTfMinutes = 240, _profileTfMinutes = 30;
         int _seq;
         string _labelPrefix = "MAS";
+        string _labelSymbol = "SYM";
         int _signalCount, _rejectCount, _markerSeq;
 
         // ---------------------------------------------------------------- lifecycle
         protected override void OnStart()
         {
             _labelPrefix = string.IsNullOrWhiteSpace(LabelPrefix) ? "MAS" : Sizing.Normalize(LabelPrefix);
-            if (_labelPrefix.Length > 12) _labelPrefix = _labelPrefix.Substring(0, 12);
+            if (_labelPrefix.Length > 10) _labelPrefix = _labelPrefix.Substring(0, 10);
+            string nsym = Sizing.Normalize(SymbolName);
+            _labelSymbol = nsym.Length >= 3 ? nsym.Substring(0, 3) : (nsym.Length > 0 ? nsym : "SYM");
 
             _entryTfMinutes = EntryTf == EntryTimeframeOption.D1 ? 1440 : 240;
             _profileTfMinutes = (int)ProfileTf;
@@ -2535,6 +2538,7 @@ namespace cAlgo.Robots
                         if (res.Precondition)
                         {
                             _rejectCount++;
+                            DrawExcursionMarker(res, bars[idx].TimeUtc);
                             LogSignal(res.Short() + " | " + _regime + " | " + comp.Short());
                         }
                         else LogVerbose(res.Short());
@@ -2783,7 +2787,8 @@ namespace cAlgo.Robots
                 return false;
             }
 
-            string label = _labelPrefix + "-M" + (int)res.Model + "-" + (++_seq).ToString("000", CultureInfo.InvariantCulture);
+            string label = _labelPrefix + "-" + _labelSymbol + "-M" + (int)res.Model + "-" +
+                           (++_seq).ToString("000", CultureInfo.InvariantCulture);
             string comment = "M" + (int)res.Model + " " + res.Side + " rr" + Fmt.N(rr, 2);
 
             if (DryRun)
@@ -2883,6 +2888,18 @@ namespace cAlgo.Robots
             return true;
         }
 
+        void DrawExcursionMarker(SignalResult res, DateTime barTime)
+        {
+            if (!ShowSignalMarkers) return;
+            try
+            {
+                string name = "MAS_EXC_" + barTime.Ticks.ToString(CultureInfo.InvariantCulture) + "_" +
+                              (int)res.Model + "_" + (int)res.Side;
+                Chart.DrawIcon(name, ChartIconType.Circle, barTime, res.Extreme, Color.Gray);
+            }
+            catch { }
+        }
+
         void DrawMarker(SignalResult res, DateTime barOpen, bool isLimit)
         {
             if (!ShowSignalMarkers) return;
@@ -2942,7 +2959,8 @@ namespace cAlgo.Robots
                 double units = Symbol.NormalizeVolumeInUnits(Sizing.UnitsFromRisk(riskBudget, stopDistance, valuePerUnit), RoundingMode.Down);
                 if (units < Symbol.VolumeInUnitsMin) continue;
 
-                string label = _labelPrefix + "-S" + (int)st.Model + "-" + (++_seq).ToString("000", CultureInfo.InvariantCulture);
+                string label = _labelPrefix + "-" + _labelSymbol + "-S" + (int)st.Model + "-" +
+                               (++_seq).ToString("000", CultureInfo.InvariantCulture);
                 double slPips = stopDistance / Symbol.PipSize;
                 double tpPips = Math.Abs(st.Tp2 - price) / Symbol.PipSize;
 
@@ -3276,8 +3294,8 @@ namespace cAlgo.Robots
         {
             if (!string.IsNullOrEmpty(label))
             {
-                if (label.Contains("-M2")) return SignalModel.BreakoutRetest;
-                if (label.Contains("-M3")) return SignalModel.MeanReversion;
+                if (label.Contains("-M2") || label.Contains("-S2")) return SignalModel.BreakoutRetest;
+                if (label.Contains("-M3") || label.Contains("-S3")) return SignalModel.MeanReversion;
             }
             return SignalModel.FailedAuction;
         }

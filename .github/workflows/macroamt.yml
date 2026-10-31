@@ -1,0 +1,39 @@
+name: macroamt
+
+# Compile the MacroAmtSwingBot against the real cTrader.Automate package and run the
+# pure-core unit tests (the bot file is compiled with MACROAMT_CORE_ONLY for the tests,
+# so the tested code is exactly the code the bot runs).
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "src/MacroAmtSwingBot/**"
+      - "tests/MacroAmt.Tests/**"
+      - ".github/workflows/macroamt.yml"
+  pull_request:
+    paths:
+      - "src/MacroAmtSwingBot/**"
+      - "tests/MacroAmt.Tests/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            8.0.x
+
+      - name: Build cBot (net6.0 + cTrader.Automate 1.0.21)
+        run: dotnet build src/MacroAmtSwingBot/MacroAmtSwingBot.csproj -c Release --nologo -v m
+
+      - name: Unit tests (pure core, tanpa cAlgo)
+        run: dotnet test tests/MacroAmt.Tests/MacroAmt.Tests.csproj -c Release --nologo -v n

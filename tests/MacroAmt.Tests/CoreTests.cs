@@ -110,9 +110,10 @@ namespace MacroAmt.Tests
             var engine = new ValueProfileEngine(70, 5, 4000);
             string err;
 
+            // blok 8 bin yang bergeser +2 per hari -> value area naik terus
             for (int d = 0; d < 4; d++)
             {
-                double lo = 100.1 + d * 2;
+                double lo = 96.1 + d * 2;
                 var bars = new List<ProfileBar> { Bar(lo + 1, lo + 7.8, lo, lo + 4, 100, d) };
                 DateTime key = new DateTime(2026, 1, 5).AddDays(d);
                 Assert.True(engine.IngestDay(key, bars, 1.0, out err), err);
@@ -121,6 +122,7 @@ namespace MacroAmt.Tests
 
             Assert.NotNull(engine.Session);
             Assert.NotNull(engine.Composite);
+            Assert.Equal(2, engine.Migration.Pushes);
             Assert.Equal(MigrationDirection.Up, engine.Migration.Last);
             Assert.Equal(2, engine.Migration.UpStreak);
         }
@@ -149,7 +151,7 @@ namespace MacroAmt.Tests
             Assert.Equal(MarketRegime.Range, RegimeClassifier.Classify(0, 0, 3, 15, RegimeOverrideMode.Auto, 2, 3, 20));
             Assert.Equal(MarketRegime.Unknown, RegimeClassifier.Classify(0, 0, 3, 25, RegimeOverrideMode.Auto, 2, 3, 20));
             Assert.Equal(MarketRegime.Unknown, RegimeClassifier.Classify(1, 0, 0, 25, RegimeOverrideMode.Auto, 2, 3, 20));
-            Assert.Equal(MarketRegime.TrendUp, RegimeClassifier.Classify(0, 0, 5, 10, RegimeOverrideMode.ForceTrend, 2, 3, 20));
+            Assert.Equal(MarketRegime.TrendUp, RegimeClassifier.Classify(1, 0, 0, 10, RegimeOverrideMode.ForceTrend, 2, 3, 20));
             Assert.Equal(MarketRegime.Range, RegimeClassifier.Classify(5, 0, 0, 40, RegimeOverrideMode.ForceRange, 2, 3, 20));
         }
 
@@ -495,7 +497,7 @@ namespace MacroAmt.Tests
         public void UnitsFromRiskAndValuePerUnit()
         {
             Assert.Equal(1.0, Sizing.ValuePerPricePerUnit(1.0, 0.01, 100), 9);
-            Assert.Equal(1.0395, Sizing.UnitsFromRisk(5, 4.81, 1.0), 6);
+            Assert.Equal(5.0 / 4.81, Sizing.UnitsFromRisk(5, 4.81, 1.0), 9);
             Assert.Equal(0, Sizing.UnitsFromRisk(0, 4.81, 1.0), 9);
             Assert.Equal(0, Sizing.UnitsFromRisk(5, 0, 1.0), 9);
         }

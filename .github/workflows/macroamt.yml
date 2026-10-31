@@ -44,7 +44,7 @@ jobs:
           cat test_out.txt
           if [ $RC -ne 0 ]; then
             # ringkas kegagalan jadi anotasi supaya mudah dibaca dari ringkasan run
-            grep -E "Failed |Error Message|Assert|Expected|Actual|Stack Trace|error CS" test_out.txt | head -80 | while IFS= read -r line; do
+            grep -E "^  Failed MacroAmt|Error Message|Assert\.|Expected:|Actual:|error CS" test_out.txt | head -120 | while IFS= read -r line; do
               echo "::error::${line}"
             done
           fi

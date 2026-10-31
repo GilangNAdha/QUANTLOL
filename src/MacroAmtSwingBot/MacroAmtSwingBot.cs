@@ -1377,6 +1377,7 @@ namespace cAlgo.Robots
         public bool Adopted;
         public int ScaleIns;
         public double AtrAtEntry;
+        public DateTime LastStopModifyUtc = DateTime.MinValue;
     }
 
     // =================================================================================================
@@ -2903,6 +2904,9 @@ namespace cAlgo.Robots
         {
             if (ScaleInMax <= 0 || _states.Count == 0) return;
             if (_dailyHalted || _ddHalted) return;
+            if (BiasExpired(now)) return;
+            string fridayWhy;
+            if (TimeGuards.FridayCutoff(now, FridayCutoffHourUtc, out fridayWhy)) return;
             if (Account.AccountType != AccountType.Hedged && !AllowScaleInOnNetting) return;
             if (!(comp != null && comp.IsValid)) return;
 
@@ -3128,9 +3132,16 @@ namespace cAlgo.Robots
                 if (remaining < Symbol.VolumeInUnitsMin)
                 {
                     TradeResult fr = ClosePosition(p);
-                    st.PartialDone = true;
-                    Log("TP1 " + (p.Label ?? "") + ": tutup penuh (sisa < volume minimum) " +
-                        (fr != null && fr.IsSuccessful ? "ok" : "gagal"));
+                    if (fr != null && fr.IsSuccessful)
+                    {
+                        st.PartialDone = true;
+                        Log("TP1 " + (p.Label ?? "") + ": tutup penuh (sisa < volume minimum)");
+                    }
+                    else
+                    {
+                        LogOnce("parfull" + p.Id, "tutup penuh di TP1 gagal: " +
+                                 (fr != null && fr.Error.HasValue ? fr.Error.Value.ToString() : "null"), 120);
+                    }
                     return;
                 }
 
@@ -3170,6 +3181,9 @@ namespace cAlgo.Robots
 
         bool MoveStop(Position p, double price, ManagedTrade st, string why)
         {
+            DateTime now = Server.TimeInUtc;
+            if ((now - st.LastStopModifyUtc).TotalSeconds < 30) return false;
+            st.LastStopModifyUtc = now;
             try
             {
                 double rounded = Math.Round(price, Symbol.Digits);
